@@ -1,0 +1,198 @@
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul
+		http://www.zkoss.org/2005/zul/zul.xsd">
+	
+	<window title="Patient Selection" width="90%" height="90%"
+		minwidth="800" minheight="400" mode="modal" mold="bootstrap"
+		apply="${patientSelectionController}"
+		sclass="panel-primary cwf-patientselection">
+		<style>
+			.cwf-patientselection-toolbar1 {
+				background: transparent;
+				border: none;
+			}
+
+			.cwf-patientselection-toolbar2 {
+				background: white;
+				border: none;
+				border-top: solid 1px gray;
+			}
+
+			.cwf-patientselection-toolbar1 button {
+				width: 80px!important;
+			}
+
+			.cwf-patientselection .z-listitem *,
+			.cwf-patientselection-toolbar1 {
+				word-wrap: normal;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.cwf-patientselection .z-west,
+			.cwf-patientselection .z-east, 
+			.cwf-patientselection .z-north,
+			.cwf-patientselection .z-center {
+				background: lightyellow;
+			}
+
+			.cwf-patientselection .z-west .z-radio {
+				padding-left: 15px; 
+			}
+
+			.cwf-patientselection .z-listbox {
+				background: white;
+			}
+
+		</style>
+
+		<timer id="timer" delay="1000" repeats="true" running="false" />
+
+		<borderlayout>
+			<west title="Patient Lists" width="20%" splittable="true"
+				minsize="40">
+				<div width="100%" height="100%">
+					<vlayout width="100%" vflex="1" spacing="15px">
+						<separator height="2px" />
+						<radiogroup id="rgrpLists" orient="vertical" />
+						<listbox id="lstFilter" vflex="1" width="100%" />
+						<label id="lblDateRange" value="List xxx for:"
+							style="margin-left: 5px" />
+						<datepicker id="drpDateRange" allowCustom="true"
+							width="100%" />
+						<separator height="2px" />
+					</vlayout>
+					<toolbar align="center" orient="horizontal"
+						mold="panel" sclass="cwf-patientselection-toolbar2">
+						<button id="btnManageList" zclass="btn"
+							sclass="btn-sm btn-default"
+							label="${labels.patientselection.btn.manage.label}" />
+						<button id="btnFavorite" zclass="btn"
+							sclass="btn-sm btn-default"
+							label="${labels.patientselection.btn.favorite.label}"
+							w:onClick="jq('$radFavorites').effect('pulsate', {times:3}, 500);" />
+					</toolbar>
+				</div>
+			</west>
+			<center title="Patients" flex="true">
+				<borderlayout>
+					<north height="50%" splittable="true">
+						<div height="100%">
+							<hlayout spacing="0">
+								<textbox id="edtSearch" hflex="1" vflex="1"
+									focus="true" sclass="pull-left" />
+								<button id="btnSearch" vflex="1" zclass="btn"
+									sclass="btn-sm btn-default pull-right"
+									label="${labels.patientselection.btn.search.label}"
+									tooltiptext="${labels.patientselection.btn.search.hint}" />
+							</hlayout>
+							<listbox id="lstSearch" width="100%"
+								vflex="1" />
+						</div>
+					</north>
+					<center flex="true">
+						<div height="100%">
+							<div style="padding:2px">
+								<label id="lblPatientList" />
+							</div>
+							<listbox id="lstPatientList" width="100%"
+								vflex="1" />
+						</div>
+					</center>
+				</borderlayout>
+			</center>
+			<east id="rgnEast" title="Demographics" width="30%"
+				splittable="true" minsize="40">
+				<div width="100%" height="100%">
+					<div width="100%" vflex="1">
+						<vbox id="pnlDemographics" visible="true"
+							align="center" vflex="1" width="100%">
+							<image id="imgPhoto" />
+							<vbox id="pnlDemoRoot" width="100%"
+								align="center" vflex="1" />
+							<toolbar align="center" orient="vertical"
+								sclass="cwf-patientselection-toolbar1">
+								<button id="btnDemoDetail" zclass="btn"
+									sclass="btn-sm btn-default" visible="false"
+									label="${labels.patientselection.btn.detail.label}"
+									tooltiptext="${labels.patientselection.btn.detail.hint}" />
+							</toolbar>
+						</vbox>
+						<vbox id="pnlManagedList" visible="false"
+							vflex="1" width="100%">
+							<hbox id="pnlManagedListFilters" vflex="1"
+								width="100%">
+								<listbox id="lstManagedListFilter"
+									hflex="1" vflex="1" />
+								<toolbar align="center"
+									orient="vertical" sclass="cwf-patientselection-toolbar1">
+									<button id="btnManagedListFilterNew"
+										zclass="btn" sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.new_.label}" />
+									<button
+										id="btnManagedListFilterRename" zclass="btn"
+										sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.rename.label}" />
+									<button
+										id="btnManagedListFilterDelete" zclass="btn"
+										sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.delete.label}" />
+								</toolbar>
+							</hbox>
+							<label id="lblManagedList"
+								value="${labels.patientselection.lbl.managed.label}" />
+							<hbox id="pnlManagedListItems" vflex="2"
+								width="100%">
+								<listbox id="lstManagedList" hflex="1"
+									vflex="1">
+									<listhead>
+										<listheader />
+										<listheader />
+									</listhead>
+								</listbox>
+								<toolbar align="center"
+									orient="vertical" sclass="cwf-patientselection-toolbar1">
+									<separator />
+									<button id="btnManagedListAdd"
+										zclass="btn" sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.add.label}" />
+									<button id="btnManagedListImport"
+										zclass="btn" sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.import_.label}" />
+									<button
+										id="btnManagedListAddCurrent" zclass="btn"
+										sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.add.current.label}" />
+									<separator />
+									<button id="btnManagedListRemove"
+										zclass="btn" sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.remove.label}" />
+									<button id="btnManagedListRemoveAll"
+										zclass="btn" sclass="btn-sm btn-default"
+										label="${labels.patientselection.btn.remove.all.label}" />
+								</toolbar>
+							</hbox>
+						</vbox>
+					</div>
+					<toolbar align="center" orient="horizontal"
+						mold="panel" sclass="cwf-patientselection-toolbar2">
+						<button id="btnOK" zclass="btn"
+							sclass="btn-sm btn-success"
+							label="${labels.patientselection.btn.ok.label}" />
+						<button id="btnCancel" zclass="btn"
+							sclass="btn-sm btn-danger"
+							label="${labels.patientselection.btn.cancel.label}" />
+					</toolbar>
+				</div>
+			</east>
+		</borderlayout>
+		<script type="text/javascript" defer="true">
+			jq(this.$f('edtSearch')).watermark('${labels.patientselection.edit.search.watermark}');
+		</script>
+	</window>
+
+</zk>

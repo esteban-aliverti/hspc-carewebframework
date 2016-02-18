@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<beans profile="root">
+	
+	</beans>
+	
+	<beans profile="desktop">
+
+		<bean id="patientListRegistry" class="org.hspconsortium.cwf.api.patientlist.PatientListRegistry"
+			depends-on="userContext" />
+
+		<bean id="patientList" abstract="true">
+		</bean>
+		
+		<bean id="patientListMRU" class="org.hspconsortium.cwf.api.patientlist.MRUPatientList" parent="patientList">
+			<constructor-arg type="java.lang.String" value="CAREWEB.PATIENT.LIST.MRU" />
+		</bean>
+
+		<bean id="patientListPersonal" class="org.hspconsortium.cwf.api.patientlist.PersonalPatientList" parent="patientList">
+			<constructor-arg type="java.lang.String" value="CAREWEB.PATIENT.LIST.PERSONAL" />
+		</bean>
+
+		<bean id="patientListFavorites" class="org.hspconsortium.cwf.api.patientlist.FavoritePatientList" parent="patientList">
+		</bean>
+		
+	</beans>
+</beans>

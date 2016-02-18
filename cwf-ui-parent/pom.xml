@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.hspconsortium.carewebframework</groupId>
+		<artifactId>cwf-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<name>UI Component Aggregator</name>
+	<artifactId>cwf-ui-parent</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>cwf-ui-core</module>
+		<module>cwf-ui-patientselection-parent</module>
+		<module>cwf-ui-patientheader</module>
+		<module>cwf-ui-patientphoto</module>
+		<module>cwf-ui-reporting</module>
+		<module>cwf-ui-documents</module>
+		<module>cwf-ui-conditions</module>
+		<module>cwf-ui-familyhistory</module>
+		<module>cwf-ui-adversereactions</module>
+		<module>cwf-ui-medications</module>
+	</modules>
+</project>

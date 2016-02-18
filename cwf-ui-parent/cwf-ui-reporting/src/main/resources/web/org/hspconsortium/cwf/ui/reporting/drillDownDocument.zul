@@ -1,0 +1,22 @@
+<zk>
+	<panel height="100%" width="100%" mold="bootstrap">
+		<panelchildren style="padding:5px">
+			<div id="printRoot" width="100%" height="100%"
+				style="overflow:auto;padding:0"
+				sclass="cwf-reporting-report-all">
+			</div>
+		</panelchildren>
+		<toolbar align="end">
+			<button id="btnPrint" zclass="btn" sclass="btn-sm btn-info"
+				label="${labels.reporting.drilldowndisplay.btn.print.label}"
+				tooltiptext="${labels.reporting.drilldowndisplay.btn.print.tooltiptext}"
+				w:onClick="cwf.print('$report_headers $patient,#${self.spaceOwner.uuid} $printRoot');" />
+			<space />
+			<button id="btnClose" zclass="btn"
+				sclass="btn-sm btn-danger"
+				label="${labels.reporting.drilldowndisplay.btn.close.label}"
+				tooltiptext="${labels.reporting.drilldowndisplay.btn.close.tooltiptext}" />
+			<space />
+		</toolbar>
+	</panel>
+</zk>

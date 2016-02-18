@@ -1,0 +1,25 @@
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window title="${arg.title}" closable="true" sizable="true" style="min-width:200px"
+		mold="bootstrap">
+		<div id="printRoot" vflex="1" style="padding:5px;border-bottom:1px solid lightgray">
+			<html width="100%" height="100%" content="${arg.content}"
+				style="overflow:auto" />
+		</div>
+		<toolbar align="end">
+			<button id="btnPrint" label="Print"
+				visible="${arg.allowPrint}" zclass="btn" sclass="btn-info btn-sm"
+				tooltiptext="Print this page."
+				w:onClick="cwf.print('$report_headers $patient,#${printRoot.uuid}');" />
+			<space width="20px" />
+			<button id="btnClose" label="Close"
+				forward="onClick=onClose" zclass="btn" sclass="btn-danger btn-sm"
+				tooltiptext="Close this dialog." />
+			<space width="10px" />
+		</toolbar>
+	</window>
+</zk>

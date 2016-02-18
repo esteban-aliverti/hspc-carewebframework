@@ -1,0 +1,15 @@
+<language-addon>
+	<addon-name>org.carewebframework.vista.ui.resultsdisplay.addon</addon-name>
+	<depends>cwf.ui</depends>
+	<language-name>xul/html</language-name>
+	
+	<javascript-module name="org.hspconsortium.cwf.ui.reporting.addon" version="3.1.0"/>
+
+	<javascript>
+		cwf.registerPrintStyle('~./org/hspconsortium/cwf/ui/reporting/print.css');
+	</javascript>
+
+	<stylesheet href="~./org/hspconsortium/cwf/ui/reporting/common.css"
+		type="text/css" />
+
+</language-addon>

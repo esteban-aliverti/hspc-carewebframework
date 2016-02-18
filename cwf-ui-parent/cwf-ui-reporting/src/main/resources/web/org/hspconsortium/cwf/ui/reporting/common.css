@@ -1,0 +1,89 @@
+@CHARSET "UTF-8";
+
+/* CSS for results display. */
+	
+.cwf-reporting-normalRange, .cwf-reporting-normalRange * {
+	color: #5E5E5E;
+	font-style: italic;
+}
+
+.cwf-reporting-abnormalResult, .cwf-reporting-abnormalResult * {
+	color: red;
+}
+
+div.cwf-reporting-textReport-title {
+	font-weight: bold;
+	font-size: 125%;
+	text-align: center;
+	padding-top: 0px;
+	background-color: lightblue;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	padding: 5px;
+}
+
+div.cwf-reporting-textReport-body {
+	font-family: monospace;
+	white-space: -moz-pre-wrap !important;  	/* Mozilla, since 1999 */
+	white-space: -pre-wrap;      				/* Opera 4-6 */
+	white-space: -o-pre-wrap;    				/* Opera 7 */
+	white-space: pre-wrap;     					/* css-3 */
+	word-wrap: break-word;       				/* Internet Explorer 5.5+ */
+}
+
+div.cwf-reporting-textReport-header {
+	font-weight: bold;
+	font-size: 125%;
+	color: darkblue;
+}
+
+.cwf-reporting-drillDown-document-title * { 
+	text-align: center; 
+}
+
+.cwf-reporting-drillDown-grid .z-grid-body {
+    overflow-x: hidden;
+}
+
+.cwf-reporting-drillDown-grid td {
+	border-left: none !important;
+	border-right: none !important;
+}
+
+.cwf-reporting-drillDown-grid-debug * {
+	background-color: lightgray !important;
+}
+
+.cwf-reporting-drillDown-link {
+	vertical-align: baseline;	
+}
+
+.cwf-reporting-drillDown-grid .z-grid-header {
+    height: 10px;
+}
+
+@media print {
+	.cwf-reporting-drillDown-link {
+		display: none;
+	}
+	
+	.cwf-reporting-header {
+		display: block;
+	}
+	
+	.cwf-reporting-abnormalResult, .cwf-reporting-abnormalResult * {
+		color: #000 !important;
+		font-weight: 900 !important;
+		font-style: italic !important;
+	}
+		
+}
+
+@media screen {
+	.cwf-reporting-header {
+		display: none;
+	}
+	.cwf-reporting-drillDown-link {
+		cursor: pointer;
+	}
+}

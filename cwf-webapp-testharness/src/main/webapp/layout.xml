@@ -1,0 +1,30 @@
+<layout name="TestHarness" title="Test Harness - FHIR" icon="fhir_icon.png" version="1.0">
+	<_menubar />
+	<_toolbar />
+	<splitterview orientation="vertical">
+		<splitterpane size="47" relative="false">
+			<splitterview orientation="horizontal">
+				<splitterpane relative="false" size="40">
+					<patientPhoto />
+				</splitterpane>
+				<splitterpane relative="true" size="50">
+					<patientHeader color="lightyellow" />
+				</splitterpane>
+				<splitterpane relative="true" size="50">
+					<userHeader color="lightblue" />
+				</splitterpane>
+			</splitterview>
+		</splitterpane>
+		<splitterpane size="90" relative="true">
+			<tabview orientation="horizontal">
+				<tabpane label="Test Harness">
+					<treeview caption="Plugins:" open="true">
+					</treeview>
+				</tabpane>
+			</tabview>
+		</splitterpane>
+		<splitterpane size="17" relative="false">
+			<statusPanel />
+		</splitterpane>
+	</splitterview>
+</layout>

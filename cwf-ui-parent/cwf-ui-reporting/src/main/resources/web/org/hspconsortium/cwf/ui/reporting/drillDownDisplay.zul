@@ -1,0 +1,29 @@
+<zk>
+	<div id="printRoot" width="100%" vflex="1">
+		<grid id="grid" width="100%" height="100%"
+			sizedByContent="false" sclass="cwf-reporting-drillDown-grid">
+			<columns sizable="true" visible="false">
+				<column id="colLink" align="left" width="25px" />
+				<column id="colLabel" align="right" valign="top" />
+				<column id="colValue" align="left" label=" "
+					valign="top" />
+			</columns>
+			<rows></rows>
+		</grid>
+	</div>
+	<toolbar align="end">
+		<button id="btnPrint" zclass="btn" sclass="btn-sm btn-info"
+			label="${labels.reporting.drilldowndisplay.btn.print.label}"
+			tooltiptext="${labels.reporting.drilldowndisplay.btn.print.tooltiptext}"
+			w:onClick="cwf.print(this.$f('printRoot'),'~./org/hspconsortium/cwf/ui/reporting/drillDownDisplayPrint.css');" />
+		<space />
+		<button id="btnCloseAll" zclass="btn" sclass="btn-sm btn-danger"
+			label="${labels.reporting.drilldowndisplay.btn.close.all.label}"
+			visible="false"
+			tooltiptext="${labels.reporting.drilldowndisplay.btn.close.all.tooltiptext}" />
+		<button id="btnClose" zclass="btn" sclass="btn-sm btn-danger"
+			label="${labels.reporting.drilldowndisplay.btn.close.label}"
+			tooltiptext="${labels.reporting.drilldowndisplay.btn.close.tooltiptext}" />
+		<space />
+	</toolbar>
+</zk>

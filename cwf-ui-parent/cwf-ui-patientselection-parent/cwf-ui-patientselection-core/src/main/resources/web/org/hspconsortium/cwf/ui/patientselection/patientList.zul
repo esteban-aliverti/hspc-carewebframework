@@ -1,0 +1,12 @@
+<zk>
+	<div apply="${patientListController}" renderdefer="50">
+		<listbox id="patientList" hflex="1">
+			<listhead>
+				<listheader align="left" label="Last Name" hflex="1" />
+				<listheader align="left" label="First Name" hflex="1" />
+				<listheader align="center" label="MRN" width="10em" />
+				<listheader align="center" label="DOB" width="10em" />
+			</listhead>
+		</listbox>
+	</div>
+</zk>

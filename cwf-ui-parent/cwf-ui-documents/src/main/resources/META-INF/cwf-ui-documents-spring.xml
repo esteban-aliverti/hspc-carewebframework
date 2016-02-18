@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:cwp="http://www.carewebframework.org/schema/plugin"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		 http://www.springframework.org/schema/beans/spring-beans.xsd
+		 http://www.carewebframework.org/schema/plugin
+		 http://www.carewebframework.org/schema/plugin/plugin-extensions.xsd">
+
+	<beans profile="root">
+
+		<cwp:plugin
+			url="~./org/hspconsortium/cwf/ui/documents/documents.zul"
+			id="calDocuments" name="Clinical Documents Display">
+			<cwp:resource>
+				<cwp:help-resource module="calDocumentsHelp" />
+				<cwp:property-resource group="DOCUMENT.CONTROLS" />
+				<cwp:bean-resource bean="calDocumentsActionStatus"
+					required="true" />
+			</cwp:resource>
+
+			<cwp:serialization>
+				<cwp:property name="Fixed Category" id="fixedFilter" type="enum" 
+					description="To restrict documents to a specific category, set this to the category name." >
+					<cwp:config>
+						<cwp:entry key="bean">documentTypeEnumerator</cwp:entry>
+					</cwp:config>
+				</cwp:property>
+			</cwp:serialization>
+
+			<cwp:security requiresAll="false">
+			</cwp:security>
+		</cwp:plugin>
+
+	</beans>
+
+	<beans profile="desktop">
+
+		<!-- Presentation Layer -->
+		<bean id="calDocumentsDocumentListRenderer"
+			class="org.hspconsortium.cwf.ui.documents.DocumentListRenderer" />
+
+		<bean id="calDocumentsDocumentDisplayRenderer"
+			class="org.hspconsortium.cwf.ui.documents.DocumentDisplayRenderer" />
+
+		<!-- Controllers -->
+		<bean id="calDocumentsMainController"
+			class="org.hspconsortium.cwf.ui.documents.DocumentMainController"
+			scope="prototype">
+			<property name="listController" ref="calDocumentsListController" />
+			<property name="displayController" ref="calDocumentsDisplayController" />
+		</bean>
+
+		<bean id="calDocumentsListController"
+			class="org.hspconsortium.cwf.ui.documents.DocumentListController"
+			scope="prototype">
+			<constructor-arg ref="documentService" />
+			<property name="itemRenderer" ref="calDocumentsDocumentListRenderer" />
+		</bean>
+
+		<bean id="calDocumentsDisplayController"
+			class="org.hspconsortium.cwf.ui.documents.DocumentDisplayController"
+			scope="prototype">
+			<constructor-arg ref="documentService" />
+			<property name="itemRenderer" ref="calDocumentsDocumentDisplayRenderer" />
+		</bean>
+
+		<bean id="calDocumentsActionStatus" lazy-init="true"
+			class="org.hspconsortium.cwf.ui.documents.ActionStatus">
+		</bean>
+
+	</beans>
+</beans>

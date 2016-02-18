@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cwf="http://www.carewebframework.org/schema/spring"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.carewebframework.org/schema/spring
+		http://www.carewebframework.org/schema/spring/spring-extensions.xsd">
+
+	<beans profile="root">
+	
+		<!-- FHIR context and client -->
+		<bean id="fhirContext" class="org.hspconsortium.cwf.fhir.client.FhirContext" />
+		
+		<bean id="fhirClient" factory-bean="fhirContext" factory-method="newRestfulGenericClient">
+			<constructor-arg ref="fhirServiceRoot" />
+			<constructor-arg ref="fhirServiceAuth" />
+			<constructor-arg value="true" />
+		</bean>
+		
+		<bean class="org.hspconsortium.cwf.api.security.BasicAuthInterceptor">
+			<constructor-arg value="Basic" />
+		</bean>
+		
+		<bean class="org.hspconsortium.cwf.api.security.BearerAuthInterceptor">
+			<constructor-arg value="OAuth2" />
+		</bean>
+		
+		<!-- This may be overridden to provide an alternative means for returning the service root. -->
+		<bean id="fhirServiceRoot" class="java.lang.String">
+			<constructor-arg value="${fhir.service.root.url}" />
+		</bean>
+		
+		<!-- This may be overridden to provide an alternative means for returning the service auth type. -->
+		<bean id="fhirServiceAuth" class="java.lang.String">
+			<constructor-arg value="${fhir.service.authorization.type:}" />
+		</bean>
+		
+		<!-- Domain factory  -->
+		<bean class="org.hspconsortium.cwf.api.DomainFactory" factory-method="getInstance">
+			<property name="fhirClient" ref="fhirClient" />
+		</bean>
+		
+		<!-- Register a context serializer for names. -->
+		<bean class="org.hspconsortium.cwf.api.NameSerializer" />
+	
+		<!-- Patient search engine -->
+		<bean id="patientSearchEngine" class="org.hspconsortium.cwf.api.patient.PatientSearch">
+			<constructor-arg ref="fhirClient" />
+		</bean>
+		
+		<!-- Encounter search engine -->
+		<bean id="encounterSearchEngine" class="org.hspconsortium.cwf.api.encounter.EncounterSearch">
+			<constructor-arg ref="fhirClient" />
+		</bean>
+		
+		<!-- Practitioner search engine -->
+		<bean id="practitionerSearchEngine" class="org.hspconsortium.cwf.api.practitioner.PractitionerSearch">
+			<constructor-arg ref="fhirClient" />
+		</bean>
+		
+		<!-- Location search engine -->
+		<bean id="locationSearchEngine" class="org.hspconsortium.cwf.api.location.LocationSearch">
+			<constructor-arg ref="fhirClient" />
+		</bean>
+		
+	</beans>
+	
+	<beans profile="desktop">
+
+		<!-- Shared clinical contexts. -->
+
+		<bean id="patientContext" parent="managedContext"
+			class="org.hspconsortium.cwf.api.patient.PatientContext"	/>
+
+		<bean id="encounterContext" parent="managedContext"
+			class="org.hspconsortium.cwf.api.encounter.EncounterContext">
+		</bean>
+
+		<bean id="encounterParticipantContext" parent="managedContext"
+			class="org.hspconsortium.cwf.api.encounter.EncounterParticipantContext">
+		</bean>
+
+		<bean id="locationContext" parent="managedContext"
+			class="org.hspconsortium.cwf.api.location.LocationContext" depends-on="userContext">
+		</bean>
+
+	</beans>
+</beans>

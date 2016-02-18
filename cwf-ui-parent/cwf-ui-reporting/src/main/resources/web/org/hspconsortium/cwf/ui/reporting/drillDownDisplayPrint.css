@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+/* CSS for printing of drilldown display. */
+	
+div * {
+	height: auto !important;
+	overflow: visible !important;
+}
+
+.z-grid-body {
+    width: 100%!important;
+}
+
+.z-grid-header {
+	display: none;
+}

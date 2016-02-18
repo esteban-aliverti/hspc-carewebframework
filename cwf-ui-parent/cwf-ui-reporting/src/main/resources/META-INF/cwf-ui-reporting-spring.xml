@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:cwp="http://www.carewebframework.org/schema/plugin" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		 http://www.springframework.org/schema/beans/spring-beans.xsd
+		 http://www.carewebframework.org/schema/plugin
+		 http://www.carewebframework.org/schema/plugin/plugin-extensions.xsd">
+
+	<beans profile="root">
+
+		<bean class="org.hspconsortium.cwf.ui.reporting.headers.ReportHeaderRegistry"
+			factory-method="getInstance" />
+
+	</beans>
+
+	<beans profile="desktop">
+
+		<bean class="org.hspconsortium.cwf.ui.reporting.headers.ReportHeaderRegistry.Init" />
+
+		<bean id="reportHeaderPatient" class="org.hspconsortium.cwf.ui.reporting.headers.GenericHeader"
+			scope="prototype">
+			<constructor-arg value="CONTEXT.CHANGED.Patient" />
+		</bean>
+
+		<bean id="reportHeaderUser" class="org.hspconsortium.cwf.ui.reporting.headers.GenericHeader"
+			scope="prototype">
+			<constructor-arg value="CONTEXT.CHANGED.User" />
+		</bean>
+
+		<bean name="reportListViewBase" abstract="true" parent="sharedFormListViewController"
+			scope="prototype">
+			<property name="fhirClient" ref="fhirClient" />
+		</bean>
+		
+	</beans>
+
+</beans>

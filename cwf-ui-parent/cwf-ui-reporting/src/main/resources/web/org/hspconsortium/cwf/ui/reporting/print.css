@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+/* CSS for printing of results display. */
+	
+.cwf-reporting-drillDown-link {
+	display: none;
+}
+
+.cwf-reporting-abnormalResult, .cwf-reporting-abnormalResult * {
+	color: #000 !important;
+	font-weight: 900 !important;
+	font-style: italic !important;
+}
+
+.cwf-reporting-report-all {
+	border: 0;
+	overflow: visible !important;
+	zoom: normal !important;
+}
+	
+.cwf-reporting-header-title, .cwf-reporting-header-title * {
+	text-align: center;
+	font-size: 110%;
+	font-weight: bold;
+	background-color: lightblue;
+}
+	
+.cwf-reporting-header {
+	display: block !important;
+}
+
+

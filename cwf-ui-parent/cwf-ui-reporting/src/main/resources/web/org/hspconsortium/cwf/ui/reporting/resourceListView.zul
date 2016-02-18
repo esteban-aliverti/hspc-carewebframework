@@ -1,0 +1,5 @@
+<?init class="org.carewebframework.ui.zk.Composition" arg0="~./org/carewebframework/ui/sharedforms/listViewForm.zul"?>
+
+<zk>
+	<html self="@define(sharedFormsListView)" id="detailView" />
+</zk>
