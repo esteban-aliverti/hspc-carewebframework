@@ -2,7 +2,7 @@
 <web-app id="WVEHR" version="2.4"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-	<display-name>CareWeb</display-name>
+	<display-name>FHIRWorks</display-name>
 	<!--
 		- Loads the root application context of this web app at startup, - by
 		default from "/WEB-INF/applicationContext.xml". - Note that you need
