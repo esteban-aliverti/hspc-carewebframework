@@ -23,10 +23,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.hspconsortium.cwf.api.ClientUtil;
-import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 import org.carewebframework.common.StrUtil;
 
+import org.hspconsortium.cwf.api.ClientUtil;
+import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
+
+import ca.uhn.fhir.model.api.IDatatype;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Medication;
 import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
@@ -48,7 +51,16 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
     
     @Override
     protected void render(MedicationOrder script, List<Object> columns) {
-        String med = "????"; // TODO: script.getMedication().getDisplay().getValue();
+        String med = null;
+        IDatatype medicationDt = script.getMedication();
+        
+        if (medicationDt != null && medicationDt instanceof CodeableConceptDt) {
+            CodeableConceptDt medCode = (CodeableConceptDt) medicationDt;
+            med = medCode.getCodingFirstRep().getDisplay();//Assuming there is only one code. If not, we need to get the preferred one.
+        } else if (medicationDt != null && medicationDt instanceof Medication) {
+            Medication medObject = (Medication) medicationDt;
+            med = medObject.getCode().getCodingFirstRep().getDisplay();//Not sure about this one
+        }
         
         if (StringUtils.isEmpty(med)) {
             Medication medication = ClientUtil.getResource((ResourceReferenceDt) script.getMedication(), Medication.class);
