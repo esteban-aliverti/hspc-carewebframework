@@ -11,7 +11,9 @@
 	<beans profile="root">
 	
 		<!-- FHIR context and client -->
-		<bean id="fhirContext" class="org.hspconsortium.cwf.fhir.client.FhirContext" />
+		<bean id="fhirContext" class="org.hspconsortium.cwf.fhir.client.FhirContext">
+			<constructor-arg ref="fhirServiceProxy" />
+		</bean>
 		
 		<bean id="fhirClient" factory-bean="fhirContext" factory-method="newRestfulGenericClient">
 			<constructor-arg ref="fhirServiceRoot" />
@@ -25,6 +27,11 @@
 		
 		<bean class="org.hspconsortium.cwf.api.security.BearerAuthInterceptor">
 			<constructor-arg value="OAuth2" />
+		</bean>
+		
+		<!-- This may be overridden to provide an alternative means for returning the service proxy. -->
+		<bean id="fhirServiceProxy" class="java.lang.String">
+			<constructor-arg value="${fhir.service.proxy:}" />
 		</bean>
 		
 		<!-- This may be overridden to provide an alternative means for returning the service root. -->
