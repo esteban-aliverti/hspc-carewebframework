@@ -23,22 +23,23 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.hspconsortium.cwf.api.SearchException;
-import org.hspconsortium.cwf.api.patient.PatientSearchCriteria;
-import org.hspconsortium.cwf.api.patient.PatientUtil;
 import org.carewebframework.common.StrUtil;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.carewebframework.ui.zk.PromptDialog;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.zul.Messagebox;
+
+import org.hspconsortium.cwf.api.SearchException;
+import org.hspconsortium.cwf.api.patient.PatientSearchCriteria;
+import org.hspconsortium.cwf.api.patient.PatientUtil;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 
 /**
  * Patient search services.
@@ -74,7 +75,9 @@ public class PatientSearchUtil {
         public int compare(Patient patient1, Patient patient2) {
             HumanNameDt name1 = FhirUtil.getName(patient1.getName(), NameUseEnum.USUAL, null);
             HumanNameDt name2 = FhirUtil.getName(patient2.getName(), NameUseEnum.USUAL, null);
-            return name1.toString().compareToIgnoreCase(name2.toString());
+            String cmp1 = name1 == null ? "" : name1.toString();
+            String cmp2 = name2 == null ? "" : name2.toString();
+            return cmp1.compareToIgnoreCase(cmp2.toString());
         }
         
     };

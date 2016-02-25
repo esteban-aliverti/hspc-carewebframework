@@ -12,36 +12,25 @@
 	
 		<!-- FHIR context and client -->
 		<bean id="fhirContext" class="org.hspconsortium.cwf.fhir.client.FhirContext">
-			<constructor-arg ref="fhirServiceProxy" />
+			<constructor-arg value="${fhir.service.proxy:}" />
 		</bean>
 		
 		<bean id="fhirClient" factory-bean="fhirContext" factory-method="newRestfulGenericClient">
-			<constructor-arg ref="fhirServiceRoot" />
-			<constructor-arg ref="fhirServiceAuth" />
-			<constructor-arg value="true" />
+			<constructor-arg value="${fhir.service.root.url}" />
+			<constructor-arg value="${fhir.service.authorization.type:}" />
+			<constructor-arg value="${fhir.service.validate.conformance:true}" />
+			<constructor-arg value="${fhir.client.encoding:}" />
+			<constructor-arg value="${fhir.client.prettyprint:false}" />
 		</bean>
 		
 		<bean class="org.hspconsortium.cwf.api.security.BasicAuthInterceptor">
 			<constructor-arg value="Basic" />
+			<constructor-arg value="${fhir.service.username:}" />
+			<constructor-arg value="${fhir.service.password:}" />
 		</bean>
 		
 		<bean class="org.hspconsortium.cwf.api.security.BearerAuthInterceptor">
 			<constructor-arg value="OAuth2" />
-		</bean>
-		
-		<!-- This may be overridden to provide an alternative means for returning the service proxy. -->
-		<bean id="fhirServiceProxy" class="java.lang.String">
-			<constructor-arg value="${fhir.service.proxy:}" />
-		</bean>
-		
-		<!-- This may be overridden to provide an alternative means for returning the service root. -->
-		<bean id="fhirServiceRoot" class="java.lang.String">
-			<constructor-arg value="${fhir.service.root.url}" />
-		</bean>
-		
-		<!-- This may be overridden to provide an alternative means for returning the service auth type. -->
-		<bean id="fhirServiceAuth" class="java.lang.String">
-			<constructor-arg value="${fhir.service.authorization.type:}" />
 		</bean>
 		
 		<!-- Domain factory  -->
