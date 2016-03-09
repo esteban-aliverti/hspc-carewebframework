@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+
+.cwfNotification .z-east .z-groupbox > div {
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+}
+
+.cwfNotification-legend .z-vlayout {
+	margin-left: 20px;
+	border-top: 1px solid lightgray;
+	padding-top: 5px;
+}
+
+.cwfNotification-legend img {
+	margin-right: 5px;
+}
+
+.cwfNotification-legend .z-a[disabled] {
+	color: black;
+}
