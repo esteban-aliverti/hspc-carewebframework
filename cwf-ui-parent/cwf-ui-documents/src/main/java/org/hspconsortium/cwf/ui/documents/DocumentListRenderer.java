@@ -23,10 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.ui.zk.AbstractListitemRenderer;
-import org.hspconsortium.cwf.api.documents.Document;
 
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Listitem;
+
+import org.hspconsortium.cwf.api.documents.Document;
 
 /**
  * Renderer for the document list.
@@ -34,6 +35,7 @@ import org.zkoss.zul.Listitem;
  * @author dmartin
  */
 public class DocumentListRenderer extends AbstractListitemRenderer<Document, Object> {
+    
     
     private static final Log log = LogFactory.getLog(DocumentListRenderer.class);
     
@@ -50,7 +52,7 @@ public class DocumentListRenderer extends AbstractListitemRenderer<Document, Obj
     @Override
     public void renderItem(Listitem item, Document doc) {
         log.trace("item render");
-        item.setCheckable(true);
+        item.setSelectable(true);
         item.addForward(Events.ON_DOUBLE_CLICK, item.getListbox(), Events.ON_DOUBLE_CLICK);
         addCell(item, "");
         addCell(item, doc.getDateTime());
