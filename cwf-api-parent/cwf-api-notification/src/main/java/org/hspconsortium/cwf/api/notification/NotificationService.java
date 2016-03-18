@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.carewebframework.common.StrUtil;
 
+import ca.uhn.fhir.model.dstu2.resource.Communication;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
@@ -44,8 +45,6 @@ import ca.uhn.fhir.model.dstu2.resource.Patient;
  */
 public class NotificationService {
     
-    // Mail group lookup screen.
-    private static final String MG_SCREEN = "I $P(^(0),U,2)'=\"PR\"!$D(^XMB(3.8,\"AB\",DUZ,Y))";
     
     private final String scheduledPrefix;
     
@@ -85,7 +84,7 @@ public class NotificationService {
      * @param result The list to receive the results.
      */
     public void getNotifications(Patient patient, Collection<Notification> result) {
-        List<String> lst = null;
+        List<Communication> lst = null;
         result.clear();
         
         if (patient == null) {
@@ -95,7 +94,7 @@ public class NotificationService {
         }
         
         if (lst != null) {
-            for (String item : lst) {
+            for (Communication item : lst) {
                 result.add(new Notification(item));
             }
         }

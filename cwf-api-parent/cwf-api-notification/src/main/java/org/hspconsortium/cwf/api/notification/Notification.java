@@ -34,10 +34,13 @@ import java.util.Arrays;
 
 import org.carewebframework.common.StrUtil;
 
+import ca.uhn.fhir.model.dstu2.resource.Communication;
+
 /**
  * A delivered notification.
  */
 public class Notification extends AbstractNotification {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -56,7 +59,7 @@ public class Notification extends AbstractNotification {
     private Priority priority;
     
     public Notification() {
-    
+        
     }
     
     /**
@@ -67,7 +70,8 @@ public class Notification extends AbstractNotification {
      * Priority^Info Only^Patient Name^ Patient Location ^Subject^Date Delivered^Sender Name^DFN^Alert Type^Alert ID^Can Delete^Extra Info
      * </code>
      */
-    public Notification(String data) {
+    public Notification(Communication communication) {
+        String data = null;
         String[] pcs = StrUtil.split(data, U, 12);
         setPriority(Priority.fromString(pcs[0]));
         setActionable(!StrUtil.toBoolean(pcs[1]));

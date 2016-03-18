@@ -68,12 +68,14 @@ import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
+import ca.uhn.fhir.model.dstu2.resource.Communication;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Controller for main notification display.
  */
 public class MainController extends CaptionedForm implements IPatientContextEvent {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -94,6 +96,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     // This is the renderer for the notification display.
     private final AbstractListitemRenderer<Notification, Object> renderer = new AbstractListitemRenderer<Notification, Object>() {
         
+        
         @Override
         protected void renderItem(Listitem item, Notification notification) {
             createCell(item, null);
@@ -110,10 +113,11 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     };
     
     // This is the listener for notification action messages.
-    private final IGenericEvent<String> actionListener = new IGenericEvent<String>() {
+    private final IGenericEvent<Communication> actionListener = new IGenericEvent<Communication>() {
+        
         
         @Override
-        public void eventCallback(String eventName, String eventData) {
+        public void eventCallback(String eventName, Communication eventData) {
             Action action = Action.valueOf(StrUtil.piece(eventName, ".", 2));
             Notification notification;
             
@@ -121,7 +125,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                 case ADD:
                     addNotification(eventData);
                     break;
-                    
+                
                 case INFO:
                     notification = findNotification(eventData);
                     
@@ -131,11 +135,11 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                     }
                     
                     break;
-                    
+                
                 case REFRESH:
                     refresh();
                     break;
-                    
+                
                 case DELETE:
                     notification = findNotification(eventData);
                     
@@ -192,7 +196,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     
     private ProcessingController processingController;
     
-    private final ListModelList<Notification> model = new ListModelList<Notification>();
+    private final ListModelList<Notification> model = new ListModelList<>();
     
     private boolean showAll = true;
     
@@ -315,13 +319,13 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     }
     
     /**
-     * Creates a notification from raw data. Will be added to the model unless filtered. Will
-     * generate a slide-down message alert if its priority exceeds the set threshold.
+     * Creates a notification from communication resource. Will be added to the model unless
+     * filtered. Will generate a slide-down message alert if its priority exceeds the set threshold.
      *
-     * @param data Raw notification data.
+     * @param communication Communication resource.
      */
-    private void addNotification(String data) {
-        Notification notification = new Notification(data);
+    private void addNotification(Communication communication) {
+        Notification notification = new Notification(communication);
         service.getNotificationMessage(notification);
         
         if (radAll.isChecked() || (notification.hasPatient() && patient != null
@@ -343,11 +347,11 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * @param alertId Alert id.
      * @return Notification with a matching alert id, or null if not found in the current model.
      */
-    private Notification findNotification(String alertId) {
+    private Notification findNotification(Communication communication) {
         for (Notification notification : model) {
-            if (alertId.equals(notification.getAlertId())) {
-                return notification;
-            }
+            //if (alertId.equals(notification.getAlertId())) {
+            //    return notification;
+            //}
         }
         
         return null;
@@ -410,11 +414,11 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                     switch (getResponse(msg, Response.YES, Response.NO, Response.ALL, Response.CANCEL)) {
                         case NO:
                             continue;
-                            
+                        
                         case ALL:
                             silent = true;
                             break;
-                            
+                        
                         case CANCEL:
                             break LOOP;
                     }
@@ -544,7 +548,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         
         radPatient.setLabel(patient == null ? Labels.getLabel("cwfnotification.main.patient.not.selected")
                 : FhirUtil.formatName(patient.getName()));
-                
+        
         if (refresh) {
             refresh();
         }
