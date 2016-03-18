@@ -9,8 +9,8 @@
 
 	<beans profile="root">
 
-		<cwp:plugin url="~./org/hspconsortium/cwf/ui/medications/main.zul" id="calMedications"
-			name="Patient Medications">
+		<cwp:plugin url="~./org/hspconsortium/cwf/ui/medicationorders/main.zul" id="hspcMedicationOrders"
+			name="Patient Medication Orders">
 			<cwp:serialization>
 				<cwp:property id="allowPrint" name="Allow Printing"
 					type="boolean" description="If true, printing is allowed." />
@@ -40,7 +40,7 @@
 					editable="false" />
 			</cwp:serialization>
 			<cwp:resource>
-				<cwp:help-resource module="calMedicationsHelp" />
+				<cwp:help-resource module="hspcMedicationOrdersHelp" />
 			</cwp:resource>
 		</cwp:plugin>
 
@@ -48,8 +48,8 @@
 
 	<beans profile="desktop">
 
-		<bean name="calMedicationsController" parent="reportListViewBase"
-			class="org.hspconsortium.cwf.ui.medications.MainController" scope="prototype" />
+		<bean name="hspcMedicationOrdersController" parent="reportListViewBase"
+			class="org.hspconsortium.cwf.ui.medicationorders.MainController" scope="prototype" />
 
 	</beans>
 

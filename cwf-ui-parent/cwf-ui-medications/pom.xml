@@ -6,11 +6,11 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<name>Patient Medications Plugin</name>
-	<artifactId>cwf-ui-medications</artifactId>
+	<name>Patient Medication Orders Plugin</name>
+	<artifactId>cwf-ui-medicationorders</artifactId>
 	<packaging>jar</packaging>
 
-	<description>Patient-associated medications.</description>
+	<description>Patient-associated medication orders.</description>
 	
 	<dependencies>
 		<dependency>

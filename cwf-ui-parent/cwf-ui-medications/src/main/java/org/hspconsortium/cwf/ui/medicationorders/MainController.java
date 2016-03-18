@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.hspconsortium.cwf.ui.medications;
+package org.hspconsortium.cwf.ui.medicationorders;
 
 import java.util.List;
 
