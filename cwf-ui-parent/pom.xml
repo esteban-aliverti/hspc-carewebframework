@@ -20,7 +20,7 @@
 		<module>cwf-ui-conditions</module>
 		<module>cwf-ui-familyhistory</module>
 		<module>cwf-ui-adversereactions</module>
-		<module>cwf-ui-medications</module>
+		<module>cwf-ui-medicationorders</module>
 		<module>cwf-ui-notification</module>
 	</modules>
 </project>
