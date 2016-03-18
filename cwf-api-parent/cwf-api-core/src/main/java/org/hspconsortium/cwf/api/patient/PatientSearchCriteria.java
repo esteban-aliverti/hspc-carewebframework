@@ -23,8 +23,9 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.hspconsortium.cwf.api.SearchCriteria;
 import org.carewebframework.common.DateUtil;
+
+import org.hspconsortium.cwf.api.SearchCriteria;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
@@ -35,6 +36,7 @@ import ca.uhn.fhir.model.dstu2.valueset.IdentifierTypeCodesEnum;
  * Represents search criteria supported by FHIR.
  */
 public class PatientSearchCriteria extends SearchCriteria {
+    
     
     private static final String ERROR_MISSING_REQUIRED = "@patientsearch.error.missing.required";
     
@@ -56,7 +58,7 @@ public class PatientSearchCriteria extends SearchCriteria {
      * Creates a criteria instance with settings parsed from search text.
      * 
      * @param searchText Search text to parse. Uses pattern matching to determine which criterion is
-     *            associated with a given input component. Separate multiple input components with a
+     *            associated with a given input component. Separate multiple input components with
      *            semicolons.
      */
     public PatientSearchCriteria(String searchText) {
