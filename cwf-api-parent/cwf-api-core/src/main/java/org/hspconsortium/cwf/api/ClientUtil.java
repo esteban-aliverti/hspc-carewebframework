@@ -22,10 +22,9 @@ package org.hspconsortium.cwf.api;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import org.carewebframework.api.spring.SpringUtil;
-import org.hspconsortium.cwf.fhir.client.FhirContext;
-import org.hspconsortium.cwf.fhir.client.HttpClientProxy;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hspconsortium.cwf.fhir.client.FhirContext;
 
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -35,15 +34,19 @@ import ca.uhn.fhir.rest.client.IGenericClient;
 
 /**
  * FHIR client utility methods.
+ * 
+ * @deprecated All methods have been incorporated into BaseService.
  */
+@Deprecated
 public class ClientUtil {
+    
     
     public static FhirContext getFhirContext() {
         return SpringUtil.getAppContext().getBean("fhirContext", FhirContext.class);
     }
     
     public static void registerHttpClient(String pattern, CloseableHttpClient client) {
-        ((HttpClientProxy) getFhirContext().getRestfulClientFactory().getHttpClient()).registerHttpClient(pattern, client);
+        getFhirContext().registerHttpClient(pattern, client);
     }
     
     public static IGenericClient getFhirClient() {
