@@ -32,10 +32,6 @@
 			org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 
-   <listener>
-		<listener-class>com.cogmedsys.hsp.ui.messagebox.controller.UcsWebAppContextListener</listener-class>
-   </listener>
-   
 	<!--
      - Spring Security Filter Chains
      -->

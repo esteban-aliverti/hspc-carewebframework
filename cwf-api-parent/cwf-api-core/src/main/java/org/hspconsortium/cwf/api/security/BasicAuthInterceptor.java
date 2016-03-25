@@ -22,6 +22,7 @@ package org.hspconsortium.cwf.api.security;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
 import org.carewebframework.api.domain.IUser;
 import org.carewebframework.api.security.SecurityUtil;
@@ -32,24 +33,32 @@ import org.carewebframework.common.MiscUtil;
  */
 public class BasicAuthInterceptor extends AbstractAuthInterceptor {
     
-    public BasicAuthInterceptor(String id) {
+    
+    private final String credentials;
+    
+    public BasicAuthInterceptor(String id, String username, String password) {
         super(id, "Basic");
+        username = StringUtils.trimToNull(username);
+        password = StringUtils.trimToEmpty(password);
+        this.credentials = username == null ? null : encode(username, password);
     }
     
     @Override
     public String getCredentials() {
+        if (credentials != null) {
+            return credentials;
+        }
+        
+        IUser user = SecurityUtil.getAuthenticatedUser();
+        return user == null ? null : encode(user.getLoginName(), user.getPassword());
+    }
+    
+    private String encode(String username, String password) {
         try {
-            IUser user = SecurityUtil.getAuthenticatedUser();
-            
-            if (user == null) {
-                return null;
-            }
-            
-            String credentials = user.getLoginName() + ":" + user.getPassword();
+            String credentials = username + ":" + password;
             return Base64.encodeBase64String(credentials.getBytes("ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
             throw MiscUtil.toUnchecked(e);
         }
     }
-    
 }

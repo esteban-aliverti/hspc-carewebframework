@@ -130,7 +130,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.carewebframework</groupId>
-			<artifactId>org.carewebframework.h2.property</artifactId>
+			<artifactId>org.carewebframework.hibernate.h2</artifactId>
+			<version>5.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.carewebframework</groupId>
+			<artifactId>org.carewebframework.hibernate.property</artifactId>
 			<version>5.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
