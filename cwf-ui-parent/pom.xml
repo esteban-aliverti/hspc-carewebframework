@@ -21,6 +21,6 @@
 		<module>cwf-ui-familyhistory</module>
 		<module>cwf-ui-adversereactions</module>
 		<module>cwf-ui-medicationorders</module>
-		<module>cwf-ui-notification</module>
+		<module>cwf-ui-messages</module>
 	</modules>
 </project>

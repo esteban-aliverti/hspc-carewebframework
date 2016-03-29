@@ -16,7 +16,7 @@
 		<module>cwf-api-patientlist</module>
 		<module>cwf-api-documents</module>
 		<module>cwf-api-smart</module>
-		<module>cwf-api-notification</module>
+		<module>cwf-api-messages</module>
 	</modules>
 	
 	<dependencyManagement>
