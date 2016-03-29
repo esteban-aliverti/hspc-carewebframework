@@ -13,5 +13,6 @@
 	<modules>
 		<module>cwf-webapp-testharness</module>
 		<module>cwf-webapp-template</module>
+		<module>cwf-webapp-demo</module>
 	</modules>
 </project>
