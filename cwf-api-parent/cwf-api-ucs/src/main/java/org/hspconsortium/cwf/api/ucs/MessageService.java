@@ -22,6 +22,7 @@ package org.hspconsortium.cwf.api.ucs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -34,6 +35,7 @@ import org.socraticgrid.hl7.services.uc.model.AlertMessage;
 import org.socraticgrid.hl7.services.uc.model.AlertStatus;
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.MessageModel;
+import org.socraticgrid.hl7.services.uc.model.Recipient;
 import org.socraticgrid.hl7.services.uc.model.UserContactInfo;
 import org.socraticgrid.hl7.ucs.nifi.api.ClientImpl;
 import org.socraticgrid.hl7.ucs.nifi.api.UCSNiFiSession;
@@ -249,6 +251,38 @@ public class MessageService {
             log.error("Error retrieving messages", e);
             throw new RuntimeException("Error retrieving messages", e);
         }
+    }
+    
+    public List<Message> getMessagesByRecipient(String recipientId) {
+        List<Message> result = new ArrayList<>();
+        
+        for (Message message : getAllMessages()) {
+            Set<Recipient> recipients = message.getHeader().getRecipientsList();
+            
+            for (Recipient myRecipient : recipients) {
+                String addressee = myRecipient.getDeliveryAddress().getPhysicalAddress().getAddress();//TODO Does not seem right to me.
+                
+                if (addressee.equals(recipientId)) {
+                    result.add(message);
+                }
+            }
+        }
+        return result;
+    }
+    
+    public List<Message> getMessagesByPatient(String about) {
+        List<Message> result = new ArrayList<>();
+        
+        for (Message message : getAllMessages()) {
+            Properties props = message.getHeader().getProperties();
+            
+            String messageAbout = props.getProperty(MessageProperty.MESSAGE_ABOUT.toString());
+            
+            if (messageAbout != null && messageAbout.equals(about)) {
+                result.add(message);
+            }
+        }
+        return result;
     }
     
     public Message getMessageWithId(String messageId) {

@@ -21,8 +21,6 @@ package org.hspconsortium.cwf.api.ucs;
 
 import java.util.Date;
 
-import com.cogmedsys.hsp.api.ucs.MessageProperty;
-
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.MessageBody;
 

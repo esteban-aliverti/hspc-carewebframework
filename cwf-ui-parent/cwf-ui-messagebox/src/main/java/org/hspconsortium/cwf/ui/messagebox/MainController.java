@@ -25,8 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.cogmedsys.hsp.api.ucs.MessageUtils;
-
 import org.carewebframework.api.context.UserContext;
 import org.carewebframework.api.event.IGenericEvent;
 import org.carewebframework.common.NumUtil;
@@ -212,10 +210,9 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     }
     
     private void loadMessages(boolean currentPatientOnly) {
-        List<Message> messages = service.getAllMessages();
         String userId = UserContext.getActiveUser().getLogicalId();
         String patientId = currentPatientOnly && patient != null ? patient.getId().getIdPart() : null;
-        messages = MessageUtils.filterMessagesByRecipient(messages, userId);
+        List<Message> messages = service.getMessagesByRecipient(userId);
         model.clear();
         
         for (Message message : messages) {

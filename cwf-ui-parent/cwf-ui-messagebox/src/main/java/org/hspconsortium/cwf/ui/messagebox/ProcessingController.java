@@ -24,8 +24,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.cogmedsys.hsp.api.ucs.UcsMessageService;
-
 import org.carewebframework.api.domain.DomainFactoryRegistry;
 import org.carewebframework.api.spring.SpringUtil;
 import org.carewebframework.common.StrUtil;
@@ -41,6 +39,7 @@ import org.zkoss.zul.Window;
 
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
+import org.hspconsortium.cwf.api.ucs.MessageService;
 import org.hspconsortium.cwf.api.ucs.MessageWrapper;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.Action;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.ActionEvent;
@@ -57,7 +56,7 @@ public class ProcessingController extends FrameworkController implements IPatien
     
     private static final String DIALOG = ZKUtil.getResourcePath(ProcessingController.class) + "processing.zul";
     
-    private UcsMessageService service;
+    private MessageService service;
     
     private Iterator<MessageWrapper> iterator;
     
@@ -130,7 +129,7 @@ public class ProcessingController extends FrameworkController implements IPatien
      * 
      * @param service Message service.
      */
-    public void setUcsMessageService(UcsMessageService service) {
+    public void setUcsMessageService(MessageService service) {
         this.service = service;
     }
     
