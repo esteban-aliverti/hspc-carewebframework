@@ -1,4 +1,4 @@
-<layout helpViewerMode="POPUP" icon="fhir_icon.png" name="FHIRWorks"
+<layout helpViewerMode="POPUP" icon="images/fhir_icon.png" name="FHIRWorks"
 	style="DEFAULT" title="FHIRWorks" version="3.0">
 	<_menubar>
 		<menuitem label="Actions">
@@ -29,41 +29,42 @@
 		<splitterpane relative="false" size="47.0">
 			<splitterview orientation="horizontal">
 				<splitterpane relative="false" size="40.0">
-					<patientPhoto />
+					<patientPhoto/>
 				</splitterpane>
 				<splitterpane relative="true" size="50.0">
-					<patientHeader color="lightyellow" />
+					<patientHeader color="lightyellow"/>
 				</splitterpane>
-				<splitterpane relative="true" size="46.44760213143872">
-					<userHeader color="lightblue" />
+				<splitterpane relative="true" size="46.7373572593801">
+					<userHeader color="lightblue"/>
 				</splitterpane>
 			</splitterview>
 		</splitterpane>
-		<splitterpane relative="true" size="89.8989898989899">
+		<splitterpane relative="true" size="75.96153846153845">
 			<tabview orientation="top">
 				<tabpane label="Chart">
 					<treeview open="true" selectionStyle="PRIMARY">
 						<treepane label="Clinical Documents Display">
-							<calDocuments />
+							<calDocuments/>
 						</treepane>
 						<treepane label="Family History">
-							<calFamilyHistory />
+							<calFamilyHistory/>
 						</treepane>
 						<treepane label="Patient Adverse Reactions">
-							<calAdverseReactions />
+							<calAdverseReactions/>
 						</treepane>
 						<treepane label="Patient Conditions">
-							<calConditions />
+							<calConditions/>
 						</treepane>
-						<treepane label="Patient Medications">
-							<calMedications />
-						</treepane>
+						<treepane label="Patient Medications"/>
 					</treeview>
 				</tabpane>
 			</tabview>
 		</splitterpane>
-		<splitterpane relative="false" size="13.0">
-			<statusPanel />
+		<splitterpane relative="false" size="25.0">
+			<statusPanel/>
+		</splitterpane>
+		<splitterpane relative="false" size="103.0">
+			<frame url="/footer.html"/>
 		</splitterpane>
 	</splitterview>
 </layout>
