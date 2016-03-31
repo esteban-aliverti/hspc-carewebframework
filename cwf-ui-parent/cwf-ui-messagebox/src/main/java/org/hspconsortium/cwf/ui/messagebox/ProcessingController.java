@@ -129,7 +129,7 @@ public class ProcessingController extends FrameworkController implements IPatien
      * 
      * @param service Message service.
      */
-    public void setUcsMessageService(MessageService service) {
+    public void setMessageService(MessageService service) {
         this.service = service;
     }
     
@@ -215,7 +215,7 @@ public class ProcessingController extends FrameworkController implements IPatien
         }
         
         MessageWrapper message = iterator.next();
-        caption.setLabel(StrUtil.getLabel("cwfmessages.processing.caption", ++currentIndex, total));
+        caption.setLabel(StrUtil.getLabel("cwfmessagebox.processing.caption", ++currentIndex, total));
         caption.setTooltiptext(message.getDisplayText());
         
         if (!iterator.hasNext()) {
@@ -257,7 +257,7 @@ public class ProcessingController extends FrameworkController implements IPatien
                     getEventManager().fireLocalEvent(eventName, message);
                 }
             } else {
-                viewer.process(message, StrUtil.getLabel("cwfmessages.processing.nohandler", message.getType()));
+                viewer.process(message, StrUtil.getLabel("cwfmessagebox.processing.nohandler", message.getType()));
             }
         }
     }
@@ -290,8 +290,8 @@ public class ProcessingController extends FrameworkController implements IPatien
     @Override
     public String pending(boolean silent) {
         if (!requestingContextChange && !silent && isProcessing()
-                && !PromptDialog.confirm("@cwfmessages.processing.cancel.confirm.prompt")) {
-            return StrUtil.formatMessage("@cwfmessages.processing.cancel.rejected.message");
+                && !PromptDialog.confirm("@cwfmessagebox.processing.cancel.confirm.prompt")) {
+            return StrUtil.formatMessage("@cwfmessagebox.processing.cancel.rejected.message");
         }
         
         return null;

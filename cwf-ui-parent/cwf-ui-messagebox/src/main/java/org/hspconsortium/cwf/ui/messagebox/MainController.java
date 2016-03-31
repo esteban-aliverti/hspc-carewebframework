@@ -76,32 +76,53 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         
         @Override
         public String toString() {
-            return Labels.getLabel("cwfmessages.response.label." + name());
+            return Labels.getLabel("cwfmessagebox.response.label." + name());
         }
     }
     
     /**
      * Recognized message actions.
      */
-    private enum Action {
+    protected enum Action {
         CHECK, ADD, SCHEDULE, INFO, REFRESH, DELETE, MONITOR;
+        
+        public String eventName() {
+            return "MESSAGE." + name();
+        }
     }
     
     // This is the listener for notification action messages.
-    private final IGenericEvent<String> actionListener = new IGenericEvent<String>() {
+    private final IGenericEvent<Object> actionListener = new IGenericEvent<Object>() {
         
         
         @Override
-        public void eventCallback(String eventName, String messageId) {
+        public void eventCallback(String eventName, Object eventData) {
             Action action = Action.valueOf(StrUtil.piece(eventName, ".", 2));
+            MessageWrapper message = null;
+            String messageId = null;
+            
+            if (eventData instanceof Message) {
+                message = new MessageWrapper((Message) eventData);
+                messageId = message.getId();
+            } else if (eventData instanceof MessageWrapper) {
+                message = (MessageWrapper) eventData;
+                messageId = message.getId();
+            } else {
+                messageId = eventData.toString();
+            }
             
             switch (action) {
                 case ADD:
-                    addMessage(service.getMessageWithId(messageId));
+                    if (message == null) {
+                        addMessage(service.getMessageWithId(messageId));
+                    } else {
+                        addMessage(message);
+                    }
+                    
                     break;
                 
                 case INFO:
-                    MessageWrapper message = findMessage(messageId);
+                    message = findMessage(messageId);
                     
                     if (message != null) {
                         highlightMessage(message);
@@ -166,12 +187,12 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         super.doBeforeComposeChildren(comp);
         comp.setAttribute("iconInfoOnly", Constants.ICON_INFO);
         comp.setAttribute("iconActionable", Constants.ICON_ACTIONABLE);
-        comp.setAttribute("iconUrgency", Constants.ICON_PRIORITY);
+        comp.setAttribute("iconUrgency", Constants.ICON_URGENCY);
         comp.setAttribute("iconType", Constants.ICON_TYPE);
         comp.setAttribute("iconIndicator", Constants.ICON_INDICATOR);
-        comp.setAttribute("iconUrgencyHigh", Urgency.HIGH.getIcon());
-        comp.setAttribute("iconUrgencyMedium", Urgency.MEDIUM.getIcon());
-        comp.setAttribute("iconUrgencyLow", Urgency.LOW.getIcon());
+        comp.setAttribute("iconUrgencyHigh", Constants.ICON_URGENCY_HIGH);
+        comp.setAttribute("iconUrgencyMedium", Constants.ICON_URGENCY_MEDIUM);
+        comp.setAttribute("iconUrgencyLow", Constants.ICON_URGENCY_LOW);
     }
     
     /**
@@ -212,7 +233,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     private void loadMessages(boolean currentPatientOnly) {
         String userId = UserContext.getActiveUser().getLogicalId();
         String patientId = currentPatientOnly && patient != null ? patient.getId().getIdPart() : null;
-        List<Message> messages = service.getMessagesByRecipient(userId);
+        List<Message> messages = service.getMessagesByRecipient(userId, patientId);
         model.clear();
         
         for (Message message : messages) {
@@ -291,14 +312,25 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         return PromptDialog.show(prompt, null, responses);
     }
     
+    protected void addMessage(Message message) {
+        if (message != null) {
+            addMessage(new MessageWrapper(message));
+        }
+    }
+    
     /**
      * Adds a message to the model unless filtered. Will generate a slide-down message alert if its
      * urgency exceeds the set threshold.
      *
-     * @param msg Message.
+     * @param message Message.
      */
-    protected void addMessage(Message msg) {
-        MessageWrapper message = new MessageWrapper(msg);
+    protected void addMessage(MessageWrapper message) {
+        int i = indexOfMessage(message.getId());
+        
+        if (i >= 0) {
+            model.set(i, message);
+            return;
+        }
         
         if (radAll.isChecked()
                 || (message.hasPatient() && patient != null && message.getPatientId().equals(patient.getId().getIdPart()))) {
@@ -307,7 +339,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         
         if (alertThreshold != null && message.getUrgency().ordinal() <= alertThreshold.ordinal()) {
             MessageInfo mi = new MessageInfo(message.getDisplayText(), "New Message", message.getUrgency().getColor(),
-                    alertDuration * 1000, null, "cwf.fireLocalEvent('ALERT.INFO', '" + message.getAlertId() + "');");
+                    alertDuration * 1000, null, "cwf.fireLocalEvent('MESSAGE.INFO', '" + message.getAlertId() + "');");
             getEventManager().fireLocalEvent(MessageWindow.EVENT_SHOW, mi);
         }
     }
@@ -318,12 +350,11 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * @param id The message id.
      */
     protected void removeMessage(String id) {
-        MessageWrapper message = findMessage(id);
+        int i = indexOfMessage(id);
         
-        if (message != null) {
-            model.remove(message);
+        if (i >= 0) {
+            model.remove(i);
         }
-        
     }
     
     /**
@@ -333,13 +364,18 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * @return Message with a matching id, or null if not found in the current model.
      */
     private MessageWrapper findMessage(String id) {
-        for (MessageWrapper message : model) {
-            if (message.getId().equals(id)) {
-                return message;
+        int i = indexOfMessage(id);
+        return i < 0 ? null : model.get(i);
+    }
+    
+    private int indexOfMessage(String id) {
+        for (int i = 0; i < model.size(); i++) {
+            if (model.get(i).getId().equals(id)) {
+                return i;
             }
         }
         
-        return null;
+        return -1;
     }
     
     /**
@@ -394,7 +430,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
             
             if (message.canDelete()) {
                 if (!silent) {
-                    String msg = StrUtil.getLabel("cwfmessages.main.delete.confirm.prompt", s);
+                    String msg = StrUtil.getLabel("cwfmessagebox.main.delete.confirm.prompt", s);
                     
                     switch (getResponse(msg, Response.YES, Response.NO, Response.ALL, Response.CANCEL)) {
                         case NO:
@@ -410,7 +446,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                 }
                 service.acknowledgeMessage(message.getId());
             } else {
-                String msg = StrUtil.getLabel("cwfmessages.main.delete.unable.prompt", s);
+                String msg = StrUtil.getLabel("cwfmessagebox.main.delete.unable.prompt", s);
                 
                 if (getResponse(msg, Response.YES, Response.CANCEL) != Response.YES) {
                     break;
@@ -466,7 +502,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      *
      * @param event The process item event.
      */
-    public void onProcessItem$lstMessage(Event event) {
+    public void onProcessItem$lstMessages(Event event) {
         event = ZKUtil.getEventOrigin(event);
         Listitem item = (Listitem) event.getTarget();
         MessageWrapper message = (MessageWrapper) item.getValue();
@@ -535,7 +571,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     private void updatePatient(boolean refresh) {
         patient = PatientContext.getActivePatient();
         
-        radPatient.setLabel(patient == null ? Labels.getLabel("cwfmessages.main.patient.not.selected")
+        radPatient.setLabel(patient == null ? Labels.getLabel("cwfmessagebox.main.patient.not.selected")
                 : FhirUtil.formatName(patient.getName()));
         
         if (refresh) {
@@ -554,7 +590,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      */
     private void subscribe(boolean doSubscribe) {
         for (Action action : Action.values()) {
-            String eventName = "ALERT." + action.name();
+            String eventName = action.eventName();
             
             if (doSubscribe) {
                 getEventManager().subscribe(eventName, actionListener);
@@ -565,11 +601,22 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     }
     
     /**
+     * Invokes an action on the specified target in the event thread.
+     * 
+     * @param action An action to perform.
+     * @param target Target of the action. This may be a message id or a wrapped or unwrapped
+     *            message;
+     */
+    protected void invokeAction(Action action, Object target) {
+        getEventManager().fireLocalEvent(action.eventName(), target);
+    }
+    
+    /**
      * Allows IOC container to inject UCS.
      *
      * @param service Message service.
      */
-    public void setUcsMessageService(MessageService service) {
+    public void setMessageService(MessageService service) {
         this.service = service;
     }
     
@@ -599,8 +646,8 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     }
     
     /**
-     * Returns the alert threshold as a string value. This threshold determines which newly arriving
-     * messages cause a slide-down message alert to be displayed.
+     * Returns the alert threshold. This threshold determines which newly arriving messages cause a
+     * slide-down message alert to be displayed.
      *
      * @return The alert threshold.
      */
@@ -609,8 +656,8 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     }
     
     /**
-     * Sets the alert threshold as a string value. This threshold determines which newly arriving
-     * messages cause a slide-down message alert to be displayed.
+     * Sets the alert threshold. This threshold determines which newly arriving messages cause a
+     * slide-down message alert to be displayed.
      *
      * @param value The alert threshold.
      */

@@ -16,11 +16,11 @@
 
 		<bean class="org.hspconsortium.cwf.ui.patientselection.Init" />
 		
-		<bean id="patientListController"
+		<bean id="cwfPatientListController"
 			class="org.hspconsortium.cwf.ui.patientselection.PatientListController"
 			scope="prototype" />
 
-		<bean id="patientSelectionFeatures" class="org.hspconsortium.cwf.ui.patientselection.Features">
+		<bean id="cwfPatientSelectionFeatures" class="org.hspconsortium.cwf.ui.patientselection.Features">
 			<constructor-arg value="PATIENT.SELECTION.SHOW." />
 		</bean>
 

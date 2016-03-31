@@ -21,6 +21,7 @@ package org.hspconsortium.cwf.ui.messagebox;
 
 import java.util.List;
 
+import org.hspconsortium.cwf.ui.messagebox.MainController.Action;
 import org.socraticgrid.hl7.services.uc.interfaces.UCSAlertingIntf;
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.MessageModel;
@@ -37,15 +38,15 @@ public class AlertListener implements UCSAlertingIntf {
     @Override
     public <T extends Message> boolean receiveAlertMessage(MessageModel<T> messageModel, List<String> localReceivers,
                                                            String serverId) {
-        controller.addMessage(messageModel.getMessageType());
+        controller.invokeAction(Action.ADD, messageModel.getMessageType());
         return false;
     }
     
     @Override
     public <T extends Message> boolean updateAlertMessage(MessageModel<T> newMessageModel, MessageModel<T> oldMessageModel,
                                                           List<String> localReceivers, String serverId) {
-        controller.removeMessage(oldMessageModel.getMessageType().getHeader().getMessageId());
-        controller.addMessage(newMessageModel.getMessageType());
+        controller.invokeAction(Action.DELETE, oldMessageModel.getMessageType());
+        controller.invokeAction(Action.ADD, newMessageModel.getMessageType());
         return false;
     }
     

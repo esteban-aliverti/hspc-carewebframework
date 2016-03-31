@@ -1,7 +1,7 @@
 <zk>
 	<window title="${labels.cwfmessagebox.recipients.title}"
 		mode="modal" height="500px" width="500px" mold="bootstrap"
-		apply="${cwfMessageRecipientsController}" >
+		apply="${cwfMessageboxRecipientsController}" >
 		<hbox spacing="0" vflex="1" align="center">
 			<vlayout vflex="1" spacing="1">
 				<groupbox vflex="1">

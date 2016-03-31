@@ -29,10 +29,10 @@
 		<splitterpane relative="false" size="47.0">
 			<splitterview orientation="horizontal">
 				<splitterpane relative="false" size="40.0">
-					<patientPhoto />
+					<cwfPatientPhoto />
 				</splitterpane>
 				<splitterpane relative="true" size="50.0">
-					<patientHeader color="lightyellow" />
+					<cwfPatientHeader color="lightyellow" />
 				</splitterpane>
 				<splitterpane relative="true" size="46.44760213143872">
 					<userHeader color="lightblue" />
@@ -44,19 +44,19 @@
 				<tabpane label="Chart">
 					<treeview open="true" selectionStyle="PRIMARY">
 						<treepane label="Clinical Documents Display">
-							<calDocuments />
+							<cwfDocuments />
 						</treepane>
 						<treepane label="Family History">
-							<calFamilyHistory />
+							<cwfFamilyHistory />
 						</treepane>
 						<treepane label="Patient Adverse Reactions">
-							<calAdverseReactions />
+							<cwfAdverseReactions />
 						</treepane>
 						<treepane label="Patient Conditions">
-							<calConditions />
+							<cwfConditions />
 						</treepane>
-						<treepane label="Patient Medications">
-							<calMedications />
+						<treepane label="Patient Medication Orders">
+							<cwfMedicationorders />
 						</treepane>
 					</treeview>
 				</tabpane>

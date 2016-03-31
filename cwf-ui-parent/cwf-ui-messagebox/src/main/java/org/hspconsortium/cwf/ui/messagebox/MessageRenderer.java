@@ -32,7 +32,7 @@ public class MessageRenderer extends AbstractListitemRenderer<MessageWrapper, Ob
     @Override
     protected void renderItem(Listitem item, MessageWrapper message) {
         createCell(item, null);
-        createCell(item, null).setImage(message.getUrgency().getIcon());
+        createCell(item, null).setImage(Constants.ICON_URGENCY_ALL[message.getUrgency().ordinal()]);
         createCell(item, null).setImage(message.isActionable() ? Constants.ICON_ACTIONABLE : Constants.ICON_INFO);
         createCell(item, message.getPatientName());
         createCell(item, message.getSubject());

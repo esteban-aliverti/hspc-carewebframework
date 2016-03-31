@@ -12,11 +12,11 @@
 
 		<cwp:plugin
 			url="~./org/hspconsortium/cwf/ui/documents/documents.zul"
-			id="calDocuments" name="Clinical Documents Display">
+			id="cwfDocuments" name="Clinical Documents Display">
 			<cwp:resource>
-				<cwp:help-resource module="calDocumentsHelp" />
+				<cwp:help-resource module="cwfDocumentsHelp" />
 				<cwp:property-resource group="DOCUMENT.CONTROLS" />
-				<cwp:bean-resource bean="calDocumentsActionStatus"
+				<cwp:bean-resource bean="cwfDocumentsActionStatus"
 					required="true" />
 			</cwp:resource>
 
@@ -38,35 +38,35 @@
 	<beans profile="desktop">
 
 		<!-- Presentation Layer -->
-		<bean id="calDocumentsDocumentListRenderer"
+		<bean id="cwfDocumentsDocumentListRenderer"
 			class="org.hspconsortium.cwf.ui.documents.DocumentListRenderer" />
 
-		<bean id="calDocumentsDocumentDisplayRenderer"
+		<bean id="cwfDocumentsDocumentDisplayRenderer"
 			class="org.hspconsortium.cwf.ui.documents.DocumentDisplayRenderer" />
 
 		<!-- Controllers -->
-		<bean id="calDocumentsMainController"
+		<bean id="cwfDocumentsMainController"
 			class="org.hspconsortium.cwf.ui.documents.DocumentMainController"
 			scope="prototype">
-			<property name="listController" ref="calDocumentsListController" />
-			<property name="displayController" ref="calDocumentsDisplayController" />
+			<property name="listController" ref="cwfDocumentsListController" />
+			<property name="displayController" ref="cwfDocumentsDisplayController" />
 		</bean>
 
-		<bean id="calDocumentsListController"
+		<bean id="cwfDocumentsListController"
 			class="org.hspconsortium.cwf.ui.documents.DocumentListController"
 			scope="prototype">
 			<constructor-arg ref="documentService" />
-			<property name="itemRenderer" ref="calDocumentsDocumentListRenderer" />
+			<property name="itemRenderer" ref="cwfDocumentsDocumentListRenderer" />
 		</bean>
 
-		<bean id="calDocumentsDisplayController"
+		<bean id="cwfDocumentsDisplayController"
 			class="org.hspconsortium.cwf.ui.documents.DocumentDisplayController"
 			scope="prototype">
 			<constructor-arg ref="documentService" />
-			<property name="itemRenderer" ref="calDocumentsDocumentDisplayRenderer" />
+			<property name="itemRenderer" ref="cwfDocumentsDocumentDisplayRenderer" />
 		</bean>
 
-		<bean id="calDocumentsActionStatus" lazy-init="true"
+		<bean id="cwfDocumentsActionStatus" lazy-init="true"
 			class="org.hspconsortium.cwf.ui.documents.ActionStatus">
 		</bean>
 

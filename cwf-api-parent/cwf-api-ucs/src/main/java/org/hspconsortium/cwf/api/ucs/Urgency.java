@@ -77,7 +77,7 @@ public enum Urgency {
      * @return The label value.
      */
     private String getLabel(String name) {
-        return StrUtil.getLabel("cwfmessages.urgency." + name + "." + name());
+        return StrUtil.getLabel("cwfmessagebox.urgency." + name + "." + name());
     }
     
 };

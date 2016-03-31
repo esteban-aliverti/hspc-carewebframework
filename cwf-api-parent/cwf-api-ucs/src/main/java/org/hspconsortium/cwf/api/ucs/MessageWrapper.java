@@ -20,6 +20,7 @@
 package org.hspconsortium.cwf.api.ucs;
 
 import java.util.Date;
+import java.util.Properties;
 
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.MessageBody;
@@ -93,7 +94,8 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     
     @Override
     public String getParam(String param) {
-        return message.getHeader().getProperties().getProperty(param);
+        Properties properties = message.getHeader().getProperties();
+        return properties == null ? null : properties.getProperty(param);
     }
     
     @Override

@@ -10,13 +10,13 @@
 	<beans profile="root">
 
 		<cwp:plugin url="~./org/hspconsortium/cwf/ui/patientheader/patientHeader.zul"
-			id="patientHeader" name="Current Patient Header">
+			id="cwfPatientHeader" name="Current Patient Header">
 			<cwp:serialization>
 				<cwp:property name="Background Color" id="color" type="color"
 					description="Sets the background color." />
 			</cwp:serialization>
 			<cwp:resource>
-				<cwp:help-resource module="patientSelectionHelp" />
+				<cwp:help-resource module="cwfPatientSelectionHelp" />
 			</cwp:resource>
 		</cwp:plugin>
 
@@ -24,7 +24,7 @@
 
 	<beans profile="desktop">
 
-		<bean id="patientHeaderController" class="org.hspconsortium.cwf.ui.patientheader.PatientHeader"
+		<bean id="cwfPatientHeaderController" class="org.hspconsortium.cwf.ui.patientheader.PatientHeader"
 			scope="prototype" />
 
 	</beans>

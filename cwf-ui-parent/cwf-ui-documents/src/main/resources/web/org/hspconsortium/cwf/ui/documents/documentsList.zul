@@ -22,10 +22,10 @@
 			</span>
 			<label id="lblInfo" style="font-size:12px; font-weight:bold"/>
 			<span style="float:right;">
-				<button id="btnClear" label="${labels.caldocuments.plugin.btn.clear.label}"
-					tooltiptext="${labels.caldocuments.plugin.btn.clear.tooltip}" />
-				<button id="btnView" label="${labels.caldocuments.plugin.btn.view.selected.label}"
-					tooltiptext="${labels.caldocuments.plugin.btn.view.tooltip}" />
+				<button id="btnClear" label="${labels.cwfdocuments.plugin.btn.clear.label}"
+					tooltiptext="${labels.cwfdocuments.plugin.btn.clear.tooltip}" />
+				<button id="btnView" label="${labels.cwfdocuments.plugin.btn.view.selected.label}"
+					tooltiptext="${labels.cwfdocuments.plugin.btn.view.tooltip}" />
 				<button id="btnRefresh" label="${labels.reporting.plugin.refresh.view.label}"
 					tooltiptext="${labels.reporting.plugin.refresh.view.tooltiptext}" />
 				<button id="btnPrint" label="${labels.reporting.plugin.btn.print.label}"
@@ -37,8 +37,8 @@
 				<label id="lblMessage" visible="false" />
 				<listbox id="listBox" sizedByContent="false"
 					hflex="1" vflex="1"
-					sclass="cal-documents-lstList"
-					oddRowSclass="cal-documents-oddRow"
+					sclass="cwf-documents-lstList"
+					oddRowSclass="cwf-documents-oddRow"
 					checkmark="true" multiple="true" >
 					<listhead sizable="true">
 						<listheader width="4%"

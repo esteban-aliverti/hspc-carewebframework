@@ -55,7 +55,7 @@ public class DocumentDisplayController extends AbstractListController<Document, 
     private final ComboitemRenderer<Document> comboRenderer = new DocumentDisplayComboRenderer();
     
     public DocumentDisplayController(DocumentService service) {
-        super(new DocumentDisplayDataService(service), "caldocuments", "TIU", "documentsPrint.css");
+        super(new DocumentDisplayDataService(service), "cwfdocuments", "TIU", "documentsPrint.css");
         setPaging(false);
     }
     

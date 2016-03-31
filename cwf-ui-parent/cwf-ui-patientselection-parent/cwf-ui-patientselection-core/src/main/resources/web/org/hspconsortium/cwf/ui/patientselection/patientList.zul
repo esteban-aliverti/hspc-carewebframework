@@ -1,5 +1,5 @@
 <zk>
-	<div apply="${patientListController}" renderdefer="50">
+	<div apply="${cwfPatientListController}" renderdefer="50">
 		<listbox id="patientList" hflex="1">
 			<listhead>
 				<listheader align="left" label="Last Name" hflex="1" />

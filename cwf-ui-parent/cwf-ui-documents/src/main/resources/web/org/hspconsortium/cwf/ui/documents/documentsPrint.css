@@ -16,15 +16,15 @@
 	background-image: none!important;
 }
 
-.cal-documents-sep {
+.cwf-documents-sep {
 	page-break-before: always;
 	background-color: black;
 	height: 3px;
 	margin: 10px 0 10px 0;
 }
 
-.z-listitem:first-child .cal-documents-sep,
-.cal-documents-lstList tbody>tr>td:first-child,
-.cal-documents-lstList tbody>tr>th:first-child {
+.z-listitem:first-child .cwf-documents-sep,
+.cwf-documents-lstList tbody>tr>td:first-child,
+.cwf-documents-lstList tbody>tr>th:first-child {
     display: none;
 }

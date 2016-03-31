@@ -19,6 +19,7 @@
  */
 package org.hspconsortium.cwf.ui.messagebox;
 
+import org.hspconsortium.cwf.ui.messagebox.MainController.Action;
 import org.socraticgrid.hl7.services.uc.exceptions.BadBodyException;
 import org.socraticgrid.hl7.services.uc.exceptions.FeatureNotSupportedException;
 import org.socraticgrid.hl7.services.uc.exceptions.InvalidContentException;
@@ -57,7 +58,7 @@ public class MessageListener implements UCSClientIntf {
     
     @Override
     public <T extends Message> boolean handleNotification(MessageModel<T> messageModel, String serverId) {
-        controller.addMessage(messageModel.getMessageType());
+        controller.invokeAction(Action.ADD, messageModel.getMessageType());
         return true;
     }
     
@@ -75,7 +76,7 @@ public class MessageListener implements UCSClientIntf {
     
     @Override
     public <T extends Message> boolean receiveMessage(MessageModel<T> messageModel, String serverId) {
-        controller.addMessage(messageModel.getMessageType());
+        controller.invokeAction(Action.ADD, messageModel.getMessageType());
         return true;
     }
     

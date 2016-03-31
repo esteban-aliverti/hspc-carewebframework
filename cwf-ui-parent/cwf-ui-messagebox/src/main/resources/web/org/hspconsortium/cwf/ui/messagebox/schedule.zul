@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window title="Schedule a Message" mode="modal" height="500px" width="500px"
-		apply="${cwfMessageScheduleController}" mold="bootstrap">
+		apply="${cwfMessageboxScheduleController}" mold="bootstrap">
 		<vlayout hflex="1" vflex="1" style="padding: 10px">
 			<hlayout id="pnlAssociate">
 				<checkbox id="chkAssociate" />

@@ -9,8 +9,8 @@
 
 	<beans profile="root">
 
-		<cwp:plugin url="~./org/hspconsortium/cwf/ui/conditions/main.zul" id="calConditions"
-			name="Patient Conditions">
+		<cwp:plugin url="~./org/hspconsortium/cwf/ui/conditions/main.zul" 
+			id="cwfConditions" name="Patient Conditions">
 			<cwp:serialization>
 				<cwp:property id="allowPrint" name="Allow Printing"
 					type="boolean" description="If true, printing is allowed." />
@@ -40,7 +40,7 @@
 					editable="false" />
 			</cwp:serialization>
 			<cwp:resource>
-				<cwp:help-resource module="calConditionsHelp" />
+				<cwp:help-resource module="cwfConditionsHelp" />
 			</cwp:resource>
 		</cwp:plugin>
 
@@ -48,7 +48,7 @@
 
 	<beans profile="desktop">
 
-		<bean name="calConditionsController" parent="reportListViewBase"
+		<bean name="cwfConditionsController" parent="reportListViewBase"
 			class="org.hspconsortium.cwf.ui.conditions.MainController" scope="prototype" />
 
 	</beans>

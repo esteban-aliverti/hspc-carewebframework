@@ -52,7 +52,7 @@ public class DocumentDisplayRenderer extends AbstractListitemRenderer<Document, 
         Listcell cell = new Listcell();
         item.appendChild(cell);
         Div sep = new Div();
-        sep.setSclass("cal-documents-sep");
+        sep.setSclass("cwf-documents-sep");
         cell.appendChild(sep);
         Div div = new Div();
         div.setSclass(Constants.SCLASS_TEXT_REPORT_TITLE);

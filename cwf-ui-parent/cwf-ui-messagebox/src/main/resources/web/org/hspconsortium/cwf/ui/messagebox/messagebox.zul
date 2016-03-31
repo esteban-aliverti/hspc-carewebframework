@@ -22,7 +22,7 @@
 							<radiogroup id="rgFilter"
 								orient="horizontal">
 								<radio id="radAll"
-									label="${labels.cwfmessages.main.button.all.label}"
+									label="${labels.cwfmessagebox.main.button.all.label}"
 									renderdefer="1" />
 								<separator orient="vertical" />
 								<radio id="radPatient" selected="true"
@@ -30,9 +30,9 @@
 							</radiogroup>
 						</listheader>
 						<listheader id="getSubject" hflex="3"
-							label="${labels.cwfmessages.main.header.subject}" />
+							label="${labels.cwfmessagebox.main.header.subject}" />
 						<listheader id="getDeliveryDate" width="150px"
-							label="${labels.cwfmessages.main.header.delivered}" />
+							label="${labels.cwfmessagebox.main.header.delivered}" />
 					</listhead>
 				</listbox>
 			</center>

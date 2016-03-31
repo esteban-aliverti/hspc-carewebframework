@@ -5,7 +5,7 @@
 
 	<window mode="overlapped" width="500px" mold="bootstrap"
 		sclass="panel-primary panel-sm"
-		apply="${cwfMessageViewerController}" visible="false"
+		apply="${cwfMessageboxViewerController}" visible="false"
 		position="center">
 		<caption id="caption" label="${labels.cwfmessagebox.viewer.title}" />
 		<vlayout hflex="1">

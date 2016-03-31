@@ -21,7 +21,7 @@
 			<div id="printRoot" height="100%" width="100%">
 				<label id="lblMessage" visible="false" />
 				<listbox id="listBox" nonselectableTags="*"
-					sclass="cal-documents-lstDisplay"
+					sclass="cwf-documents-lstDisplay"
 					oddRowSclass="none" hflex="1" vflex="1" disabled="true">
 				</listbox>
 			</div>

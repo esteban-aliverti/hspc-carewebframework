@@ -3,7 +3,7 @@
 	xmlns:w="http://www.zkoss.org/2005/zk/client"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<div apply="${calDocumentsMainController}" height="100%" width="100%">
+	<div apply="${cwfDocumentsMainController}" height="100%" width="100%">
 		<include id="documentList" height="100%" width="100%"
 			src="~./org/hspconsortium/cwf/ui/documents/documentsList.zul" />
 		<include id="documentDisplay" height="100%" width="100%" visible="false"
@@ -11,37 +11,37 @@
 	</div>
 
 	<style>
-		.cal-documents-oddRow {
+		.cwf-documents-oddRow {
 			background-color: #E4EBF8;
 		}
 
-		.cal-documents * {
+		.cwf-documents * {
 			cursor: default !important;
 		}
 
-		.cal-documents-lstDisplay tr.z-listitem-over,
-		.cal-documents-lstDisplay tr.z-listitem-seld,
-		.cal-documents-lstDisplay tr.z-listitem-over-seld {
+		.cwf-documents-lstDisplay tr.z-listitem-over,
+		.cwf-documents-lstDisplay tr.z-listitem-seld,
+		.cwf-documents-lstDisplay tr.z-listitem-over-seld {
 			background-image: none;
 		}
 		
-		.cal-documents-lstDisplay tr.z-listitem-over,
-		.cal-documents-lstDisplay tr.z-listitem-over-seld {
+		.cwf-documents-lstDisplay tr.z-listitem-over,
+		.cwf-documents-lstDisplay tr.z-listitem-over-seld {
 			background-color: ivory;
 		}
 		
-		.cal-documents-lstDisplay tr.z-listitem-over .z-listcell,
-		.cal-documents-lstDisplay tr.z-listitem-over-seld .z-listcell {
+		.cwf-documents-lstDisplay tr.z-listitem-over .z-listcell,
+		.cwf-documents-lstDisplay tr.z-listitem-over-seld .z-listcell {
 			border: 1px solid gray;
 		}
 
-		.cal-documents-sep {
+		.cwf-documents-sep {
 			background-color: gray;
     		height: 3px;
     		margin: 10px 0 10px 0;
     	}
 
-    	.z-listitem:first-child .cal-documents-sep {
+    	.z-listitem:first-child .cwf-documents-sep {
     		display: none;
     	}
 

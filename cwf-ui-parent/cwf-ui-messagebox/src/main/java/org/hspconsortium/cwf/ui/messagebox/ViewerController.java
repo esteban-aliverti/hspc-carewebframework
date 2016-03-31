@@ -139,7 +139,7 @@ public class ViewerController extends FrameworkController {
      * Delete the message.
      */
     public void onClick$btnDelete() {
-        if (PromptDialog.confirm(StrUtil.formatMessage("@cwfmessages.viewer.delete.confirm.prompt", message.getSubject()))) {
+        if (PromptDialog.confirm(StrUtil.formatMessage("@cwfmessagebox.viewer.delete.confirm.prompt", message.getSubject()))) {
             onAction(Action.DELETE);
         }
     }
@@ -148,7 +148,7 @@ public class ViewerController extends FrameworkController {
      * Delete this and all remaining messages.
      */
     public void onClick$btnDeleteAll() {
-        if (PromptDialog.confirm(StrUtil.formatMessage("@cwfmessages.viewer.delete.all.confirm.prompt"))) {
+        if (PromptDialog.confirm(StrUtil.formatMessage("@cwfmessagebox.viewer.delete.all.confirm.prompt"))) {
             onAction(Action.DELETE_ALL);
         }
     }

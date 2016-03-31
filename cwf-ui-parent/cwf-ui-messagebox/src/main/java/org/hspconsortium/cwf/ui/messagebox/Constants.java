@@ -21,6 +21,8 @@ package org.hspconsortium.cwf.ui.messagebox;
 
 import org.carewebframework.ui.icons.IconUtil;
 
+import org.hspconsortium.cwf.api.ucs.Urgency;
+
 public class Constants {
     
     
@@ -34,9 +36,17 @@ public class Constants {
     
     public static final String ICON_TYPE = IconUtil.getIconPath("silk:16x16:help.png");
     
-    public static final String ICON_PRIORITY = IconUtil.getIconPath("silk:16x16:bullet_error.png");
-    
     public static final String ICON_INDICATOR = IconUtil.getIconPath("silk:16x16:asterisk_orange.png");
+    
+    public static final String ICON_URGENCY = IconUtil.getIconPath("silk:16x16:bullet_error.png");
+    
+    public static final String ICON_URGENCY_HIGH = IconUtil.getIconPath(Urgency.HIGH.getIcon());
+    
+    public static final String ICON_URGENCY_MEDIUM = IconUtil.getIconPath(Urgency.MEDIUM.getIcon());
+    
+    public static final String ICON_URGENCY_LOW = IconUtil.getIconPath(Urgency.LOW.getIcon());
+    
+    public static final String[] ICON_URGENCY_ALL = { ICON_URGENCY_HIGH, ICON_URGENCY_MEDIUM, ICON_URGENCY_LOW };
     
     private Constants() {
     }

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window title="Message Scheduling" height="500px" width="700px"
-		apply="${cwfMessageSchedulingController}" mold="bootstrap">
+		apply="${cwfMessageboxSchedulingController}" mold="bootstrap">
 		<hbox vflex="1">
 			<listbox id="lstScheduled" vflex="1">
 				<auxhead>

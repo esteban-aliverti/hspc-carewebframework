@@ -253,33 +253,27 @@ public class MessageService {
         }
     }
     
-    public List<Message> getMessagesByRecipient(String recipientId) {
+    public List<Message> getMessagesByRecipient(String recipientId, String aboutId) {
         List<Message> result = new ArrayList<>();
         
         for (Message message : getAllMessages()) {
+            if (aboutId != null) {
+                Properties props = message.getHeader().getProperties();
+                String messageAbout = props == null ? null : props.getProperty(MessageProperty.MESSAGE_ABOUT.toString());
+                
+                if (messageAbout != null && !messageAbout.equals(aboutId)) {
+                    continue;
+                }
+            }
+            
             Set<Recipient> recipients = message.getHeader().getRecipientsList();
             
             for (Recipient myRecipient : recipients) {
                 String addressee = myRecipient.getDeliveryAddress().getPhysicalAddress().getAddress();//TODO Does not seem right to me.
                 
-                if (addressee.equals(recipientId)) {
-                    result.add(message);
-                }
-            }
-        }
-        return result;
-    }
-    
-    public List<Message> getMessagesByPatient(String about) {
-        List<Message> result = new ArrayList<>();
-        
-        for (Message message : getAllMessages()) {
-            Properties props = message.getHeader().getProperties();
-            
-            String messageAbout = props.getProperty(MessageProperty.MESSAGE_ABOUT.toString());
-            
-            if (messageAbout != null && messageAbout.equals(about)) {
+                //if (addressee.equals(recipientId)) {
                 result.add(message);
+                //}
             }
         }
         return result;

@@ -183,11 +183,11 @@ public class ScheduleController extends FrameworkController {
      */
     private boolean validate() {
         if (StringUtils.trimToEmpty(txtSubject.getText()).isEmpty()) {
-            wrongValue(txtSubject, "cwfmessages.schedule.validate.nosubject");
+            wrongValue(txtSubject, "cwfmessagebox.schedule.validate.nosubject");
         } else if (dtbDelivery.getDate() == null) {
-            wrongValue(dtbDelivery, "cwfmessages.schedule.validate.nodate");
+            wrongValue(dtbDelivery, "cwfmessagebox.schedule.validate.nodate");
         } else if (recipients.isEmpty()) {
-            wrongValue(txtRecipients, "cwfmessages.schedule.validate.norecipients");
+            wrongValue(txtRecipients, "cwfmessagebox.schedule.validate.norecipients");
         } else {
             return true;
         }
@@ -231,7 +231,7 @@ public class ScheduleController extends FrameworkController {
                 root.setAttribute("message", message);
                 root.detach();
             } else {
-                PromptDialog.showError("@cwfmessages.schedule.save.failure");
+                PromptDialog.showError("@cwfmessagebox.schedule.save.failure");
             }
         }
     }

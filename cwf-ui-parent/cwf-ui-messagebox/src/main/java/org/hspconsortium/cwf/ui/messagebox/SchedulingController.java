@@ -133,7 +133,7 @@ public class SchedulingController extends FrameworkController {
      * Delete the selected scheduled message.
      */
     public void onClick$btnDelete() {
-        if (PromptDialog.confirm("@cwfmessages.scheduling.delete.confirm.prompt")) {
+        if (PromptDialog.confirm("@cwfmessagebox.scheduling.delete.confirm.prompt")) {
             service.deleteScheduledMessage(getSelected());
         }
     }
@@ -150,7 +150,7 @@ public class SchedulingController extends FrameworkController {
     @Override
     public void doBeforeComposeChildren(Component comp) throws Exception {
         super.doBeforeComposeChildren(comp);
-        comp.setAttribute("iconUrgency", Constants.ICON_PRIORITY);
+        comp.setAttribute("iconUrgency", Constants.ICON_URGENCY);
     }
     
     /**

@@ -78,7 +78,7 @@ public class DocumentListController extends AbstractListController<Document, Doc
     
     private String viewText; //default view selected documents
     
-    private final String lblBtnViewSelectAll = Labels.getLabel("caldocuments.plugin.btn.view.selectall.label");
+    private final String lblBtnViewSelectAll = Labels.getLabel("cwfdocuments.plugin.btn.view.selectall.label");
     
     private Combobox cboFilter;
     
@@ -93,7 +93,7 @@ public class DocumentListController extends AbstractListController<Document, Doc
     private final Collection<String> allTypes;
     
     public DocumentListController(DocumentService service) {
-        super(new DocumentListDataService(service), "caldocuments", "TIU", "documentsPrint.css");
+        super(new DocumentListDataService(service), "cwfdocuments", "TIU", "documentsPrint.css");
         setPaging(false);
         registerQueryFilter(new DocumentTypeFilter());
         allTypes = service.getTypes();

@@ -10,14 +10,14 @@
 	<beans profile="root">
 
 		<cwp:plugin url="~./org/hspconsortium/cwf/ui/patientphoto/patientPhoto.zul"
-			id="patientPhoto" name="Current Patient Photo">
+			id="cwfPatientPhoto" name="Current Patient Photo">
 		</cwp:plugin>
 
 	</beans>
 
 	<beans profile="desktop">
 
-		<bean id="patientPhotoController" class="org.hspconsortium.cwf.ui.patientphoto.PatientPhoto"
+		<bean id="cwfPatientPhotoController" class="org.hspconsortium.cwf.ui.patientphoto.PatientPhoto"
 			scope="prototype" />
 
 	</beans>
