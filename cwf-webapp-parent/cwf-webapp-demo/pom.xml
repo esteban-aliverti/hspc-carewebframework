@@ -119,6 +119,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-observations</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-messagebox</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

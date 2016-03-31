@@ -31,20 +31,23 @@
 				<splitterpane relative="false" size="40.0">
 					<cwfPatientPhoto/>
 				</splitterpane>
-				<splitterpane relative="true" size="50.0">
+				<splitterpane relative="true" size="49.9604743083004">
 					<cwfPatientHeader color="lightyellow"/>
 				</splitterpane>
-				<splitterpane relative="true" size="46.7373572593801">
+				<splitterpane relative="true" size="46.87747035573123">
 					<userHeader color="lightblue"/>
 				</splitterpane>
 			</splitterview>
 		</splitterpane>
-		<splitterpane relative="true" size="75.96153846153845">
+		<splitterpane relative="true" size="78.98351648351648">
 			<tabview orientation="top">
 				<tabpane label="Chart">
 					<treeview open="true" selectionStyle="PRIMARY">
 						<treepane label="Clinical Documents Display">
 							<cwfDocuments/>
+						</treepane>
+						<treepane label="Observations">
+							<cwfObservations/>
 						</treepane>
 						<treepane label="Family History">
 							<cwfFamilyHistory/>
@@ -65,10 +68,10 @@
 				</tabpane>
 			</tabview>
 		</splitterpane>
-		<splitterpane relative="false" size="25.0">
+		<splitterpane relative="false" size="26.0">
 			<statusPanel/>
 		</splitterpane>
-		<splitterpane relative="false" size="103.0">
+		<splitterpane relative="false" size="80.0">
 			<frame url="/footer.html"/>
 		</splitterpane>
 	</splitterview>
