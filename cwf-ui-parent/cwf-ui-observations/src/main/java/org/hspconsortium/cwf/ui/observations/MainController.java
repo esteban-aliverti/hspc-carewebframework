@@ -21,12 +21,10 @@ package org.hspconsortium.cwf.ui.observations;
 
 import java.util.List;
 
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
 
 /**
  * Controller for patient observations display.
@@ -45,28 +43,9 @@ public class MainController extends ResourceListView<Observation, Observation> {
     
     @Override
     protected void render(Observation observation, List<Object> columns) {
-        CodingDt coding = observation.getCode().getCodingFirstRep();
-        String name = "";
-        
-        if (coding != null) {
-            name = coding.getDisplay();
-            name = name == null ? coding.getCode() : name;
-        }
-        
-        Object eff = observation.getEffective();
-        
-        if (eff instanceof DateTimeDt) {
-            eff = ((DateTimeDt) eff).getValue();
-        }
-        
-        Object value = observation.getValue();
-        
-        if (value instanceof QuantityDt) {
-            QuantityDt val = (QuantityDt) value;
-            String units = val.getUnit();
-            value = val.getValue().toString() + (units == null ? "" : " " + units);
-        }
-        
+        String name = FhirUtil.getDisplayValue(observation.getCode());
+        String eff = FhirUtil.getDisplayValue(observation.getEffective());
+        String value = FhirUtil.getDisplayValue(observation.getValue());
         columns.add(name);
         columns.add(eff);
         columns.add(observation.getStatus());
