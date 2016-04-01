@@ -97,7 +97,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
     
     @Override
     protected Object transformData(Object data) {
-        return (data instanceof IDatatype) ? FhirUtil.getDisplayValue((IDatatype) data) : data;
+        return (data instanceof IDatatype) ? FhirUtil.getDisplayValueForType((IDatatype) data) : data;
     }
     
     /**
