@@ -16,6 +16,7 @@
 		<module>cwf-api-patientlist</module>
 		<module>cwf-api-documents</module>
 		<module>cwf-api-smart</module>
+		<module>cwf-api-eps</module>
 		<module>cwf-api-ucs</module>
 	</modules>
 	

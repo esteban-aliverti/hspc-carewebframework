@@ -21,11 +21,11 @@ package org.hspconsortium.cwf.ui.familyhistory;
 
 import java.util.List;
 
-import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Vlayout;
+
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
 import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory.Condition;
@@ -34,6 +34,7 @@ import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory.Condition;
  * Controller for family history display.
  */
 public class MainController extends ResourceListView<FamilyMemberHistory, FamilyMemberHistory> {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -46,25 +47,24 @@ public class MainController extends ResourceListView<FamilyMemberHistory, Family
     
     @Override
     protected void render(FamilyMemberHistory relation, List<Object> columns) {
-        String value = FhirUtil.getDisplayValue(relation.getRelationship());
-        columns.add(value);
+        columns.add(relation.getRelationship());
         
         for (int i = 0; i < 3; i++) {
             Vlayout cmp = new Vlayout();
             columns.add(cmp);
             
             for (Condition condition : relation.getCondition()) {
-                value = null;
+                String value = null;
                 
                 switch (i) {
                     case 0:
                         value = FhirUtil.getDisplayValue(condition.getCode());
                         break;
-                        
+                    
                     case 1:
                         value = FhirUtil.getDisplayValue(condition.getOutcome());
                         break;
-                        
+                    
                     case 2:
                         value = condition.getNote().getText();
                         break;

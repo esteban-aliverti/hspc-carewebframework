@@ -25,9 +25,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.hspconsortium.cwf.api.patient.PatientContext;
-import org.hspconsortium.cwf.ui.reporting.Constants;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.carewebframework.ui.sharedforms.ListViewForm;
 import org.carewebframework.ui.thread.ZKThread;
 import org.carewebframework.ui.thread.ZKThread.ZKRunnable;
@@ -38,7 +35,12 @@ import org.zkoss.zul.Html;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+import org.hspconsortium.cwf.ui.reporting.Constants;
+
 import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.api.IDatatype;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.UriDt;
@@ -51,7 +53,8 @@ import ca.uhn.fhir.rest.client.GenericClient;
  * @param <R> Type of resource object.
  * @param <M> Type of model object.
  */
-public abstract class ResourceListView<R extends IResource, M> extends ListViewForm<M>implements PatientContext.IPatientContextEvent {
+public abstract class ResourceListView<R extends IResource, M> extends ListViewForm<M> implements PatientContext.IPatientContextEvent {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -92,6 +95,11 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
     public void canceled() {
     }
     
+    @Override
+    protected Object transformData(Object data) {
+        return (data instanceof IDatatype) ? FhirUtil.getDisplayValue((IDatatype) data) : data;
+    }
+    
     /**
      * Override load list to clear display if no patient in context.
      */
@@ -113,6 +121,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
         final UriDt uri = new UriDt(resourcePath.replace("#", patient.getId().getIdPart()));
         
         startBackgroundThread(new ZKRunnable() {
+            
             
             @Override
             public void run(ZKThread thread) throws Exception {

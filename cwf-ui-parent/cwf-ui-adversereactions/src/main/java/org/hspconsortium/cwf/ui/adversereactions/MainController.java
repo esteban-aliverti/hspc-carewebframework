@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
@@ -36,6 +37,7 @@ import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
  * Controller for patient adverse reaction display.
  */
 public class MainController extends ResourceListView<AllergyIntolerance, Reaction> {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -57,7 +59,7 @@ public class MainController extends ResourceListView<AllergyIntolerance, Reactio
     @Override
     protected void render(Reaction adr, List<Object> columns) {
         columns.add(adr.getOnset());
-        columns.add(adr.getSubstance().getCodingFirstRep().getDisplay());
+        columns.add(adr.getSubstance());
         columns.add(getManifestations(adr.getManifestation()));
     }
     
@@ -68,7 +70,7 @@ public class MainController extends ResourceListView<AllergyIntolerance, Reactio
             String sx = symptom.getText();
             
             if (StringUtils.isEmpty(sx)) {
-                sx = symptom.getCodingFirstRep().getDisplay();
+                sx = FhirUtil.getDisplayValue(symptom);
             }
             
             add(sx, sb);

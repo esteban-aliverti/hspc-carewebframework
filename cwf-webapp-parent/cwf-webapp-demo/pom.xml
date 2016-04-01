@@ -75,6 +75,11 @@
 			<artifactId>cwf-api-ucs</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-api-eps</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		
 		<!--  HSPC CWF plugins -->
 		<dependency>

@@ -21,8 +21,6 @@ package org.hspconsortium.cwf.ui.medicationorders;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import org.carewebframework.common.StrUtil;
 
 import org.hspconsortium.cwf.api.ClientUtil;
@@ -40,31 +38,31 @@ import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
  */
 public class MainController extends ResourceListView<MedicationOrder, MedicationOrder> {
     
+    
     private static final long serialVersionUID = 1L;
     
     @Override
     protected void init() {
-        setup(MedicationOrder.class, "Medications", "Medication Detail", "MedicationOrder?patient=#", 1, "Medication",
+        setup(MedicationOrder.class, "Medication Orders", "Order Detail", "MedicationOrder?patient=#", 1, "Medication",
             "Date", "Status", "Sig");
         super.init();
     }
     
     @Override
     protected void render(MedicationOrder script, List<Object> columns) {
-        String med = null;
+        Object med = null;
         IDatatype medicationDt = script.getMedication();
         
-        if (medicationDt != null && medicationDt instanceof CodeableConceptDt) {
-            CodeableConceptDt medCode = (CodeableConceptDt) medicationDt;
-            med = medCode.getCodingFirstRep().getDisplay();//Assuming there is only one code. If not, we need to get the preferred one.
-        } else if (medicationDt != null && medicationDt instanceof Medication) {
+        if (medicationDt instanceof CodeableConceptDt) {
+            med = medicationDt;//Assuming there is only one code. If not, we need to get the preferred one.
+        } else if (medicationDt instanceof Medication) {
             Medication medObject = (Medication) medicationDt;
-            med = medObject.getCode().getCodingFirstRep().getDisplay();//Not sure about this one
+            med = medObject.getCode();
         }
         
-        if (StringUtils.isEmpty(med)) {
+        if (med == null) {
             Medication medication = ClientUtil.getResource((ResourceReferenceDt) script.getMedication(), Medication.class);
-            med = medication.getCode().getCodingFirstRep().getDisplay();
+            med = medication.getCode();
         }
         
         columns.add(med);

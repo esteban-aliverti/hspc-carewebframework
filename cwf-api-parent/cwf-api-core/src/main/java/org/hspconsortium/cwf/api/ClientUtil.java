@@ -69,7 +69,7 @@ public class ClientUtil {
      * @return URL with a service root prepended.
      */
     public static String expandURL(String url) {
-        return url.matches("^.+:/") ? url : concatPath(getServiceRoot(), url);
+        return url.matches("^.+:/.*$") ? url : concatPath(getServiceRoot(), url);
     }
     
     /**

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:cwp="http://www.carewebframework.org/schema/plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cwf="http://www.carewebframework.org/schema/spring" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 		 http://www.springframework.org/schema/beans/spring-beans.xsd
-		 http://www.carewebframework.org/schema/plugin
-		 http://www.carewebframework.org/schema/plugin/plugin-extensions.xsd">
+		 http://www.carewebframework.org/schema/spring
+		 http://www.carewebframework.org/schema/spring/spring-extensions.xsd">
 
 	<beans profile="root">
 

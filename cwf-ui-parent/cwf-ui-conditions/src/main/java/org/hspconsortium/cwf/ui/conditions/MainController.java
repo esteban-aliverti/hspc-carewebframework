@@ -23,13 +23,13 @@ import java.util.List;
 
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 
 /**
  * Controller for patient conditions display.
  */
 public class MainController extends ResourceListView<Condition, Condition> {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -42,8 +42,7 @@ public class MainController extends ResourceListView<Condition, Condition> {
     
     @Override
     protected void render(Condition condition, List<Object> columns) {
-        CodingDt coding = condition.getCode().getCodingFirstRep();
-        columns.add(coding == null ? null : coding.getDisplay());
+        columns.add(condition.getCode());
         columns.add(condition.getDateRecorded());
         columns.add(condition.getClinicalStatus());
         columns.add(condition.getNotes());

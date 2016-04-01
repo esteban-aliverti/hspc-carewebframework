@@ -21,7 +21,6 @@ package org.hspconsortium.cwf.ui.observations;
 
 import java.util.List;
 
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
@@ -43,13 +42,10 @@ public class MainController extends ResourceListView<Observation, Observation> {
     
     @Override
     protected void render(Observation observation, List<Object> columns) {
-        String name = FhirUtil.getDisplayValue(observation.getCode());
-        String eff = FhirUtil.getDisplayValue(observation.getEffective());
-        String value = FhirUtil.getDisplayValue(observation.getValue());
-        columns.add(name);
-        columns.add(eff);
+        columns.add(observation.getCode());
+        columns.add(observation.getEffective());
         columns.add(observation.getStatus());
-        columns.add(value);
+        columns.add(observation.getValue());
         columns.add(observation.getReferenceRangeFirstRep().getText());
     }
     

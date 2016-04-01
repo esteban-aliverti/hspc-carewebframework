@@ -21,23 +21,23 @@ package org.hspconsortium.cwf.api.security;
 
 import java.io.IOException;
 
-import ca.uhn.fhir.rest.server.Constants;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import org.hspconsortium.cwf.fhir.client.FhirContext;
 import org.hspconsortium.cwf.fhir.client.IAuthInterceptor;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import ca.uhn.fhir.rest.client.api.IHttpRequest;
+import ca.uhn.fhir.rest.client.api.IHttpResponse;
+import ca.uhn.fhir.rest.server.Constants;
 
 /**
  * Abstract base class for implementing authentication interceptors. The BeanFactoryPostProcessor
  * interface ensures that the interceptors get registered early.
  */
 public abstract class AbstractAuthInterceptor implements IAuthInterceptor, BeanFactoryPostProcessor {
+    
     
     private final String authType;
     
@@ -56,7 +56,7 @@ public abstract class AbstractAuthInterceptor implements IAuthInterceptor, BeanF
      * Intercepts the request, adding the appropriate authorization header.
      */
     @Override
-    public void interceptRequest(HttpRequestBase theRequest) {
+    public void interceptRequest(IHttpRequest theRequest) {
         String credentials = getCredentials();
         
         if (credentials != null && !credentials.isEmpty()) {
@@ -65,7 +65,7 @@ public abstract class AbstractAuthInterceptor implements IAuthInterceptor, BeanF
     }
     
     @Override
-    public void interceptResponse(HttpResponse theResponse) throws IOException {
+    public void interceptResponse(IHttpResponse theResponse) throws IOException {
         // nothing
     }
     
