@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.carewebframework.common.StrUtil;
 
-import org.hspconsortium.cwf.api.ClientUtil;
+import org.hspconsortium.cwf.fhir.medication.MedicationService;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
 import ca.uhn.fhir.model.api.IDatatype;
@@ -40,6 +40,12 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
     
     
     private static final long serialVersionUID = 1L;
+    
+    private final MedicationService service;
+    
+    public MainController(MedicationService service) {
+        this.service = service;
+    }
     
     @Override
     protected void init() {
@@ -61,7 +67,7 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
         }
         
         if (med == null) {
-            Medication medication = ClientUtil.getResource((ResourceReferenceDt) script.getMedication(), Medication.class);
+            Medication medication = service.getResource((ResourceReferenceDt) script.getMedication(), Medication.class);
             med = medication.getCode();
         }
         

@@ -48,8 +48,10 @@
 
 	<beans profile="desktop">
 
-		<bean name="cwfMedicationOrdersController" parent="reportListViewBase"
-			class="org.hspconsortium.cwf.ui.medicationorders.MainController" scope="prototype" />
+		<bean name="cwfMedicationOrdersController" parent="reportListViewBase" scope="prototype"
+			class="org.hspconsortium.cwf.ui.medicationorders.MainController">
+			<constructor-arg ref="fhirMedicationService" />
+		</bean>
 
 	</beans>
 

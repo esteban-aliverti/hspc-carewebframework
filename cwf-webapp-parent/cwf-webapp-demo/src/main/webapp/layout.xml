@@ -43,23 +43,26 @@
 			<tabview orientation="top">
 				<tabpane label="Chart">
 					<treeview open="true" selectionStyle="PRIMARY">
-						<treepane label="Clinical Documents Display">
-							<cwfDocuments/>
-						</treepane>
 						<treepane label="Observations">
 							<cwfObservations/>
 						</treepane>
 						<treepane label="Family History">
 							<cwfFamilyHistory/>
 						</treepane>
-						<treepane label="Patient Adverse Reactions">
+						<treepane label="Adverse Reactions">
 							<cwfAdverseReactions/>
 						</treepane>
-						<treepane label="Patient Conditions">
+						<treepane label="Conditions">
 							<cwfConditions/>
 						</treepane>
-						<treepane label="Patient Medication Orders">
+						<treepane label="Medication Orders">
 							<cwfMedicationOrders/>
+						</treepane>
+						<treepane label="Documents">
+							<cwfDocuments/>
+						</treepane>
+						<treepane label="Growth Chart">
+							<growthchart/>
 						</treepane>
 					</treeview>
 				</tabpane>
