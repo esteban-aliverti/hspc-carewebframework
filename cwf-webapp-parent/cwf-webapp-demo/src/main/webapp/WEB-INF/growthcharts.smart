@@ -1,7 +1,7 @@
 {
     "author": "MedAppTech", 
     "description": "Displays vital signs data plotted on standard growth curves (for pediatric patients)", 
-    "icon": ""https://sandbox.hspconsortium.org/dstu2/hspc-reference-apps/static/images/apps/growth-chart.png"", 
+    "icon": "https://sandbox.hspconsortium.org/dstu2/hspc-reference-apps/static/images/apps/growth-chart.png", 
     "id": "growthchart", 
     "index": "https://sandbox.hspconsortium.org/dstu2/hspc-reference-apps/static/apps/growth-chart/launch.html", 
     "mode": "ui", 
