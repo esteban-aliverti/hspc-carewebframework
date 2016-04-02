@@ -19,13 +19,23 @@
  */
 package org.hspconsortium.cwf.api.eps;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.ws.BindingProvider;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.carewebframework.api.thread.ThreadUtil;
 import org.carewebframework.common.MiscUtil;
 
 import org.socraticgrid.hl7.services.eps.accessclients.broker.BrokerServiceSE;
@@ -34,9 +44,14 @@ import org.socraticgrid.hl7.services.eps.accessclients.subscription.Subscription
 import org.socraticgrid.hl7.services.eps.interfaces.BrokerIFace;
 import org.socraticgrid.hl7.services.eps.interfaces.PublicationIFace;
 import org.socraticgrid.hl7.services.eps.interfaces.SubscriptionIFace;
+import org.socraticgrid.hl7.services.eps.model.AccessModel;
+import org.socraticgrid.hl7.services.eps.model.Durability;
 import org.socraticgrid.hl7.services.eps.model.Message;
 import org.socraticgrid.hl7.services.eps.model.MessageBody;
 import org.socraticgrid.hl7.services.eps.model.MessageHeader;
+import org.socraticgrid.hl7.services.eps.model.Options;
+import org.socraticgrid.hl7.services.eps.model.PullRange;
+import org.socraticgrid.hl7.services.eps.model.SubscriptionType;
 import org.socraticgrid.hl7.services.eps.model.User;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -47,6 +62,133 @@ import ca.uhn.fhir.model.api.IResource;
  */
 public class EPSService {
     
+    
+    public interface IEventCallback {
+        
+        
+        void onEvent(Message event);
+    }
+    
+    private class EventPoller extends Thread {
+        
+        
+        private final Object monitor = new Object();
+        
+        private boolean terminate;
+        
+        /**
+         * Wakes up the background thread.
+         *
+         * @return True if request was successful.
+         */
+        public synchronized boolean wakeup() {
+            try {
+                synchronized (monitor) {
+                    monitor.notify();
+                }
+                return true;
+            } catch (Throwable t) {
+                return false;
+            }
+        }
+        
+        public void terminate() {
+            terminate = true;
+            wakeup();
+        }
+        
+        @Override
+        public void run() {
+            synchronized (monitor) {
+                while (!terminate) {
+                    try {
+                        pollEvents();
+                        monitor.wait(pollingInterval);
+                    } catch (InterruptedException e) {}
+                }
+            }
+            
+            log.debug("Event poller has exited.");
+        }
+        
+    }
+    
+    private class Subscription {
+        
+        private final Set<IEventCallback> callbacks = new HashSet<>();
+        
+        private final List<String> topic;
+        
+        private String subscriptionId;
+        
+        Subscription(String topic) {
+            this.topic = Collections.singletonList(topic);
+        }
+        
+        public synchronized boolean subscribe(IEventCallback callback) {
+            if (subscriptionId == null) {
+                subscribe();
+            }
+            
+            return callbacks.add(callback);
+        }
+        
+        public synchronized boolean unsubscribe(IEventCallback callback) {
+            boolean result = callbacks.remove(callback);
+            
+            if (callbacks.isEmpty() && subscriptionId != null) {
+                unsubscribe();
+            }
+            
+            return result;
+        }
+        
+        public boolean hasSubscribers() {
+            return !callbacks.isEmpty();
+        }
+        
+        public void deliverEvent(Message event) {
+            Set<IEventCallback> cbs;
+            
+            synchronized (callbacks) {
+                cbs = new HashSet<>(callbacks);
+            }
+            
+            for (IEventCallback callback : cbs) {
+                try {
+                    callback.onEvent(event);
+                } catch (Throwable e) {
+                    log.error("Error during event delivery.", e);
+                }
+            }
+        }
+        
+        private void subscribe() {
+            Options options = new Options();
+            options.setAccess(AccessModel.Open);
+            options.setDurability(Durability.Transient);
+            
+            try {
+                subscriptionId = getSubscriberPort().subscribe(topic, SubscriptionType.Pull, options, null);
+            } catch (Exception e) {
+                throw MiscUtil.toUnchecked(e);
+            }
+        }
+        
+        private void unsubscribe() {
+            try {
+                getSubscriberPort().unsubscribe(topic, subscriberId, subscriptionId);
+            } catch (Exception e) {
+                throw MiscUtil.toUnchecked(e);
+            } finally {
+                subscriptionId = null;
+            }
+        }
+    }
+    
+    private static final Log log = LogFactory.getLog(EPSService.class);
+    
+    private final String subscriberId = UUID.randomUUID().toString();
     
     private final FhirContext fhirContext;
     
@@ -59,6 +201,14 @@ public class EPSService {
     private SubscriptionIFace subscriberPort;
     
     private BrokerIFace brokerPort;
+    
+    private Date lastPoll = new Date();
+    
+    private final int pollingInterval = 5000;
+    
+    private final EventPoller eventPoller = new EventPoller();
+    
+    private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
     
     public EPSService(FhirContext fhirContext, String serviceEndpoint) {
         this.fhirContext = fhirContext;
@@ -84,10 +234,12 @@ public class EPSService {
         brokerPort = bs.getBrokerPort();
         ((BindingProvider) brokerPort).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
             serviceEndpoint + "broker");
+        
+        ThreadUtil.startThread(eventPoller);
     }
     
     public void destroy() {
-        
+        eventPoller.terminate();
     }
     
     public FhirContext getFhirContext() {
@@ -106,18 +258,10 @@ public class EPSService {
         return brokerPort;
     }
     
+    //***************************** Publication *****************************
+    
     public User getPublisher() {
         return publisher;
-    }
-    
-    /**
-     * Set a publisher to use for all publications from this instance, Should not be changed when
-     * the instance is used in a multi-threaded manner.
-     * 
-     * @param publisher Publisher of the event.
-     */
-    public void setPublisher(User publisher) {
-        this.publisher = publisher;
     }
     
     /**
@@ -209,6 +353,53 @@ public class EPSService {
     public String publishResourceToTopic(String topic, IResource resource, String subject, String title) {
         String data = fhirContext.newJsonParser().encodeResourceToString(resource);
         return publishEvent(topic, data, "application/json", subject, title);
+    }
+    
+    //**************************** Subscription *****************************
+    
+    private Subscription getSubscription(String topic, boolean forceCreate) {
+        Subscription subscription = subscriptions.get(topic);
+        
+        if (subscription == null && forceCreate) {
+            synchronized (subscriptions) {
+                subscriptions.put(topic, subscription = new Subscription(topic));
+            }
+        }
+        
+        return subscription;
+    }
+    
+    public boolean subscribe(String topic, IEventCallback callback) {
+        Subscription subscription = getSubscription(topic, true);
+        return subscription.subscribe(callback);
+    }
+    
+    public boolean unsubscribe(String topic, IEventCallback callback) {
+        Subscription subscription = getSubscription(topic, false);
+        return subscription != null && subscription.unsubscribe(callback);
+    }
+    
+    private void pollEvents() {
+        Date start = lastPoll;
+        Date end = new Date();
+        lastPoll = end;
+        
+        for (Entry<String, Subscription> entry : subscriptions.entrySet()) {
+            try {
+                if (!entry.getValue().hasSubscribers()) {
+                    continue;
+                }
+                
+                List<Message> events = getSubscriberPort().retrieveEvents(entry.getKey(), PullRange.Specific, start, end,
+                    Collections.<String> emptyList());
+                
+                for (Message event : events) {
+                    entry.getValue().deliverEvent(event);
+                }
+            } catch (Exception e) {
+                log.error("Exception while polling for events.", e);
+            }
+        }
     }
     
 }
