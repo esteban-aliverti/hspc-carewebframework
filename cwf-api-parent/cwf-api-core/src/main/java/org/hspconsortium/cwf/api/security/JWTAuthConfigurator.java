@@ -45,6 +45,9 @@ public class JWTAuthConfigurator {
     @Value("${fhir.service.authentication.audience:}")
     private String audience;
     
+    @Value("${fhir.service.authentication.scopes:launch,patient/*.read}")
+    private String requestedScopes;
+    
     public JWTAuthConfigurator() {
         super();
     }
@@ -71,6 +74,10 @@ public class JWTAuthConfigurator {
     
     public String getAudience() {
         return audience;
+    }
+    
+    public String getRequestedScopes() {
+        return requestedScopes;
     }
     
 }
