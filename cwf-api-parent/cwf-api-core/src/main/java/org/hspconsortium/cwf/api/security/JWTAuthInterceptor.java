@@ -20,7 +20,6 @@
 package org.hspconsortium.cwf.api.security;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.UUID;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -59,7 +58,7 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
         tokenProvider = new JsonAccessTokenProvider(fhirContext);
         requestedScopes = new Scopes();
         
-        for (String scope : Arrays.asList(config.getRequestedScopes().split("\\,"))) {
+        for (String scope : config.getRequestedScopes().split("\\,")) {
             scope = scope.trim();
             
             if (!scope.isEmpty()) {
@@ -71,8 +70,8 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
         // must be made known to the JWS recipient in order to verify the signatures
         URL url = getClass().getResource(config.getWebKey());
         JWKSet jwks = JWKSet.load(url);
-        
         RSAKey rsaKey = (RSAKey) jwks.getKeys().get(0);
+        
         jwtCredentials = new JWTCredentials(rsaKey.toRSAPrivateKey());
         jwtCredentials.setIssuer(config.getIssuer());
         jwtCredentials.setSubject(config.getSubject());
