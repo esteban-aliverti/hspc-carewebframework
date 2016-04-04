@@ -20,6 +20,12 @@
 			<groupId>org.socraticgrid.hl7</groupId>
 			<artifactId>ucs-nifi-api</artifactId>
 			<version>${ucs-nifi.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

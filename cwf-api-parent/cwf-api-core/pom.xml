@@ -28,6 +28,12 @@
 		    <groupId>org.hspconsortium.client</groupId>
 		    <artifactId>hspc-java-client-fork</artifactId>
 		    <version>1.4-SNAPSHOT</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>ch.qos.logback</groupId>
+		    		<artifactId>logback-classic</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<!-- Tests -->
 		<dependency>

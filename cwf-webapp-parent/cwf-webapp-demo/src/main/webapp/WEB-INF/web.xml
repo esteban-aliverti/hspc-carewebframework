@@ -66,6 +66,10 @@
 			<param-name>update-uri</param-name>
 			<param-value>/zkau</param-value>
 		</init-param>
+		<init-param>
+        	<param-name>log-level</param-name>
+        	<param-value>OFF</param-value>
+    	</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
