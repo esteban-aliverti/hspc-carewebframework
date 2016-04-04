@@ -45,7 +45,7 @@ import ca.uhn.fhir.context.FhirContext;
 public class JWTAuthInterceptor extends AbstractAuthInterceptor {
     
     
-    private volatile AccessToken accessToken;
+    private AccessToken accessToken;
     
     private final FhirContext fhirContext;
     
@@ -58,7 +58,7 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
     }
     
     @Override
-    public String getCredentials() {
+    public synchronized String getCredentials() {
         if (accessToken == null || accessToken.isExpired()) {
             accessToken = getAccessToken();
         }
