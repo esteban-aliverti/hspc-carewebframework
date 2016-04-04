@@ -131,7 +131,7 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<disable-behind-modal>false</disable-behind-modal>
 		<!-- TODO : When m2eclipse WTP 0.12.0 is available, implement some webResource filtering -->
 		<!-- <debug-js>${zk.client-config.debug-js}</debug-js> -->
-		<debug-js>true</debug-js>
+		<debug-js>false</debug-js>
 	</client-config>
 	
 	<library-property>

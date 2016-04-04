@@ -51,6 +51,8 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.event.ListDataEvent;
+import org.zkoss.zul.event.ListDataListener;
 
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
@@ -206,6 +208,15 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     @Override
     public void init() {
         super.init();
+        model.addListDataListener(new ListDataListener() {
+            
+            
+            @Override
+            public void onChange(ListDataEvent event) {
+                updateBadge();
+            }
+            
+        });
         service.addAlertListener(new AlertListener(this));
         service.addMessageListener(new MessageListener(this));
         getContainer().registerProperties(this, "showAll", "alertDuration", "alertThreshold");
@@ -233,7 +244,6 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         lstMessages.setModel(model);
         Clients.resize(lstMessages);
         updateControls(false);
-        updateBadge();
     }
     
     private void updateBadge() {
