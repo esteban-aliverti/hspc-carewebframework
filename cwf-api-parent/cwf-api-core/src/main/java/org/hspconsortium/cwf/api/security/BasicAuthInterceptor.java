@@ -29,17 +29,17 @@ import org.carewebframework.api.security.SecurityUtil;
 import org.carewebframework.common.MiscUtil;
 
 /**
- * HTTP interceptor supporting Basic authentication.
+ * Authentication interceptor supporting Basic authentication.
  */
 public class BasicAuthInterceptor extends AbstractAuthInterceptor {
     
     
     private final String credentials;
     
-    public BasicAuthInterceptor(String id, String username, String password) {
+    public BasicAuthInterceptor(String id, BasicAuthConfigurator config) {
         super(id, "Basic");
-        username = StringUtils.trimToNull(username);
-        password = StringUtils.trimToEmpty(password);
+        String username = StringUtils.trimToNull(config.getUsername());
+        String password = StringUtils.trimToEmpty(config.getPassword());
         this.credentials = username == null ? null : encode(username, password);
     }
     

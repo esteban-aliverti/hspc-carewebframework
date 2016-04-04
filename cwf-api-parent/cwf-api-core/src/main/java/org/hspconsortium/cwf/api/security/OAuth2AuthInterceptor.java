@@ -22,9 +22,10 @@ package org.hspconsortium.cwf.api.security;
 /**
  * Authentication interceptor supporting OAuth2 authentication.
  */
-public class BearerAuthInterceptor extends AbstractAuthInterceptor {
+public class OAuth2AuthInterceptor extends AbstractAuthInterceptor {
     
-    public BearerAuthInterceptor(String id) {
+    
+    public OAuth2AuthInterceptor(String id, OAuth2AuthConfigurator config) {
         super(id, "Bearer");
     }
     

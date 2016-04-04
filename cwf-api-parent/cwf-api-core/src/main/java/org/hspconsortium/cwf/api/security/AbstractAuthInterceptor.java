@@ -21,10 +21,6 @@ package org.hspconsortium.cwf.api.security;
 
 import java.io.IOException;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-
 import org.hspconsortium.cwf.fhir.client.FhirContext;
 import org.hspconsortium.cwf.fhir.client.IAuthInterceptor;
 
@@ -33,10 +29,9 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import ca.uhn.fhir.rest.server.Constants;
 
 /**
- * Abstract base class for implementing authentication interceptors. The BeanFactoryPostProcessor
- * interface ensures that the interceptors get registered early.
+ * Abstract base class for implementing authentication interceptors.
  */
-public abstract class AbstractAuthInterceptor implements IAuthInterceptor, BeanFactoryPostProcessor {
+public abstract class AbstractAuthInterceptor implements IAuthInterceptor {
     
     
     private final String authType;
@@ -66,11 +61,6 @@ public abstract class AbstractAuthInterceptor implements IAuthInterceptor, BeanF
     
     @Override
     public void interceptResponse(IHttpResponse theResponse) throws IOException {
-        // nothing
-    }
-    
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         // nothing
     }
     

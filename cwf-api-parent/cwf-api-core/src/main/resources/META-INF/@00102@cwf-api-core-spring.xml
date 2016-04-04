@@ -12,12 +12,24 @@
 	
 		<bean class="org.hspconsortium.cwf.api.security.BasicAuthInterceptor">
 			<constructor-arg value="Basic" />
-			<constructor-arg value="${fhir.service.username:}" />
-			<constructor-arg value="${fhir.service.password:}" />
+			<constructor-arg>
+				<bean class="org.hspconsortium.cwf.api.security.BasicAuthConfigurator" />
+			</constructor-arg>
 		</bean>
 		
-		<bean class="org.hspconsortium.cwf.api.security.BearerAuthInterceptor">
+		<bean class="org.hspconsortium.cwf.api.security.OAuth2AuthInterceptor">
 			<constructor-arg value="OAuth2" />
+			<constructor-arg>
+				<bean class="org.hspconsortium.cwf.api.security.OAuth2AuthConfigurator" />
+			</constructor-arg>
+		</bean>
+		
+		<bean class="org.hspconsortium.cwf.api.security.JWTAuthInterceptor">
+			<constructor-arg value="JWT" />
+			<constructor-arg ref= "fhirContext" />
+			<constructor-arg>
+				<bean class="org.hspconsortium.cwf.api.security.JWTAuthConfigurator" />
+			</constructor-arg>
 		</bean>
 		
 		<!-- Domain factory  -->
