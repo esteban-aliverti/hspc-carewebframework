@@ -160,23 +160,15 @@ public class MessageService {
         try {
             destroy();
             
-            String prefixedNifiHost = "http://" + config.getNifiHost();
-            
-            String alertingCommandURL = prefixedNifiHost + ":" + config.getNifiAlertingCommandPort() + "/contentListener";
-            String clientCommandURL = prefixedNifiHost + ":" + config.getNifiClientCommandPort() + "/contentListener";
-            
             // @formatter:off
             session = new UCSNiFiSession.UCSNiFiSessionBuilder()
-                    .withAlertingCommandURL(alertingCommandURL)
-                    .withClientCommandURL(clientCommandURL)
-                    .withUCSClientHost(config.getClientHost())
-                    .withUCSClientPort(config.getClientPort())
-                    .withUCSAlertingHost(config.getClientHost())
-                    .withUCSAlertingPort(config.getAlertingPort())
-                    .withManagementHost(config.getClientHost())
-                    .withManagementPort(config.getManagementPort())
-                    .withConversationHost(config.getClientHost())
-                    .withConversationPort(config.getConversationPort())
+                    .withNifiAlertingCommandPort(config.getNifiAlertingCommandPort())
+                    .withNifiClientCommandPort(config.getNifiClientCommandPort())
+                    .withClientHost(config.getClientHost())
+                    .withClientCallbackPort(config.getClientPort())
+                    .withClientAlertingCallbackPort(config.getAlertingPort())
+                    .withClientManagementCallbackPort(config.getManagementPort())
+                    .withClientConversationCallbackPort(config.getConversationPort())
                     .withUCSClientListener(messageBroadcaster)
                     .withUCSAlertingListener(alertBroadcaster)
                     .build();//TODO Create singleton session with broadcast

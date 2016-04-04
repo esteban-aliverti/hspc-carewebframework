@@ -38,7 +38,7 @@
 		<org.zkoss.zk.version>8.0.1.1</org.zkoss.zk.version>
 		<servlet.api.version>3.1.0</servlet.api.version>
 		<ucs-api.version>0.1.0-SNAPSHOT</ucs-api.version>
-		<ucs-nifi.version>0.4-SNAPSHOT</ucs-nifi.version>
+		<ucs-nifi.version>0.5-SNAPSHOT</ucs-nifi.version>
 		<eps.version>0.1.4-SNAPSHOT</eps.version>
 
 		<project.scm.id>github</project.scm.id>

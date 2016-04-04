@@ -70,7 +70,11 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<!-- HSPC Services -->
-		
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-api-ucs</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 		<!--  HSPC CWF plugins -->
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
@@ -116,6 +120,11 @@
 			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-observations</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-messagebox</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<!-- CareWeb Framework components -->
 		<dependency>
@@ -168,6 +177,11 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-api-ucs</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

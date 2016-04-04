@@ -24,17 +24,48 @@ import org.springframework.beans.factory.annotation.Value;
 public class MessageServiceConfigurator {
     
     
+    /**
+     * The host where ucs-nifi is running.
+     */
     @Value("${org.socraticgrid.hl7.ucs.nifiHost}")
     private String nifiHost;
     
-    @Value("${org.socraticgrid.hl7.ucs.clientHost}")
-    private String clientHost;
+    /**
+     * The port where ucs-nifi has registered its send message interface.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.nifiSendMessageCommandPort:8888}")
+    private int nifiSendMessageCommandPort;
     
-    @Value("${org.socraticgrid.hl7.ucs.nifiClientCommandPort}")
+    /**
+     * The port where ucs-nifi has registered its client interface.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.nifiClientCommandPort:8889}")
     private int nifiClientCommandPort;
     
-    @Value("${org.socraticgrid.hl7.ucs.nifiAlertingCommandPort}")
+    /**
+     * The port where ucs-nifi has registered its alerting interface.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.nifiAlertingCommandPort:8890}")
     private int nifiAlertingCommandPort;
+    
+    /**
+     * The port where ucs-nifi has registered its management interface.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.nifiManagementCommandPort:8891}")
+    private int nifiManagementCommandPort;
+    
+    /**
+     * The port where ucs-nifi has registered its conversation interface.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.nifiConversationCommandPort:8892}")
+    private int nifiConversationCommandPort;
+    
+    /**
+     * Host that ucs-nifi will use to communicate to the client. This host must be accessible by
+     * ucs-nifi.
+     */
+    @Value("${org.socraticgrid.hl7.ucs.clientHost:localhost}")
+    private String clientHost;
     
     @Value("${org.socraticgrid.hl7.ucs.clientPort}")
     private int clientPort;
