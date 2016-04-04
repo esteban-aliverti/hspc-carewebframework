@@ -29,7 +29,10 @@ import org.carewebframework.api.context.UserContext;
 import org.carewebframework.api.event.IGenericEvent;
 import org.carewebframework.common.NumUtil;
 import org.carewebframework.common.StrUtil;
+import org.carewebframework.shell.layout.UIElementBase;
+import org.carewebframework.shell.layout.UIElementZKBase;
 import org.carewebframework.ui.sharedforms.CaptionedForm;
+import org.carewebframework.ui.zk.Badge;
 import org.carewebframework.ui.zk.MessageWindow;
 import org.carewebframework.ui.zk.MessageWindow.MessageInfo;
 import org.carewebframework.ui.zk.PromptDialog;
@@ -163,6 +166,8 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     
     private Image imgIndicator;
     
+    private UIElementBase uiElement;
+    
     private MessageService service;
     
     private ProcessingController processingController;
@@ -228,6 +233,16 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         lstMessages.setModel(model);
         Clients.resize(lstMessages);
         updateControls(false);
+        updateBadge();
+    }
+    
+    private void updateBadge() {
+        if (uiElement == null) {
+            uiElement = UIElementZKBase.getAssociatedUIElement(getContainer());
+        }
+        
+        Badge badge = new Badge(Integer.toString(model.getSize()), "btn-success");
+        uiElement.notifyParent("badge", badge, false);
     }
     
     private void loadMessages(boolean currentPatientOnly) {
