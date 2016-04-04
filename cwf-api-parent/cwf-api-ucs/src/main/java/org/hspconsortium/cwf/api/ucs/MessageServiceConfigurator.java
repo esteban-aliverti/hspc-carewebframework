@@ -94,6 +94,18 @@ public class MessageServiceConfigurator {
         return nifiAlertingCommandPort;
     }
     
+    public int getNifiSendMessageCommandPort() {
+        return nifiSendMessageCommandPort;
+    }
+    
+    public int getNifiManagementCommandPort() {
+        return nifiManagementCommandPort;
+    }
+    
+    public int getNifiConversationCommandPort() {
+        return nifiConversationCommandPort;
+    }
+    
     public String getClientHost() {
         return clientHost;
     }

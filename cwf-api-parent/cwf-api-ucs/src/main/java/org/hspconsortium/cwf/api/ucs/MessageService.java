@@ -162,8 +162,12 @@ public class MessageService {
             
             // @formatter:off
             session = new UCSNiFiSession.UCSNiFiSessionBuilder()
-                    .withNifiAlertingCommandPort(config.getNifiAlertingCommandPort())
+                    .withNifiHost(config.getNifiHost())
                     .withNifiClientCommandPort(config.getNifiClientCommandPort())
+                    .withNifiAlertingCommandPort(config.getNifiAlertingCommandPort())
+                    .withNifiConversationCommandPort(config.getNifiConversationCommandPort())
+                    .withNifiManagementCommandPort(config.getNifiManagementCommandPort())
+                    .withNifiSendMessageCommandPort(config.getNifiSendMessageCommandPort())
                     .withClientHost(config.getClientHost())
                     .withClientCallbackPort(config.getClientPort())
                     .withClientAlertingCallbackPort(config.getAlertingPort())
