@@ -2,22 +2,40 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-
-	<vlayout apply="${cwfPatientHeaderController}" spacing="0"
-		height="100%" width="100%">
-		<hlayout sclass="cwf-header-row" hflex="1" vflex="1">
-			<label id="patientHeader"
-				value="${labels.patientselection.info.nopatient.selected}" />
-		</hlayout>
-		<hlayout sclass="cwf-header-row" hflex="1" vflex="1">
-			<a id="select"
-				label="${labels.patientselection.btn.select.label}"
-				tooltiptext="${labels.patientselection.btn.select.hint}" />
-			<space hflex="1" />
-			<a id="detail"
-				label="${labels.patientselection.btn.detail.label}"
-				tooltiptext="${labels.patientselection.btn.detail.hint}"
-				visible="false" />
-		</hlayout>
-	</vlayout>
+	<style>
+		.cwf-patientheader .z-hlayout-inner,
+		.cwf-patientheader .z-toolbar-content {
+			height: 100%;
+		}
+	</style>
+	
+	<hlayout sclass="cwf-patientheader" height="100%" width="100%" valign="middle"
+		apply="${cwfPatientHeaderController}">
+		<toolbar mold="panel" height="100%">
+			<label id="lblName" style="font-weight:bold"
+				value="${labels.cwfpatientheader.noselection}" />
+			<label id="lblMRN" style="font-weight:bold" />
+			<combobutton id="btnDetail">
+				<popup>
+					<vlayout id="pnlDetail" />
+				</popup>
+			</combobutton>
+			<a id="lnkSelect" style="text-decoration:underline"
+				label="${labels.cwfpatientheader.change.label}"
+				tooltiptext="${labels.cwfpatientheader.change.hint}" />
+			<separator width="10px" />
+			<label id="lblDOBLabel" style="font-weight:bold"
+				value="${labels.cwfpatientheader.dob.label}" />
+			<label id="lblDOB" />
+			<label id="lblDODLabel" style="font-weight:bold" 
+				value="${labels.cwfpatientheader.dod.label}" />
+			<label id="lblDOD" />
+			<label id="lblGender" />
+		</toolbar>
+		<toolbar mold="panel" height="100%" hflex="1" align="end">
+			<label id="lblUser" />
+			<separator width="5px" />
+		</toolbar>
+	</hlayout>
+	
 </zk>
