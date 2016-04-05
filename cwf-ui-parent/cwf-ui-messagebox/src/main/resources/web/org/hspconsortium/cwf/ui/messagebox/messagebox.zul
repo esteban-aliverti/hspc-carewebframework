@@ -6,8 +6,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<div self="@define(sharedFormsCaptioned)" width="100%" height="100%"
-		sclass="cwfMessagebox"
-		apply="${cwfMessageboxMainController}">
+		apply="${cwfMessageboxMainController}" sclass="cwfMessagebox">
 		<borderlayout width="100%" height="100%">
 			<center>
 				<listbox id="lstMessages" vflex="1"
@@ -29,6 +28,8 @@
 									renderdefer="1" />
 							</radiogroup>
 						</listheader>
+						<listheader id="getSender" hflex="2" 
+							label="${labels.cwfmessagebox.main.header.sender}" />
 						<listheader id="getSubject" hflex="3"
 							label="${labels.cwfmessagebox.main.header.subject}" />
 						<listheader id="getDeliveryDate" width="150px"
@@ -99,4 +100,8 @@
 		<image id="imgIndicator" src="${iconIndicator}"
 			style="position:absolute;left:0" visible="false" />
 	</div>
+	
+	<menuitem self="@define(sharedFormsMenu)" id="mnuRefresh"
+		label="${labels.cwf.btn.refresh.label}" />
+	
 </zk>

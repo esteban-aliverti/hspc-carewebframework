@@ -207,30 +207,40 @@ public class MessageService {
     }
     
     /**
-     * Retracts multiple messages.
+     * Cancels multiple messages.
      * 
-     * @param messagesToRetract List of message to retract.
+     * @param messages List of messages to cancel.
+     * @param retract If true, messages are retracted.
      */
-    public void retractMessages(List<Message> messagesToRetract) {
-        if (messagesToRetract != null) {
-            for (Message message : messagesToRetract) {
-                retractMessage(message);
+    public void cancelMessages(List<Message> messages, boolean retract) {
+        if (messages != null) {
+            for (Message message : messages) {
+                cancelMessage(message, retract);
             }
         }
     }
     
     /**
-     * Retracts a single message
+     * Cancels a single message
      * 
-     * @param messageToRetract Message to retract.
+     * @param message Message to cancel.
+     * @param retract If true, message is retracted.
      */
-    public void retractMessage(Message messageToRetract) {
-        if (messageToRetract != null) {
-            try {
-                getClient().cancelMessage(messageToRetract.getHeader().getMessageId(), true);
-            } catch (Exception e) {
-                log.error("An error occurred retracting message", e);
-            }
+    public void cancelMessage(Message message, boolean retract) {
+        cancelMessage(message.getHeader().getMessageId(), retract);
+    }
+    
+    /**
+     * Cancel a single message
+     * 
+     * @param messageId Id of message to cancel.
+     * @param retract If true, message is retracted.
+     */
+    public void cancelMessage(String messageId, boolean retract) {
+        try {
+            getClient().cancelMessage(messageId, retract);
+        } catch (Exception e) {
+            log.error("An error occurred cancelling message", e);
         }
     }
     
@@ -337,7 +347,7 @@ public class MessageService {
             //invoke updateAlert()
             alertingIntf.updateAlert((AlertMessage) messageWrapper.getMessage());
         } catch (Exception e) {
-            log.error("Unable to acknowledge message with message id: " + messageId, e);
+            throw new RuntimeException(e);
         }
     }
     

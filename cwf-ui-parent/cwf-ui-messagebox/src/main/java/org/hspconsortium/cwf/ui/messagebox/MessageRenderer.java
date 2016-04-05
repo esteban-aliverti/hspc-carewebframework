@@ -35,6 +35,7 @@ public class MessageRenderer extends AbstractListitemRenderer<MessageWrapper, Ob
         createCell(item, null).setImage(Constants.ICON_URGENCY_ALL[message.getUrgency().ordinal()]);
         createCell(item, null).setImage(message.isActionable() ? Constants.ICON_ACTIONABLE : Constants.ICON_INFO);
         createCell(item, message.getPatientName());
+        createCell(item, message.getSender());
         createCell(item, message.getSubject());
         createCell(item, message.getDeliveryDate());
         //item.setDisabled(message.isProcessing());

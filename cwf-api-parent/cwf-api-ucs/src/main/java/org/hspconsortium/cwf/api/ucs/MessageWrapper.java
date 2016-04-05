@@ -22,6 +22,9 @@ package org.hspconsortium.cwf.api.ucs;
 import java.util.Date;
 import java.util.Properties;
 
+import org.socraticgrid.hl7.services.uc.model.AlertMessage;
+import org.socraticgrid.hl7.services.uc.model.BaseAddress;
+import org.socraticgrid.hl7.services.uc.model.DeliveryAddress;
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.MessageBody;
 
@@ -48,6 +51,16 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     @Override
     public String getPatientId() {
         return getParam(MessageProperty.MESSAGE_ABOUT.name());
+    }
+    
+    @Override
+    public String getSender() {
+        DeliveryAddress sender = message.getHeader().getSender();
+        BaseAddress address = sender == null ? null : sender.getAddress();
+        String s = address == null ? "" : address.toString();
+        int i = s.indexOf("=") + 1;
+        int j = s.indexOf("]", i);
+        return i == 0 ? s : j == -1 ? s.substring(i) : s.substring(i, j);
     }
     
     @Override
@@ -79,7 +92,7 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     
     @Override
     public boolean canDelete() {
-        return false;
+        return message instanceof AlertMessage;
     }
     
     @Override

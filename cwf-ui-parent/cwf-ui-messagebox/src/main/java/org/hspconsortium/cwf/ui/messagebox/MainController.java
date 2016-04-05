@@ -193,6 +193,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     public void doBeforeComposeChildren(Component comp) throws Exception {
         super.doBeforeComposeChildren(comp);
         comp.setAttribute("iconInfoOnly", Constants.ICON_INFO);
+        comp.setAttribute("iconInfoOnly", Constants.ICON_INFO);
         comp.setAttribute("iconActionable", Constants.ICON_ACTIONABLE);
         comp.setAttribute("iconUrgency", Constants.ICON_URGENCY);
         comp.setAttribute("iconType", Constants.ICON_TYPE);
@@ -227,6 +228,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         model.setMultiple(true);
         updatePatient(true);
         subscribe(true);
+        ZKUtil.wireController(root.getFellow("mnuRefresh"), this);
     }
     
     @Override
@@ -251,7 +253,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
             uiElement = UIElementZKBase.getAssociatedUIElement(getContainer());
         }
         
-        Badge badge = new Badge(Integer.toString(model.getSize()), "btn-success");
+        Badge badge = model.isEmpty() ? null : new Badge(Integer.toString(model.getSize()), "btn-success");
         uiElement.notifyParent("badge", badge, false);
     }
     
@@ -433,7 +435,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     /**
      * Update controls when the selection changes.
      */
-    public void onSelect$lstMessage() {
+    public void onSelect$lstMessages() {
         updateControls(false);
     }
     
@@ -441,6 +443,13 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * Refresh the display.
      */
     public void onClick$btnRefresh() {
+        refresh();
+    }
+    
+    /**
+     * Refresh the display.
+     */
+    public void onClick$mnuRefresh() {
         refresh();
     }
     
@@ -469,7 +478,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                             break LOOP;
                     }
                 }
-                service.acknowledgeMessage(message.getId());
+                service.cancelMessage(message.getId(), false);
             } else {
                 String msg = StrUtil.getLabel("cwfmessagebox.main.delete.unable.prompt", s);
                 

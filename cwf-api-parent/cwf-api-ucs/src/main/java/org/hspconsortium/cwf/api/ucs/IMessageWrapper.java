@@ -50,6 +50,8 @@ public interface IMessageWrapper<T> {
     
     String getParam(String string);
     
+    String getSender();
+    
     String getType();
     
     public String getBody();

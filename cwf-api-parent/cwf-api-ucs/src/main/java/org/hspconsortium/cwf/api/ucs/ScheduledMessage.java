@@ -22,6 +22,9 @@ package org.hspconsortium.cwf.api.ucs;
 import java.util.Date;
 import java.util.Properties;
 
+import org.carewebframework.api.domain.IUser;
+import org.carewebframework.api.security.SecurityUtil;
+
 /**
  * A scheduled message.
  */
@@ -34,6 +37,8 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
     
     private String subject;
     
+    private String sender;
+    
     private final Properties extraInfo = new Properties();
     
     public ScheduledMessage() {
@@ -44,6 +49,9 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.subject = subject;
+        IUser user = SecurityUtil.getAuthenticatedUser();
+        ;
+        sender = user == null ? "" : user.getFullName();
         
         for (String info : extraInfo) {
             String[] pcs = info.split("\\=", 2);
@@ -166,7 +174,7 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
     
     @Override
     public boolean canDelete() {
-        return false;
+        return true;
     }
     
     @Override
@@ -205,6 +213,11 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
     public void setSubject(String value) {
         // TODO Auto-generated method stub
         
+    }
+    
+    @Override
+    public String getSender() {
+        return sender;
     }
     
 }
