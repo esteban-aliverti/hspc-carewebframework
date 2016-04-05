@@ -83,7 +83,7 @@
 								label="${labels.cwfmessagebox.main.button.infoonly.label}" />
 							<button id="btnForward" zclass="btn" sclass="btn-default btn-sm"
 								label="${labels.cwfmessagebox.main.button.forward.label}" />
-							<button id="btnDelete" zclass="btn" sclass="btn-default"
+							<button id="btnDelete" zclass="btn" sclass="btn-default btn-sm"
 								label="${labels.cwfmessagebox.main.button.delete.label}" />
 						</div>
 					</groupbox>
