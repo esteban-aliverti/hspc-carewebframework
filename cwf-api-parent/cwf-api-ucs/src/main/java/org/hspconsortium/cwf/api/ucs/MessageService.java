@@ -22,12 +22,15 @@ package org.hspconsortium.cwf.api.ucs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.carewebframework.api.property.IPropertyService;
 
 import org.socraticgrid.hl7.services.uc.interfaces.AlertingIntf;
 import org.socraticgrid.hl7.services.uc.interfaces.UCSAlertingIntf;
@@ -78,7 +81,13 @@ public class MessageService {
      */
     private final MessageServiceConfigurator config;
     
-    public MessageService(MessageServiceConfigurator config) {
+    /**
+     * This is only temporary in order to track deleted messages.
+     */
+    private final IPropertyService propertyService;
+    
+    public MessageService(IPropertyService propertyService, MessageServiceConfigurator config) {
+        this.propertyService = propertyService;
         this.config = config;
         alertBroadcaster = new AlertingBroadcaster();
         messageBroadcaster = new MessageBroadcaster();
@@ -238,11 +247,14 @@ public class MessageService {
      * @param retract If true, message is retracted.
      */
     public void cancelMessage(String messageId, boolean retract) {
+        propertyService.saveValue("UCSMessage", messageId, true, "deleted");
+        /*
         try {
             getClient().cancelMessage(messageId, retract);
         } catch (Exception e) {
             log.error("An error occurred cancelling message", e);
         }
+        */
     }
     
     /**
@@ -253,7 +265,19 @@ public class MessageService {
      */
     public List<Message> getAllMessages() {
         try {
-            return getClient().listMessages();
+            List<Message> messages = getClient().listMessages();
+            Iterator<Message> iter = messages.iterator();
+            
+            while (iter.hasNext()) {
+                Message message = iter.next();
+                String status = propertyService.getValue("UCSMessage", message.getHeader().getMessageId());
+                
+                if ("deleted".equals(status)) {
+                    iter.remove();
+                }
+            }
+            
+            return messages;
         } catch (Exception e) {
             log.error("Error retrieving messages", e);
             throw new RuntimeException("Error retrieving messages", e);

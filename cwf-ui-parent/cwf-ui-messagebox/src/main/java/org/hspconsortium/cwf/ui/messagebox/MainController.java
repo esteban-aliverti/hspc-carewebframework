@@ -142,7 +142,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                     break;
                 
                 case DELETE:
-                    removeMessage(messageId);
+                    removeMessage(messageId, true);
                     break;
             }
         }
@@ -378,11 +378,15 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * 
      * @param id The message id.
      */
-    protected void removeMessage(String id) {
+    protected void removeMessage(String id, boolean modelOnly) {
         int i = indexOfMessage(id);
         
         if (i >= 0) {
             model.remove(i);
+            
+            if (!modelOnly) {
+                service.cancelMessage(id, false);
+            }
         }
     }
     
@@ -473,7 +477,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
                             break LOOP;
                     }
                 }
-                service.cancelMessage(message.getId(), false);
+                removeMessage(message.getId(), false);
             } else {
                 String msg = StrUtil.getLabel("cwfmessagebox.main.delete.unable.prompt", s);
                 

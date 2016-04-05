@@ -22,7 +22,6 @@ package org.hspconsortium.cwf.api.ucs;
 import java.util.Date;
 import java.util.Properties;
 
-import org.socraticgrid.hl7.services.uc.model.AlertMessage;
 import org.socraticgrid.hl7.services.uc.model.BaseAddress;
 import org.socraticgrid.hl7.services.uc.model.DeliveryAddress;
 import org.socraticgrid.hl7.services.uc.model.Message;
@@ -92,7 +91,7 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     
     @Override
     public boolean canDelete() {
-        return message instanceof AlertMessage;
+        return true;
     }
     
     @Override

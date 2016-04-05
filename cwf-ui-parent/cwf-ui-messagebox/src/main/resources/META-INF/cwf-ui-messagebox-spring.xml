@@ -78,9 +78,7 @@
 		</bean>
 
 		<bean id="cwfMessageboxProcessingController" class="org.hspconsortium.cwf.ui.messagebox.ProcessingController"
-			scope="prototype">
-			<property name="messageService" ref="cwfMessageService" />
-		</bean>
+			scope="prototype" />
 
 	</beans>
 

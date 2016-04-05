@@ -39,7 +39,6 @@ import org.zkoss.zul.Window;
 
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
-import org.hspconsortium.cwf.api.ucs.MessageService;
 import org.hspconsortium.cwf.api.ucs.MessageWrapper;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.Action;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.ActionEvent;
@@ -55,8 +54,6 @@ public class ProcessingController extends FrameworkController implements IPatien
     private static final long serialVersionUID = 1L;
     
     private static final String DIALOG = ZKUtil.getResourcePath(ProcessingController.class) + "processing.zul";
-    
-    private MessageService service;
     
     private Iterator<MessageWrapper> iterator;
     
@@ -125,15 +122,6 @@ public class ProcessingController extends FrameworkController implements IPatien
     }
     
     /**
-     * Allows IOC container to inject message service.
-     * 
-     * @param service Message service.
-     */
-    public void setMessageService(MessageService service) {
-        this.service = service;
-    }
-    
-    /**
      * Closes (hides) the processing dialog.
      */
     private void close() {
@@ -189,7 +177,7 @@ public class ProcessingController extends FrameworkController implements IPatien
             
             case DELETE:
             case DELETE_ALL:
-                service.acknowledgeMessage(message.getId());
+                mainController.removeMessage(message.getId(), false);
                 break;
             
             case CANCEL:

@@ -11,6 +11,7 @@
 
 		<bean id="cwfMessageService" init-method="init" destroy-method="destroy"
 			class="org.hspconsortium.cwf.api.ucs.MessageService">
+			<constructor-arg ref="propertyService" />
 			<constructor-arg>
 				<bean class="org.hspconsortium.cwf.api.ucs.MessageServiceConfigurator" />
 			</constructor-arg>

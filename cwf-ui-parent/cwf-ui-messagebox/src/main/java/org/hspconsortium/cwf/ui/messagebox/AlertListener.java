@@ -53,7 +53,7 @@ public class AlertListener implements UCSAlertingIntf {
     @Override
     public <T extends Message> boolean cancelAlertMessage(MessageModel<T> messageModel, List<String> localReceivers,
                                                           String serverId) {
-        controller.removeMessage(messageModel.getMessageType().getHeader().getMessageId());
+        controller.removeMessage(messageModel.getMessageType().getHeader().getMessageId(), true);
         return false;
     }
     
