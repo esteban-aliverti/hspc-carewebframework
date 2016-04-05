@@ -55,7 +55,7 @@ public class SchedulingController extends FrameworkController {
         
         @Override
         protected void renderItem(Listitem item, ScheduledMessage message) {
-            createCell(item, null).setImage(message.getUrgency().getIcon());
+            createCell(item, null).setImage(UrgencyRenderer.getIconPath(message.getUrgency()));
             createCell(item, message.getDeliveryDate());
             createCell(item, message.getPatientName());
             createCell(item, message.getSubject());
@@ -161,7 +161,7 @@ public class SchedulingController extends FrameworkController {
         super.doAfterCompose(comp);
         lstScheduled.setItemRenderer(renderer);
         refresh();
-        getEventManager().subscribe("ALERT.SCHEDULE", alertEventListener);
+        getEventManager().subscribe("MESSAGE.SCHEDULE", alertEventListener);
     }
     
     /**
@@ -180,7 +180,7 @@ public class SchedulingController extends FrameworkController {
      * Unsubscribe on dialog closure.
      */
     public void onClose() {
-        getEventManager().unsubscribe("ALERT.SCHEDULE", alertEventListener);
+        getEventManager().unsubscribe("MESSAGE.SCHEDULE", alertEventListener);
     }
     
     /**

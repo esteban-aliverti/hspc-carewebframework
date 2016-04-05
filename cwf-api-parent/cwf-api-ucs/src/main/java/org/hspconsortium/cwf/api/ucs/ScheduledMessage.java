@@ -121,9 +121,17 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
         return deliveryDate;
     }
     
+    public void setDeliveryDate(Date date) {
+        this.deliveryDate = date;
+    }
+    
     @Override
     public String getSubject() {
         return subject;
+    }
+    
+    public void setSubject(String value) {
+        this.subject = value;
     }
     
     /**
@@ -159,6 +167,10 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
     @Override
     public String getPatientName() {
         return getParam("patientName");
+    }
+    
+    public void setPatientName(String value) {
+        setParam("patientName", value);
     }
     
     @Override
@@ -198,21 +210,6 @@ public class ScheduledMessage implements IMessageWrapper<ScheduledMessage> {
     public String getBody() {
         // TODO Auto-generated method stub
         return null;
-    }
-    
-    public void setDeliveryDate(Date date) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    public void setPatientName(String string) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    public void setSubject(String value) {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override

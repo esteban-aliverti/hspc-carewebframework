@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import org.carewebframework.common.NumUtil;
-import org.carewebframework.common.StrUtil;
 
 public enum Urgency {
     HIGH, MEDIUM, LOW;
@@ -40,44 +39,6 @@ public enum Urgency {
         } else {
             return valueOf(value);
         }
-    }
-    
-    /**
-     * Returns the name of the image resource representing the graphical representation of the
-     * urgency.
-     * 
-     * @return The image resource name.
-     */
-    public String getIcon() {
-        return getLabel("icon");
-    }
-    
-    /**
-     * Returns the color to be used when displaying alerts.
-     * 
-     * @return A color.
-     */
-    public String getColor() {
-        return getLabel("color");
-    }
-    
-    /**
-     * Returns the display name for the urgency.
-     * 
-     * @return Display name
-     */
-    public String getDisplayName() {
-        return getLabel("label");
-    }
-    
-    /**
-     * Returns the label property for the specified attribute name and urgency.
-     * 
-     * @param name The attribute name.
-     * @return The label value.
-     */
-    private String getLabel(String name) {
-        return StrUtil.getLabel("cwfmessagebox.urgency." + name + "." + name());
     }
     
 };

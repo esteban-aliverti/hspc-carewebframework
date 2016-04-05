@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.carewebframework.common.StrUtil;
 import org.carewebframework.ui.FrameworkController;
-import org.carewebframework.ui.icons.IconUtil;
 import org.carewebframework.ui.zk.DateTimebox;
 import org.carewebframework.ui.zk.ListUtil;
 import org.carewebframework.ui.zk.PopupDialog;
@@ -96,7 +95,7 @@ public class ScheduleController extends FrameworkController {
      * @return The modified or new scheduled message, or null if the dialog was cancelled.
      */
     public static ScheduledMessage show(ScheduledMessage message) {
-        Map<Object, Object> args = new HashMap<Object, Object>();
+        Map<Object, Object> args = new HashMap<>();
         args.put("message", message);
         Window dlg = PopupDialog.popup(DIALOG, args, true, false, true);
         return (ScheduledMessage) dlg.getAttribute("message");
@@ -111,7 +110,7 @@ public class ScheduleController extends FrameworkController {
         message = (ScheduledMessage) arg.get("message");
         
         for (Urgency urgency : Urgency.values()) {
-            Comboitem item = new Comboitem(urgency.getDisplayName(), IconUtil.getIconPath(urgency.getIcon()));
+            Comboitem item = new Comboitem(UrgencyRenderer.getDisplayName(urgency), UrgencyRenderer.getIconPath(urgency));
             item.setValue(urgency);
             cboUrgency.appendChild(item);
         }
@@ -137,7 +136,7 @@ public class ScheduleController extends FrameworkController {
         ListUtil.selectComboboxData(cboUrgency, message.getUrgency());
         
         txtSubject.setValue(message.getSubject());
-        txtMessage.setValue(StrUtil.fromList(service.getScheduledNotificationMessage(message)));
+        txtMessage.setValue(message.getBody());
         
         if (message.hasPatient()) {
             lblPatient.setValue(message.getPatientName());

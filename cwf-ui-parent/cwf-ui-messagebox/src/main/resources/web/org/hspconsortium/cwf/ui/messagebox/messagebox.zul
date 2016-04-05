@@ -65,33 +65,26 @@
 					<space vflex="1" />
 					<groupbox closable="false"
 						title="${labels.cwfmessagebox.main.group.options.caption}">
-						<div align="center" sclass="btn-group-vertical btn-sm">
-							<button id="btnSchedule" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.schedule.label}"
-								width="100%" />
-							<button id="btnRefresh" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.refresh.label}"
-								width="100%" />
+						<div align="center" sclass="btn-group-vertical" width="100%">
+							<button id="btnSchedule" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.schedule.label}" />
+							<button id="btnRefresh" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.refresh.label}" />
 						</div>
 					</groupbox>
 					<groupbox closable="false"
 						title="${labels.cwfmessagebox.main.group.process.caption}">
-						<div align="center" sclass="btn-group-vertical btn-sm">
-							<button id="btnAll" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.all.label}"
-								width="100%" />
-							<button id="btnSelected" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.selected.label}"
-								width="100%" />
-							<button id="btnInfoAll" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.infoonly.label}"
-								width="100%" />
-							<button id="btnForward" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.forward.label}"
-								width="100%" />
+						<div align="center" sclass="btn-group-vertical" width="100%">
+							<button id="btnAll" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.all.label}" />
+							<button id="btnSelected" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.selected.label}" />
+							<button id="btnInfoAll" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.infoonly.label}" />
+							<button id="btnForward" zclass="btn" sclass="btn-default btn-sm"
+								label="${labels.cwfmessagebox.main.button.forward.label}" />
 							<button id="btnDelete" zclass="btn" sclass="btn-default"
-								label="${labels.cwfmessagebox.main.button.delete.label}"
-								width="100%" />
+								label="${labels.cwfmessagebox.main.button.delete.label}" />
 						</div>
 					</groupbox>
 				</div>

@@ -20,11 +20,14 @@
 package org.hspconsortium.cwf.ui.messagebox;
 
 import org.carewebframework.ui.icons.IconUtil;
+import org.carewebframework.ui.zk.ZKUtil;
 
 import org.hspconsortium.cwf.api.ucs.Urgency;
 
 public class Constants {
     
+    
+    public static final String RESOURCE_PATH = ZKUtil.getResourcePath(Constants.class);
     
     public static final String BOLD = "font-weight:bold";
     
@@ -40,11 +43,11 @@ public class Constants {
     
     public static final String ICON_URGENCY = IconUtil.getIconPath("silk:16x16:bullet_error.png");
     
-    public static final String ICON_URGENCY_HIGH = IconUtil.getIconPath(Urgency.HIGH.getIcon());
+    public static final String ICON_URGENCY_HIGH = UrgencyRenderer.getIconPath(Urgency.HIGH);
     
-    public static final String ICON_URGENCY_MEDIUM = IconUtil.getIconPath(Urgency.MEDIUM.getIcon());
+    public static final String ICON_URGENCY_MEDIUM = UrgencyRenderer.getIconPath(Urgency.MEDIUM);
     
-    public static final String ICON_URGENCY_LOW = IconUtil.getIconPath(Urgency.LOW.getIcon());
+    public static final String ICON_URGENCY_LOW = UrgencyRenderer.getIconPath(Urgency.LOW);
     
     public static final String[] ICON_URGENCY_ALL = { ICON_URGENCY_HIGH, ICON_URGENCY_MEDIUM, ICON_URGENCY_LOW };
     

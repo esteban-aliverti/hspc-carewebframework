@@ -21,6 +21,7 @@ package org.hspconsortium.cwf.api.ucs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -377,17 +378,12 @@ public class MessageService {
     
     public Collection<ScheduledMessage> getScheduledMessages() {
         // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyList();
     }
     
     public void deleteScheduledMessage(ScheduledMessage selected) {
         // TODO Auto-generated method stub
         
-    }
-    
-    public Iterable<ScheduledMessage> getScheduledNotificationMessage(ScheduledMessage message) {
-        // TODO Auto-generated method stub
-        return null;
     }
     
     public List<UserContactInfo> getScheduledNotificationRecipients(ScheduledMessage message) {

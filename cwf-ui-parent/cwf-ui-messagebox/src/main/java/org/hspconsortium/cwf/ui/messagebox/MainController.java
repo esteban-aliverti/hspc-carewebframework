@@ -42,6 +42,7 @@ import org.carewebframework.ui.zk.ZKUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Image;
@@ -228,7 +229,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         model.setMultiple(true);
         updatePatient(true);
         subscribe(true);
-        ZKUtil.wireController(root.getFellow("mnuRefresh"), this);
+        root.getFellow("mnuRefresh").addForward(Events.ON_CLICK, "btnRefresh", null);
     }
     
     @Override
@@ -365,8 +366,9 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         }
         
         if (alertThreshold != null && message.getUrgency().ordinal() <= alertThreshold.ordinal()) {
-            MessageInfo mi = new MessageInfo(message.getDisplayText(), "New Message", message.getUrgency().getColor(),
-                    alertDuration * 1000, null, "cwf.fireLocalEvent('MESSAGE.INFO', '" + message.getAlertId() + "');");
+            MessageInfo mi = new MessageInfo(message.getDisplayText(), "New Message",
+                    UrgencyRenderer.getColor(message.getUrgency()), alertDuration * 1000, null,
+                    "cwf.fireLocalEvent('MESSAGE.INFO', '" + message.getAlertId() + "');");
             getEventManager().fireLocalEvent(MessageWindow.EVENT_SHOW, mi);
         }
     }
@@ -443,13 +445,6 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      * Refresh the display.
      */
     public void onClick$btnRefresh() {
-        refresh();
-    }
-    
-    /**
-     * Refresh the display.
-     */
-    public void onClick$mnuRefresh() {
         refresh();
     }
     
