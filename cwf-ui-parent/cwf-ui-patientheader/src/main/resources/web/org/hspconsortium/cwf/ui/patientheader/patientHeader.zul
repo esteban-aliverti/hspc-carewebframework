@@ -7,6 +7,10 @@
 		.cwf-patientheader .z-toolbar-content {
 			height: 100%;
 		}
+		
+		.cwf-patientheader a:focus {
+        	outline: none;
+ 		}
 	</style>
 	
 	<hlayout sclass="cwf-patientheader" height="100%" width="100%" valign="middle"
