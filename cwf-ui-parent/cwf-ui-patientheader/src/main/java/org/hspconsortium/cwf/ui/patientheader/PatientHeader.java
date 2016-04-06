@@ -39,9 +39,8 @@ import org.carewebframework.ui.zk.ZKUtil;
 import org.zkoss.zhtml.Div;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Toolbar;
 
@@ -70,7 +69,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
     
     private Toolbar tbPatient;
     
-    private Bandbox bbDetail;
+    private Button btnDetail;
     
     private Component pnlDetail;
     
@@ -107,18 +106,8 @@ public class PatientHeader extends FrameworkController implements PatientContext
         PatientSelection.show();
     }
     
-    /**
-     * This is a stupid workaround for bandbox's inability to deal with JIT rendering of content.
-     */
-    public void onDetail$bbDetail() {
-        bbDetail.setOpen(true);
-    }
-    
-    public void onClick$bbDetail(Event event) {
-        if (buildDetail()) {
-            bbDetail.setOpen(false);
-            Events.echoEvent("onDetail", bbDetail, null);
-        }
+    public void onClick$btnDetail(Event event) {
+        buildDetail();
     }
     
     @Override
@@ -139,11 +128,11 @@ public class PatientHeader extends FrameworkController implements PatientContext
         if (patient == null) {
             lblName.setValue(noSelection);
             lblName.setSclass("z-bandbox-disabled");
-            bbDetail.setDisabled(true);
+            btnDetail.setDisabled(true);
             return;
         }
         
-        bbDetail.setDisabled(false);
+        btnDetail.setDisabled(false);
         String name = FhirUtil.formatName(patient.getName());
         String mrn = FhirUtil.getMRNString(patient);
         name += mrn.isEmpty() ? "" : "  (" + mrn + ")";

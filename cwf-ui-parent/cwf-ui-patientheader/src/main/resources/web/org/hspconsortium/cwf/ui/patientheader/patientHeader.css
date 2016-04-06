@@ -5,17 +5,15 @@
 	height: 100%;
 }
 
-.cwf-patientheader .z-bandbox * {
-	border: none!important;
-	background: none!important;
+.cwf-patientheader .glyphicon {
+	background: none;
+	border: none;
+	font-size: 110%;
+	padding-bottom: 5px;
 }
 
-.cwf-patientheader .z-bandbox-input {
-	display: none;
-}
-
-.cwf-patientheader .z-bandbox-button {
-	padding: 3px 3px 0 0;
+.cwf-patientheader .glyphicon:disabled {
+	opacity: .5;
 }
 
 .cwf-patientheader a {

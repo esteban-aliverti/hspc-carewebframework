@@ -8,11 +8,8 @@
 	<hlayout sclass="cwf-patientheader" height="100%" width="100%" valign="middle"
 		apply="${cwfPatientHeaderController}">
 		<toolbar id="tbPatient" mold="panel" height="100%">
-			<bandbox id="bbDetail" readonly="true" >
-				<bandpopup>
-					<vlayout id="pnlDetail" sclass="cwf-patientheader-detail"/>
-				</bandpopup>
-			</bandbox>
+			<button id="btnDetail" popup="popDetail, after_start" 
+				zclass="glyphicon glyphicon-search"/>
 			<label id="lblName" style="font-weight:bold;padding-right:10px"
 				value="${labels.cwfpatientheader.noselection}" />
 			<a id="lnkSelect"
@@ -31,6 +28,10 @@
 			<label id="lblUser" />
 			<separator width="5px" />
 		</toolbar>
+		
+		<popup id="popDetail">
+			<vlayout id="pnlDetail" sclass="cwf-patientheader-detail"/>
+		</popup>
 	</hlayout>
 	
 </zk>
