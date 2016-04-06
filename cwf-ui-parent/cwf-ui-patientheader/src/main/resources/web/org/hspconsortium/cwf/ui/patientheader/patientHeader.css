@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+.cwf-patientheader .z-hlayout-inner,
+.cwf-patientheader .z-toolbar-content {
+	height: 100%;
+}
+
+.cwf-patientheader .z-bandbox * {
+	border: none!important;
+	background: none!important;
+}
+
+.cwf-patientheader .z-bandbox-input {
+	display: none;
+}
+
+.cwf-patientheader .z-bandbox-button {
+	padding: 3px 3px 0 0;
+}
+
+.cwf-patientheader a {
+	text-decoration: underline;
+}
+
+.cwf-patientheader a:focus {
+	outline: none;
+}
+
+.cwf-patientheader-detail {
+	padding: 5px;
+}
+
+.cwf-patientheader-label {
+	font-weight: bold;
+	padding-right: 5px;
+}
+
+.cwf-patientheader-header {
+	background: lightgray;
+	font-weight: bold;
+	font-size: 120%;
+	text-align: center;
+	width: 100%;
+	display: inline-block;
+}
+

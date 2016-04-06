@@ -2,41 +2,32 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<style>
-		.cwf-patientheader .z-hlayout-inner,
-		.cwf-patientheader .z-toolbar-content {
-			height: 100%;
-		}
-		
-		.cwf-patientheader a:focus {
-        	outline: none;
- 		}
-	</style>
+	
+	<style src="~./org/hspconsortium/cwf/ui/patientheader/patientHeader.css?" />
 	
 	<hlayout sclass="cwf-patientheader" height="100%" width="100%" valign="middle"
 		apply="${cwfPatientHeaderController}">
-		<toolbar mold="panel" height="100%">
-			<label id="lblName" style="font-weight:bold"
+		<toolbar id="tbPatient" mold="panel" height="100%">
+			<bandbox id="bbDetail" readonly="true" >
+				<bandpopup>
+					<vlayout id="pnlDetail" sclass="cwf-patientheader-detail"/>
+				</bandpopup>
+			</bandbox>
+			<label id="lblName" style="font-weight:bold;padding-right:10px"
 				value="${labels.cwfpatientheader.noselection}" />
-			<label id="lblMRN" style="font-weight:bold" />
-			<combobutton id="btnDetail">
-				<popup>
-					<vlayout id="pnlDetail" />
-				</popup>
-			</combobutton>
-			<a id="lnkSelect" style="text-decoration:underline"
+			<a id="lnkSelect"
 				label="${labels.cwfpatientheader.change.label}"
 				tooltiptext="${labels.cwfpatientheader.change.hint}" />
 			<separator width="10px" />
-			<label id="lblDOBLabel" style="font-weight:bold"
+			<label id="lblDOBLabel" sclass="cwf-patientheader-label"
 				value="${labels.cwfpatientheader.dob.label}" />
 			<label id="lblDOB" />
-			<label id="lblDODLabel" style="font-weight:bold" 
+			<label id="lblDODLabel" sclass="cwf-patientheader-label"
 				value="${labels.cwfpatientheader.dod.label}" />
 			<label id="lblDOD" />
 			<label id="lblGender" />
 		</toolbar>
-		<toolbar mold="panel" height="100%" hflex="1" align="end">
+		<toolbar id="tbUser" mold="panel" height="100%" hflex="1" align="end">
 			<label id="lblUser" />
 			<separator width="5px" />
 		</toolbar>

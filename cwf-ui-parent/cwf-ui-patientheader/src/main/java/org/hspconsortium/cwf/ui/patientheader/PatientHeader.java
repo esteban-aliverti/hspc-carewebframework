@@ -19,31 +19,44 @@
  */
 package org.hspconsortium.cwf.ui.patientheader;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.api.domain.IUser;
 import org.carewebframework.api.security.SecurityUtil;
 import org.carewebframework.common.DateUtil;
+import org.carewebframework.common.StrUtil;
 import org.carewebframework.ui.FrameworkController;
 import org.carewebframework.ui.zk.ZKUtil;
 
+import org.zkoss.zhtml.Div;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.OpenEvent;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Combobutton;
+import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Toolbar;
 
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.patientselection.PatientSelection;
 
 import ca.uhn.fhir.model.api.IDatatype;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.resource.Patient.Communication;
 import ca.uhn.fhir.model.primitive.BooleanDt;
 import ca.uhn.fhir.model.primitive.DateDt;
+import ca.uhn.fhir.model.primitive.StringDt;
 
 /**
  * Controller for patient header plugin.
@@ -55,13 +68,13 @@ public class PatientHeader extends FrameworkController implements PatientContext
     
     private static final Log log = LogFactory.getLog(PatientHeader.class);
     
-    private Combobutton btnDetail;
+    private Toolbar tbPatient;
+    
+    private Bandbox bbDetail;
     
     private Component pnlDetail;
     
     private Label lblName;
-    
-    private Label lblMRN;
     
     private Label lblGender;
     
@@ -73,17 +86,18 @@ public class PatientHeader extends FrameworkController implements PatientContext
     
     private Label lblDOD;
     
-    private Component[] labels;
-    
     private Label lblUser;
     
     private String noSelection;
+    
+    private Patient patient;
+    
+    private boolean needsDetail = true;
     
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
         noSelection = lblName.getValue();
-        labels = new Component[] { btnDetail, lblMRN, lblGender, lblDOBLabel, lblDOB, lblDODLabel, lblDOD };
         IUser user = SecurityUtil.getAuthenticatedUser();
         setLabel(lblUser, user.getFullName() + " @ " + user.getSecurityDomain().getName(), null);
         committed();
@@ -93,9 +107,17 @@ public class PatientHeader extends FrameworkController implements PatientContext
         PatientSelection.show();
     }
     
-    public void onOpen$btnDetail(OpenEvent event) {
-        if (event.isOpen()) {
-            buildDetail();
+    /**
+     * This is a stupid workaround for bandbox's inability to deal with JIT rendering of content.
+     */
+    public void onDetail$bbDetail() {
+        bbDetail.setOpen(true);
+    }
+    
+    public void onClick$bbDetail(Event event) {
+        if (buildDetail()) {
+            bbDetail.setOpen(false);
+            Events.echoEvent("onDetail", bbDetail, null);
         }
     }
     
@@ -106,8 +128,9 @@ public class PatientHeader extends FrameworkController implements PatientContext
     @Override
     public void committed() {
         hideLabels();
-        Patient patient = PatientContext.getActivePatient();
-        //ZKUtil.detachChildren(pnlDetail);
+        patient = PatientContext.getActivePatient();
+        needsDetail = true;
+        ZKUtil.detachChildren(pnlDetail);
         
         if (log.isDebugEnabled()) {
             log.debug("patient: " + patient);
@@ -115,12 +138,17 @@ public class PatientHeader extends FrameworkController implements PatientContext
         
         if (patient == null) {
             lblName.setValue(noSelection);
+            lblName.setSclass("z-bandbox-disabled");
+            bbDetail.setDisabled(true);
             return;
         }
         
-        setLabel(lblName, FhirUtil.formatName(patient.getName()), null);
+        bbDetail.setDisabled(false);
+        String name = FhirUtil.formatName(patient.getName());
         String mrn = FhirUtil.getMRNString(patient);
-        setLabel(lblMRN, mrn.isEmpty() ? null : "(" + mrn + ")", null);
+        name += mrn.isEmpty() ? "" : "  (" + mrn + ")";
+        lblName.setValue(name);
+        lblName.setSclass(null);
         setLabel(lblDOB, formatDateAndAge(patient.getBirthDate()), lblDOBLabel);
         setLabel(lblDOD, formatDOD(patient.getDeceased()), lblDODLabel);
         setLabel(lblGender, patient.getGender(), null);
@@ -166,16 +194,128 @@ public class PatientHeader extends FrameworkController implements PatientContext
     }
     
     private void hideLabels() {
-        for (Component label : labels) {
-            label.setVisible(false);
+        for (Component child : tbPatient.getChildren()) {
+            if (child instanceof Label && child != lblName) {
+                child.setVisible(false);
+            }
         }
     }
     
-    private void buildDetail() {
-        if (pnlDetail.getFirstChild() != null) {
+    private boolean buildDetail() {
+        if (!needsDetail) {
+            return false;
+        }
+        
+        needsDetail = false;
+        boolean needsHeader;
+        
+        // Communication
+        
+        needsHeader = true;
+        
+        for (Communication comm : patient.getCommunication()) {
+            if (needsHeader) {
+                needsHeader = false;
+                addHeader("Communication");
+            }
+            
+            String language = FhirUtil.getDisplayValueForType(comm.getLanguage());
+            
+            if (comm.getPreferred()) {
+                language += " (preferred)";
+            }
+            
+            addDetail(language, null);
+        }
+        // Telecom info
+        
+        needsHeader = true;
+        
+        List<ContactPointDt> telecoms = new ArrayList<>(patient.getTelecom());
+        Collections.sort(telecoms, new Comparator<ContactPointDt>() {
+            
+            
+            @Override
+            public int compare(ContactPointDt cp1, ContactPointDt cp2) {
+                return cp1.getRank() - cp2.getRank();
+            }
+            
+        });
+        
+        for (ContactPointDt telecom : telecoms) {
+            if (needsHeader) {
+                needsHeader = false;
+                addHeader("Contacts");
+            }
+            
+            String type = telecom.getSystem();
+            String use = telecom.getUse();
+            
+            if (!StringUtils.isEmpty(use)) {
+                type += " (" + use + ")";
+            }
+            
+            addDetail(telecom.getValue(), type);
+        }
+        
+        // Address(es)
+        needsHeader = true;
+        
+        for (AddressDt address : patient.getAddress()) {
+            if (needsHeader) {
+                needsHeader = false;
+                addHeader("Addresses");
+            }
+            
+            String type = address.getType();
+            String use = address.getUse();
+            
+            if (!StringUtils.isEmpty(type)) {
+                use += " (" + type + ")";
+            }
+            
+            addDetail(" ", use);
+            
+            for (StringDt line : address.getLine()) {
+                addDetail(line.getValue(), null);
+            }
+            
+            StringBuilder line = new StringBuilder();
+            line.append(address.getCity()).append(", ");
+            line.append(address.getState()).append("  ");
+            line.append(address.getPostalCode());
+            addDetail(line.toString(), null);
+        }
+        
+        needsHeader = true;
+        
+        if (pnlDetail.getFirstChild() == null) {
+            addDetail(StrUtil.getLabel("cwfpatientheader.nodetail.label"), null);
+        }
+        
+        return true;
+    }
+    
+    private void addHeader(String text) {
+        Label header = new Label(text);
+        header.setSclass("cwf-patientheader-header");
+        pnlDetail.appendChild(header);
+    }
+    
+    private void addDetail(String text, String label) {
+        if (StringUtils.isEmpty(text)) {
             return;
         }
         
-        System.out.println("Detail requested");
+        Div div = new Div();
+        pnlDetail.appendChild(div);
+        
+        if (label != null) {
+            Label lbl = new Label(label);
+            lbl.setSclass("cwf-patientheader-label");
+            div.appendChild(lbl);
+        }
+        
+        div.appendChild(new Label(text));
     }
 }
