@@ -24,10 +24,6 @@
 	outline: none;
 }
 
-.cwf-patientheader-detail {
-	padding: 5px;
-}
-
 .cwf-patientheader-label {
 	font-weight: bold;
 	padding-right: 5px;
@@ -39,6 +35,7 @@
 	font-size: 120%;
 	text-align: center;
 	width: 100%;
+	margin-top: 5px;
 	display: inline-block;
 }
 

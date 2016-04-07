@@ -51,6 +51,8 @@ import org.hspconsortium.cwf.ui.patientselection.PatientSelection;
 import ca.uhn.fhir.model.api.IDatatype;
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Patient.Communication;
 import ca.uhn.fhir.model.primitive.BooleanDt;
@@ -90,6 +92,8 @@ public class PatientHeader extends FrameworkController implements PatientContext
     private String noSelection;
     
     private Patient patient;
+    
+    private String patientName;
     
     private boolean needsDetail = true;
     
@@ -133,10 +137,9 @@ public class PatientHeader extends FrameworkController implements PatientContext
         }
         
         btnDetail.setDisabled(false);
-        String name = FhirUtil.formatName(patient.getName());
+        patientName = FhirUtil.formatName(patient.getName());
         String mrn = FhirUtil.getMRNString(patient);
-        name += mrn.isEmpty() ? "" : "  (" + mrn + ")";
-        lblName.setValue(name);
+        lblName.setValue(patientName + (mrn.isEmpty() ? "" : "  (" + mrn + ")"));
         lblName.setSclass(null);
         setLabel(lblDOB, formatDateAndAge(patient.getBirthDate()), lblDOBLabel);
         setLabel(lblDOD, formatDOD(patient.getDeceased()), lblDODLabel);
@@ -198,6 +201,47 @@ public class PatientHeader extends FrameworkController implements PatientContext
         needsDetail = false;
         boolean needsHeader;
         
+        // Names
+        
+        needsHeader = true;
+        
+        for (HumanNameDt name : patient.getName()) {
+            
+            String nm = FhirUtil.formatName(name);
+            
+            if (patientName.equals(nm)) {
+                continue;
+            }
+            
+            if (needsHeader) {
+                needsHeader = false;
+                addHeader("Other Names");
+            }
+            
+            addDetail(nm, null);
+        }
+        
+        // Identifiers
+        
+        needsHeader = true;
+        
+        for (IdentifierDt id : patient.getIdentifier()) {
+            if (needsHeader) {
+                needsHeader = false;
+                addHeader("Identifiers");
+            }
+            
+            String use = id.getUse();
+            String system = id.getSystem();
+            String value = id.getValue();
+            
+            if (!StringUtils.isEmpty(system)) {
+                value += " (" + system + ")";
+            }
+            
+            addDetail(value, use);
+        }
+        
         // Communication
         
         needsHeader = true;
@@ -226,7 +270,9 @@ public class PatientHeader extends FrameworkController implements PatientContext
             
             @Override
             public int compare(ContactPointDt cp1, ContactPointDt cp2) {
-                return cp1.getRank() - cp2.getRank();
+                int rank1 = cp1.getRank() == null ? 0 : cp1.getRank();
+                int rank2 = cp2.getRank() == null ? 0 : cp2.getRank();
+                return rank1 - rank2;
             }
             
         });
@@ -234,7 +280,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
         for (ContactPointDt telecom : telecoms) {
             if (needsHeader) {
                 needsHeader = false;
-                addHeader("Contacts");
+                addHeader("Contact Details");
             }
             
             String type = telecom.getSystem();
@@ -275,8 +321,6 @@ public class PatientHeader extends FrameworkController implements PatientContext
             line.append(address.getPostalCode());
             addDetail(line.toString(), null);
         }
-        
-        needsHeader = true;
         
         if (pnlDetail.getFirstChild() == null) {
             addDetail(StrUtil.getLabel("cwfpatientheader.nodetail.label"), null);
