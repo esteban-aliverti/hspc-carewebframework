@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>cwf-ui-core</module>
+		<module>cwf-ui-smart</module>
 		<module>cwf-ui-patientselection-parent</module>
 		<module>cwf-ui-patientheader</module>
 		<module>cwf-ui-patientphoto</module>

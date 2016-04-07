@@ -25,6 +25,8 @@ import java.util.UUID;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 
+import org.carewebframework.common.MiscUtil;
+
 import org.hspconsortium.client.auth.Scopes;
 import org.hspconsortium.client.auth.SimpleScope;
 import org.hspconsortium.client.auth.access.AccessToken;
@@ -45,11 +47,11 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
     
     private final JWTAuthConfigurator config;
     
-    private final JWTCredentials jwtCredentials;
-    
     private final Scopes requestedScopes;
     
     private final AccessTokenProvider<?> tokenProvider;
+    
+    private JWTCredentials jwtCredentials;
     
     public JWTAuthInterceptor(String id, FhirContext fhirContext, JWTAuthConfigurator config) throws Exception {
         super(id, "Bearer");
@@ -66,17 +68,6 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
             }
         }
         
-        // RSA signatures require a public and private RSA key pair, the public key
-        // must be made known to the JWS recipient in order to verify the signatures
-        URL url = getClass().getResource(config.getWebKey());
-        JWKSet jwks = JWKSet.load(url);
-        RSAKey rsaKey = (RSAKey) jwks.getKeys().get(0);
-        
-        jwtCredentials = new JWTCredentials(rsaKey.toRSAPrivateKey());
-        jwtCredentials.setIssuer(config.getIssuer());
-        jwtCredentials.setSubject(config.getSubject());
-        jwtCredentials.setAudience(config.getAudience().isEmpty() ? config.getTokenProviderUrl() : config.getAudience());
-        jwtCredentials.setDuration(config.getDuration());
     }
     
     @Override
@@ -89,11 +80,33 @@ public class JWTAuthInterceptor extends AbstractAuthInterceptor {
     }
     
     private AccessToken getAccessToken() {
+        if (jwtCredentials == null) {
+            initCredentials();
+        }
+        
         jwtCredentials.setTokenReference(UUID.randomUUID().toString());
         ClientCredentialsAccessTokenRequest<JWTCredentials> tokenRequest = new ClientCredentialsAccessTokenRequest<>(
                 config.getIssuer(), jwtCredentials, requestedScopes);
         
         return tokenProvider.getAccessToken(config.getTokenProviderUrl(), tokenRequest);
+    }
+    
+    private void initCredentials() {
+        try {
+            // RSA signatures require a public and private RSA key pair, the public key
+            // must be made known to the JWS recipient in order to verify the signatures
+            URL url = getClass().getResource(config.getWebKey());
+            JWKSet jwks = JWKSet.load(url);
+            RSAKey rsaKey = (RSAKey) jwks.getKeys().get(0);
+            
+            jwtCredentials = new JWTCredentials(rsaKey.toRSAPrivateKey());
+            jwtCredentials.setIssuer(config.getIssuer());
+            jwtCredentials.setSubject(config.getSubject());
+            jwtCredentials.setAudience(config.getAudience().isEmpty() ? config.getTokenProviderUrl() : config.getAudience());
+            jwtCredentials.setDuration(config.getDuration());
+        } catch (Exception e) {
+            throw MiscUtil.toUnchecked(e);
+        }
     }
     
 }

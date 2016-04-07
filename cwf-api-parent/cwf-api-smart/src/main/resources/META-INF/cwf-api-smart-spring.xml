@@ -7,8 +7,16 @@
 
 	<beans profile="desktop">
 
-		<bean id="smart.context.record" parent="smart.context.base"
-			class="org.hspconsortium.cwf.api.smart.SmartContextRecord" depends-on="patientContext" />
+		<bean id="smart.context.base" class="org.carewebframework.smart.SmartContextBase"
+			abstract="true" init-method="init" destroy-method="destroy">
+			<property name="eventManager" ref="eventManager" />
+		</bean>
+
+		<bean id="smart.context.user" parent="smart.context.base"
+			class="org.hspconsortium.cwf.api.smart.SmartContextUser" depends-on="userContext" />
+
+		<bean id="smart.context.patient" parent="smart.context.base"
+			class="org.hspconsortium.cwf.api.smart.SmartContextPatient" depends-on="patientContext" />
 
 	</beans>
 </beans>

@@ -75,6 +75,11 @@
 			<artifactId>cwf-api-ucs</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-smart</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 		<!--  HSPC CWF plugins -->
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
@@ -160,17 +165,6 @@
 		<dependency>
 			<groupId>org.carewebframework</groupId>
 			<artifactId>org.carewebframework.hibernate.h2</artifactId>
-			<version>5.0.0-SNAPSHOT</version>
-		</dependency>
-		<!-- SMART Support -->
-		<dependency>
-			<groupId>org.hspconsortium.carewebframework</groupId>
-			<artifactId>cwf-api-smart</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.carewebframework</groupId>
-			<artifactId>org.carewebframework.smart.ui</artifactId>
 			<version>5.0.0-SNAPSHOT</version>
 		</dependency>
 		<!-- Security -->

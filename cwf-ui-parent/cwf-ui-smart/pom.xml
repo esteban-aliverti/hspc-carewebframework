@@ -1,24 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
 	<parent>
 		<groupId>org.hspconsortium.carewebframework</groupId>
-		<artifactId>cwf-api-parent</artifactId>
+		<artifactId>cwf-ui-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<name>SMART Integration API Support</name>
-	<artifactId>cwf-api-smart</artifactId>
+	<name>SMART Integration UI Support</name>
+	<artifactId>cwf-ui-smart</artifactId>
 	<packaging>jar</packaging>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.carewebframework</groupId>
-			<artifactId>org.carewebframework.api.core</artifactId>
+			<artifactId>org.carewebframework.shell</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
-			<artifactId>cwf-api-core</artifactId>
+			<artifactId>cwf-api-smart</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

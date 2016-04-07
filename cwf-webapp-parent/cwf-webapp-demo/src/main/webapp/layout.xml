@@ -53,7 +53,10 @@
 							<cwfDocuments/>
 						</treepane>
 						<treepane label="Growth Chart">
-							<growthchart/>
+							<growth_chart/>
+						</treepane>
+						<treepane label="Bilirubin Risk">
+							<bilirubin_chart/>
 						</treepane>
 					</treeview>
 				</tabpane>

@@ -19,22 +19,21 @@
  */
 package org.hspconsortium.cwf.api.smart;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.hspconsortium.cwf.api.patient.PatientContext;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
-import org.carewebframework.smart.SmartContextBase;
+
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Implements SMART context scope "record".
  */
-public class SmartContextRecord extends SmartContextBase {
+public class SmartContextPatient extends SmartContextBase {
+    
     
     /**
      * Binds patient context changes to the SMART record context scope.
      */
-    public SmartContextRecord() {
-        super("record", "CONTEXT.CHANGED.Patient");
+    public SmartContextPatient() {
+        super("patient", "CONTEXT.CHANGED.Patient");
     }
     
     /**
@@ -47,9 +46,7 @@ public class SmartContextRecord extends SmartContextBase {
         Patient patient = PatientContext.getActivePatient();
         
         if (patient != null) {
-            context.put("full_name", FhirUtil.formatName(patient.getName()));
-            context.put("id", patient.getId().getIdPart());
-            context.put("param", "patientId");
+            context.put("patientId", patient.getId().getIdPart());
         }
     }
     
