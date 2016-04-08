@@ -49,6 +49,7 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
     private boolean _active;
     
     public SmartContainer() {
+        this.setStyle("background:lightgray");
         contextRegistry = SpringUtil.getBean("smartContextRegistry", SmartContextRegistry.class);
     }
     
