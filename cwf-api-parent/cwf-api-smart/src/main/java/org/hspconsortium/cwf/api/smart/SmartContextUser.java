@@ -51,7 +51,7 @@ public class SmartContextUser extends SmartContextBase {
         IUser user = UserContext.getActiveUser();
         
         if (user != null) {
-            context.put("user", user.getLogicalId());
+            context.put("userId", user.getLogicalId());
         }
     }
     

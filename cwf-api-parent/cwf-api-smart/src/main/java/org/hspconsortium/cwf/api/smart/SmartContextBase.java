@@ -38,9 +38,7 @@ import org.carewebframework.common.WeakList;
 public abstract class SmartContextBase implements IGenericEvent<Object>, ISmartContext {
     
     
-    public static final String SMART_CONTEXT_EVENT = "SMART.CONTEXT.";
-    
-    public static final class ContextMap extends HashMap<String, Object> {
+    public static class ContextMap extends HashMap<String, String> {
         
         
         private static final long serialVersionUID = 1L;
@@ -52,7 +50,9 @@ public abstract class SmartContextBase implements IGenericEvent<Object>, ISmartC
         private ContextMap(ContextMap contextMap) {
             super(contextMap);
         }
-    };
+    }
+    
+    public static final String SMART_CONTEXT_EVENT = "SMART.CONTEXT.";
     
     private IEventManager eventManager;
     
@@ -118,15 +118,6 @@ public abstract class SmartContextBase implements IGenericEvent<Object>, ISmartC
     }
     
     /**
-     * Returns the name of the SMART context scope.
-     * 
-     * @return The context scope.
-     */
-    public String getContextScope() {
-        return contextScope;
-    }
-    
-    /**
      * Used by Spring IOC to set the active event manager.
      * 
      * @param eventManager The event manager.
@@ -163,6 +154,16 @@ public abstract class SmartContextBase implements IGenericEvent<Object>, ISmartC
      * @param context Context map to receive the new context state.
      */
     protected abstract void updateContext(ContextMap context);
+    
+    /**
+     * Returns the name of the SMART context scope.
+     * 
+     * @return The context scope.
+     */
+    @Override
+    public String getContextScope() {
+        return contextScope;
+    }
     
     /**
      * ISmartContext.subscribe method allows a SMART container to subscribe to context changes for

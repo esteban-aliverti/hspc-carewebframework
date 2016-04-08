@@ -25,6 +25,8 @@ package org.hspconsortium.cwf.api.smart;
 public interface ISmartContext {
     
     
+    String getContextScope();
+    
     /**
      * Registers the subscriber to receive notification of changes to the SMART context.
      * 

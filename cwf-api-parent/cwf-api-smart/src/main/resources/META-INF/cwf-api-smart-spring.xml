@@ -5,18 +5,28 @@
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<beans profile="root">
+
+		<bean id="smartContextService" factory-method="getInstance" init-method="init"
+			class="org.hspconsortium.cwf.api.smart.SmartContextService" />
+		
+	</beans>
+	
 	<beans profile="desktop">
 
-		<bean id="smart.context.base" class="org.carewebframework.smart.SmartContextBase"
+		<bean id="smartContextRegistry"
+			class="org.hspconsortium.cwf.api.smart.SmartContextRegistry" />
+		
+		<bean id="smartContextBase"
 			abstract="true" init-method="init" destroy-method="destroy">
 			<property name="eventManager" ref="eventManager" />
 		</bean>
 
-		<bean id="smart.context.user" parent="smart.context.base"
-			class="org.hspconsortium.cwf.api.smart.SmartContextUser" depends-on="userContext" />
+		<bean parent="smartContextBase" depends-on="userContext"
+			class="org.hspconsortium.cwf.api.smart.SmartContextUser" />
 
-		<bean id="smart.context.patient" parent="smart.context.base"
-			class="org.hspconsortium.cwf.api.smart.SmartContextPatient" depends-on="patientContext" />
+		<bean parent="smartContextBase" depends-on="patientContext"
+			class="org.hspconsortium.cwf.api.smart.SmartContextPatient" />
 
 	</beans>
 </beans>

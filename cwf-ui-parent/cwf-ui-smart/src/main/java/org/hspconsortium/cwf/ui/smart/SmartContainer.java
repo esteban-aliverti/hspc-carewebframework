@@ -21,20 +21,16 @@ package org.hspconsortium.cwf.ui.smart;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
 
 import org.carewebframework.api.spring.SpringUtil;
-import org.carewebframework.common.QueryStringBuilder;
 
 import org.zkoss.zul.Iframe;
 
 import org.hspconsortium.cwf.api.smart.ISmartContextSubscriber;
 import org.hspconsortium.cwf.api.smart.SmartContextBase.ContextMap;
+import org.hspconsortium.cwf.api.smart.SmartContextRegistry;
+import org.hspconsortium.cwf.api.smart.SmartContextService;
 import org.hspconsortium.cwf.api.smart.SmartManifest;
-import org.hspconsortium.cwf.api.smart.SmartUtil;
 
 /**
  * SMART Container Implementation
@@ -48,24 +44,12 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
     
     protected final Map<String, ContextMap> _context = new HashMap<>();
     
+    private final SmartContextRegistry contextRegistry;
+    
     private boolean _active;
     
-    private final String rootUrl;
-    
-    private final String launchId = UUID.randomUUID().toString();
-    
     public SmartContainer() {
-        String url = SpringUtil.getProperty("smart.service.root.url");
-        
-        if (url == null) {
-            url = SpringUtil.getProperty("fhir.service.root.url");
-        }
-        
-        if (url == null) {
-            throw new IllegalArgumentException("No service root url defined for SMART.");
-        }
-        
-        rootUrl = StringUtils.chomp(url, "/");
+        contextRegistry = SpringUtil.getBean("smartContextRegistry", SmartContextRegistry.class);
     }
     
     /**
@@ -76,6 +60,7 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
     public void setManifest(SmartManifest manifest) {
         _manifest.init(manifest);
         registerScope(_manifest);
+        subscribe("user");
     }
     
     /**
@@ -87,7 +72,7 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
         String scope = manifest == null ? null : manifest.getValue("scope");
         
         if (scope != null) {
-            SmartUtil.subscribe(scope, this);
+            subscribe(scope);
         }
     }
     
@@ -151,29 +136,25 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
      * @return SMART plugin url.
      */
     private String getUrl() {
-        String qs = getQueryString();
-        return qs.isEmpty() ? null : _manifest.getValue("launch_uri") + "?" + qs;
+        return SmartContextService.getInstance().getUrl(_manifest, _context.values());
     }
     
     /**
-     * Return query string for the SMART plugin.
+     * Attaches this subscriber to a SMART context scope.
      * 
-     * @return The query string.
+     * @param contextScope The name of the SMART context scope.
      */
-    private String getQueryString() {
-        QueryStringBuilder qs = new QueryStringBuilder();
-        
-        for (ContextMap context : _context.values()) {
-            for (Entry<String, Object> entry : context.entrySet()) {
-                qs.append(entry.getKey(), entry.getValue());
-            }
-        }
-        
-        if (qs.length() > 0) {
-            qs.append("fhirServiceUrl", rootUrl);
-            //qs.append("launch", launchId);
-        }
-        
-        return qs.toString();
+    public void subscribe(String contextScope) {
+        contextRegistry.get(contextScope).subscribe(this);
     }
+    
+    /**
+     * Detaches this subscriber from a SMART context scope.
+     * 
+     * @param contextScope The name of the SMART context scope.
+     */
+    public void unsubscribe(String contextScope) {
+        contextRegistry.get(contextScope).unsubscribe(this);
+    }
+    
 }
