@@ -59,35 +59,7 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
      */
     public void setManifest(SmartManifest manifest) {
         _manifest.init(manifest);
-        registerScope(_manifest);
-        subscribe("user");
-    }
-    
-    /**
-     * Registers this container as a subscriber to the context scope declared in the manifest.
-     * 
-     * @param manifest The SMART manifest.
-     */
-    private void registerScope(SmartManifest manifest) {
-        String scope = manifest == null ? null : manifest.getValue("scope");
-        
-        if (scope != null) {
-            subscribe(scope);
-        }
-    }
-    
-    /**
-     * Sets the context.
-     * 
-     * @param contextScope The name of the SMART context scope.
-     * @param context The updated SMART context.
-     */
-    private void setContext(String contextScope, ContextMap context) {
-        _context.remove(contextScope);
-        
-        if (context != null && !context.isEmpty()) {
-            _context.put(contextScope, context);
-        }
+        subscribeAll(true);
     }
     
     /**
@@ -113,16 +85,18 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
      * this container of a change to the context.
      */
     @Override
-    public void updateContext(String contextType, ContextMap context) {
-        setContext(contextType, context);
+    public void updateContext(String contextScope, ContextMap context) {
+        _context.remove(contextScope);
+        
+        if (context != null && !context.isEmpty()) {
+            _context.put(contextScope, context);
+        }
+        
         refresh();
     }
     
-    /**
-     * Override to implement custom logic on container destruction.
-     */
     public void destroy() {
-        
+        subscribeAll(false);
     }
     
     public void refresh() {
@@ -140,21 +114,32 @@ public class SmartContainer extends Iframe implements ISmartContextSubscriber {
     }
     
     /**
-     * Attaches this subscriber to a SMART context scope.
+     * Subscribes/unsubscribes all scopes declared within the manifest.
      * 
-     * @param contextScope The name of the SMART context scope.
+     * @param subscribe If true, subscribe; false, unsubscribe;
      */
-    public void subscribe(String contextScope) {
-        contextRegistry.get(contextScope).subscribe(this);
+    private void subscribeAll(boolean subscribe) {
+        String scopes = _manifest == null ? null : _manifest.getValue("scope");
+        
+        if (scopes != null) {
+            for (String scope : scopes.split("\\,")) {
+                subscribe(scope.trim(), subscribe);
+            }
+        }
     }
     
     /**
-     * Detaches this subscriber from a SMART context scope.
+     * Subscribes/unsubscribes this subscriber to/from a SMART context scope.
      * 
      * @param contextScope The name of the SMART context scope.
+     * @param subscribe If true, subscribe; false, unsubscribe;
      */
-    public void unsubscribe(String contextScope) {
-        contextRegistry.get(contextScope).unsubscribe(this);
+    private void subscribe(String contextScope, boolean subscribe) {
+        if (subscribe) {
+            contextRegistry.get(contextScope).subscribe(this);
+        } else {
+            contextRegistry.get(contextScope).unsubscribe(this);
+        }
     }
     
 }
