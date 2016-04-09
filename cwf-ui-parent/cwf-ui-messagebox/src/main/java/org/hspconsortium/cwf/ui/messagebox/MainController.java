@@ -260,22 +260,12 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     
     private void loadMessages(boolean currentPatientOnly) {
         String userId = UserContext.getActiveUser().getLogicalId();
-        String patientId = currentPatientOnly && patient != null ? patient.getId().getIdPart() : null;
+        String patientId = currentPatientOnly && patient != null ? FhirUtil.getIdAsString(patient, true) : null;
         List<Message> messages = service.getMessagesByRecipient(userId, patientId);
         model.clear();
         
         for (Message message : messages) {
-            MessageWrapper mm = new MessageWrapper(message);
-            
-            if (currentPatientOnly) {
-                String assocPatientId = mm.getPatientId();
-                
-                if (assocPatientId != null && assocPatientId != patientId) {
-                    continue;
-                }
-            }
-            
-            model.add(mm);
+            model.add(new MessageWrapper(message));
         }
     }
     
@@ -382,10 +372,10 @@ public class MainController extends CaptionedForm implements IPatientContextEven
         int i = indexOfMessage(id);
         
         if (i >= 0) {
-            model.remove(i);
+            MessageWrapper message = model.remove(i);
             
             if (!modelOnly) {
-                service.cancelMessage(id, false);
+                service.cancelMessage(message.getMessage(), false);
             }
         }
     }

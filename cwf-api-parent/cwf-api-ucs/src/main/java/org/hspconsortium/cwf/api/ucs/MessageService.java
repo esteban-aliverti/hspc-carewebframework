@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,6 +54,9 @@ public class MessageService {
     
     
     private static final Log log = LogFactory.getLog(MessageService.class);
+    
+    private static final AlertStatus[] IGNORED_STATUSES = { AlertStatus.Acknowledged, AlertStatus.Expired,
+            AlertStatus.Retracted };
     
     /**
      * The UCS session associated with the service. This UCS session will be shared by all servlet
@@ -208,6 +212,10 @@ public class MessageService {
         }
     }
     
+    private boolean isAlert(Message message) {
+        return message instanceof AlertMessage;
+    }
+    
     public void sendMessage(Message message) {
         try {
             getClient().sendMessage(new MessageModel<Message>(message));
@@ -237,24 +245,17 @@ public class MessageService {
      * @param retract If true, message is retracted.
      */
     public void cancelMessage(Message message, boolean retract) {
-        cancelMessage(message.getHeader().getMessageId(), retract);
-    }
-    
-    /**
-     * Cancel a single message
-     * 
-     * @param messageId Id of message to cancel.
-     * @param retract If true, message is retracted.
-     */
-    public void cancelMessage(String messageId, boolean retract) {
-        propertyService.saveValue("UCSMessage", messageId, true, "deleted");
-        /*
-        try {
-            getClient().cancelMessage(messageId, retract);
-        } catch (Exception e) {
-            log.error("An error occurred cancelling message", e);
+        String messageId = message.getHeader().getMessageId();
+        
+        if (isAlert(message)) {
+            try {
+                getClient().cancelMessage(messageId, retract);
+            } catch (Exception e) {
+                log.error("An error occurred cancelling message", e);
+            }
+        } else {
+            propertyService.saveValue("UCSMessage", messageId, true, "deleted");
         }
-        */
     }
     
     /**
@@ -270,6 +271,16 @@ public class MessageService {
             
             while (iter.hasNext()) {
                 Message message = iter.next();
+                
+                if (isAlert(message)) {
+                    AlertStatus status = ((AlertMessage) message).getHeader().getAlertStatus();
+                    
+                    if (ArrayUtils.contains(IGNORED_STATUSES, status)) {
+                        iter.remove();
+                        continue;
+                    }
+                }
+                
                 String status = propertyService.getValue("UCSMessage", message.getHeader().getMessageId());
                 
                 if ("deleted".equals(status)) {
@@ -290,7 +301,7 @@ public class MessageService {
         for (Message message : getAllMessages()) {
             if (aboutId != null) {
                 Properties props = message.getHeader().getProperties();
-                String messageAbout = props == null ? null : props.getProperty(MessageProperty.MESSAGE_ABOUT.toString());
+                String messageAbout = props == null ? null : props.getProperty(MessageProperty.MESSAGE_ABOUT_ID.toString());
                 
                 if (messageAbout != null && !messageAbout.equals(aboutId)) {
                     continue;

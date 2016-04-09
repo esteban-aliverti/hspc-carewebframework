@@ -43,13 +43,12 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     
     @Override
     public String getPatientName() {
-        // TODO How to get name?
-        return getPatientId();
+        return getParam(MessageProperty.MESSAGE_ABOUT_DISPLAY);
     }
     
     @Override
     public String getPatientId() {
-        return getParam(MessageProperty.MESSAGE_ABOUT.name());
+        return getParam(MessageProperty.MESSAGE_ABOUT_ID);
     }
     
     @Override
@@ -102,6 +101,10 @@ public class MessageWrapper implements IMessageWrapper<Message> {
     @Override
     public String getAlertId() {
         return null;
+    }
+    
+    private String getParam(MessageProperty property) {
+        return getParam(property.name());
     }
     
     @Override

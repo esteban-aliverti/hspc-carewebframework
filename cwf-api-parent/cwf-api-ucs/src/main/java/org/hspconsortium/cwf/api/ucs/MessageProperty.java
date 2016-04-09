@@ -23,5 +23,5 @@ package org.hspconsortium.cwf.api.ucs;
  * Message property name enumeration.
  */
 public enum MessageProperty {
-    MESSAGE_ABOUT, MESSAGE_TEMPLATE_NAME
+    MESSAGE_ABOUT_DISPLAY, MESSAGE_ABOUT_ID, MESSAGE_TEMPLATE_NAME
 }
