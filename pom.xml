@@ -212,6 +212,17 @@
 				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
+			<!-- HAPI-FHIR -->
+			<dependency>
+				<groupId>ca.uhn.hapi.fhir</groupId>
+				<artifactId>hapi-fhir-base</artifactId>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>jcl-over-slf4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 			<!-- Servlet -->
 			<dependency>
 				<groupId>javax.servlet</groupId>

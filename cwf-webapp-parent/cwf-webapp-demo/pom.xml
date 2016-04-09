@@ -72,13 +72,18 @@
 		<!-- HSPC Services -->
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-api-eps</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-api-ucs</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-smart</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!--  HSPC CWF plugins -->
 		<dependency>
@@ -171,11 +176,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hspconsortium.carewebframework</groupId>
-			<artifactId>cwf-api-ucs</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
