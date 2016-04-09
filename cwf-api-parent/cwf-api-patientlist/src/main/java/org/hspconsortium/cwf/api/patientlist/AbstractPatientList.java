@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.reflect.ConstructorUtils;
@@ -37,10 +35,13 @@ import org.carewebframework.api.domain.DomainFactoryRegistry;
 import org.carewebframework.api.domain.IDomainFactory;
 import org.carewebframework.common.DateRange;
 
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+
 /**
  * Base class for patient list implementations.
  */
 public abstract class AbstractPatientList implements IPatientList {
+    
     
     private static final Log log = LogFactory.getLog(AbstractPatientList.class);
     
@@ -99,7 +100,7 @@ public abstract class AbstractPatientList implements IPatientList {
      * @param max Maximum # of entries in item list (0 if no limit).
      */
     protected final void addPatients(List<PatientListItem> items, List<String> list, int max) {
-        Map<String, String> ids = new HashMap<String, String>(list.size());
+        Map<String, String> ids = new HashMap<>(list.size());
         
         for (String value : list) {
             String[] pcs = PatientListUtil.split(value, 4);

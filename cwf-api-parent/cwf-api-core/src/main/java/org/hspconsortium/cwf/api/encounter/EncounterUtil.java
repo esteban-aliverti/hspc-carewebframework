@@ -275,7 +275,7 @@ public class EncounterUtil {
     }
     
     public static List<Practitioner> getPractitioners(List<Participant> participants) {
-        List<Practitioner> list = new ArrayList<Practitioner>();
+        List<Practitioner> list = new ArrayList<>();
         
         for (Participant participant : participants) {
             Practitioner practitioner = getPractitioner(participant);

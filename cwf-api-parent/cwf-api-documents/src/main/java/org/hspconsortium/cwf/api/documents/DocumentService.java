@@ -80,7 +80,7 @@ public class DocumentService {
         
         Bundle bundle = query.execute();
         List<DocumentReference> list = FhirUtil.getEntries(bundle, DocumentReference.class);
-        List<Document> results = new ArrayList<Document>(list.size());
+        List<Document> results = new ArrayList<>(list.size());
         
         for (DocumentReference ref : list) {
             Document doc = new Document(ref);

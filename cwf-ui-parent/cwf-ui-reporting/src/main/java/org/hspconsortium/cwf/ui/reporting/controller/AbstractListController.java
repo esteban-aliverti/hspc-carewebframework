@@ -166,7 +166,7 @@ public abstract class AbstractListController<T, M> extends AbstractMeshControlle
      */
     protected List<M> getObjects(boolean selectedOnly) {
         List<Listitem> items = getItems(selectedOnly);
-        List<M> objects = new ArrayList<M>(items.size());
+        List<M> objects = new ArrayList<>(items.size());
         
         for (Listitem item : items) {
             M value = item.getValue();

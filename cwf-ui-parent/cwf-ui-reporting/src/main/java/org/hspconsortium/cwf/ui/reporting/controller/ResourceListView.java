@@ -171,7 +171,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
             if (getShowDetailPane()) {
                 detailView.setContent(detail);
             } else {
-                Map<Object, Object> map = new HashMap<Object, Object>();
+                Map<Object, Object> map = new HashMap<>();
                 map.put("title", detailTitle);
                 map.put("content", detail);
                 map.put("allowPrint", getAllowPrint());

@@ -24,14 +24,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.api.property.PropertyUtil;
+
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Abstract base class for patient lists that are stored in properties. The filter associated with
@@ -41,6 +41,7 @@ import org.carewebframework.api.property.PropertyUtil;
  * null application instance value will be used.
  */
 public abstract class PropertyBasedPatientList extends AbstractPatientList {
+    
     
     private static final Log log = LogFactory.getLog(PropertyBasedPatientList.class);
     
@@ -158,7 +159,7 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
     @Override
     public Collection<PatientListItem> getListItems() {
         if (this.pplList == null) {
-            this.pplList = new ArrayList<PatientListItem>();
+            this.pplList = new ArrayList<>();
             
             if (!isFiltered() || getActiveFilter() != null) {
                 try {

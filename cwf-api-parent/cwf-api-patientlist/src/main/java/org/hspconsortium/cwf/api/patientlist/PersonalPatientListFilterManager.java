@@ -32,6 +32,7 @@ import org.carewebframework.api.property.PropertyUtil;
  */
 public class PersonalPatientListFilterManager extends AbstractPatientListFilterManager {
     
+    
     private static final Log log = LogFactory.getLog(PersonalPatientListFilterManager.class);
     
     private static final String INSTANCE_NAME = "$";
@@ -63,7 +64,7 @@ public class PersonalPatientListFilterManager extends AbstractPatientListFilterM
     protected List<AbstractPatientListFilter> initFilters() {
         if (filters == null) {
             log.debug("Retrieving personal list names...");
-            filters = new ArrayList<AbstractPatientListFilter>();
+            filters = new ArrayList<>();
             List<String> values = PropertyUtil.getValues(getFilterProperty(), INSTANCE_NAME);
             
             if (values != null) {
@@ -81,7 +82,7 @@ public class PersonalPatientListFilterManager extends AbstractPatientListFilterM
      */
     @Override
     protected void saveFilters() {
-        ArrayList<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         
         for (AbstractPatientListFilter filter : initFilters()) {
             list.add(filter.serialize());

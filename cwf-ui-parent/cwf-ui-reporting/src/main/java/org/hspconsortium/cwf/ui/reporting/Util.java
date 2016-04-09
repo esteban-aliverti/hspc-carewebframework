@@ -44,7 +44,7 @@ public class Util {
      * @param preview If true, show print preview.
      */
     public static void print(Component printRoot, String title, String header, String styleSheet, boolean preview) {
-        List<String> content = new ArrayList<String>();
+        List<String> content = new ArrayList<>();
 
         if (header != null && !header.isEmpty()) {
             content.add("$report_headers $" + header);

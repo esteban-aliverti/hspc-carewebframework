@@ -24,18 +24,20 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 
 import org.carewebframework.common.StrUtil;
+
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
+
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Utility methods for patient lists.
  */
 public class PatientListUtil {
+    
     
     private static final char[] WORD_DELIMITERS = new char[] { ' ', ',' };
     
@@ -72,7 +74,7 @@ public class PatientListUtil {
      */
     @SafeVarargs
     public static <T> Set<T> createImmutableSet(T... elements) {
-        return Collections.unmodifiableSet(new HashSet<T>(Arrays.asList(elements)));
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(elements)));
     }
     
     /**

@@ -38,6 +38,7 @@ import org.carewebframework.api.spring.SpringUtil;
  */
 public class PatientListRegistry implements IRegisterEvent, IPatientListRegistry {
     
+    
     private static final Log log = LogFactory.getLog(PatientListRegistry.class);
     
     /**
@@ -45,6 +46,7 @@ public class PatientListRegistry implements IRegisterEvent, IPatientListRegistry
      * will sort alphabetically by name.
      */
     private static class PatientListComparator implements Comparator<IPatientList> {
+        
         
         @Override
         public int compare(IPatientList list1, IPatientList list2) {
@@ -71,9 +73,9 @@ public class PatientListRegistry implements IRegisterEvent, IPatientListRegistry
     
     private static final PatientListComparator patientListComparator = new PatientListComparator();
     
-    private final List<IPatientList> patientList = new ArrayList<IPatientList>();
+    private final List<IPatientList> patientList = new ArrayList<>();
     
-    private final Map<String, IPatientList> patientListIndex = new HashMap<String, IPatientList>();
+    private final Map<String, IPatientList> patientListIndex = new HashMap<>();
     
     private boolean needsSorting;
     

@@ -199,7 +199,7 @@ public class PatientSelectionController extends FrameworkController {
     
     private DateRange defaultDateRange;
     
-    private final List<PatientListItem> pendingListItem = new ArrayList<PatientListItem>();
+    private final List<PatientListItem> pendingListItem = new ArrayList<>();
     
     private IPatientDetailRenderer patientDetailRenderer = new PatientDetailRenderer();
     
@@ -966,7 +966,7 @@ public class PatientSelectionController extends FrameworkController {
     }
     
     public void onClick$btnManagedListRemoveAll() {
-        for (PatientListItem item : new ArrayList<PatientListItem>(managedList.getListItems())) {
+        for (PatientListItem item : new ArrayList<>(managedList.getListItems())) {
             managedListRemove(item, false);
         }
         

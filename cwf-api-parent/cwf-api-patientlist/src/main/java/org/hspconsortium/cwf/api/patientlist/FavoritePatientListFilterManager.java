@@ -34,6 +34,7 @@ import org.carewebframework.api.property.PropertyUtil;
  */
 public class FavoritePatientListFilterManager extends AbstractPatientListFilterManager {
     
+    
     private static final Log log = LogFactory.getLog(FavoritePatientListFilterManager.class);
     
     private static final String FAVORITES_PROPERTY = "CAREWEB.PATIENT.LIST.FAVORITES";
@@ -44,14 +45,14 @@ public class FavoritePatientListFilterManager extends AbstractPatientListFilterM
      * @param patientList The patient list.
      */
     public FavoritePatientListFilterManager(FavoritePatientList patientList) {
-        super(patientList, PatientListUtil.createImmutableSet(FilterCapability.RENAME, FilterCapability.MOVE,
-            FilterCapability.REMOVE));
+        super(patientList,
+                PatientListUtil.createImmutableSet(FilterCapability.RENAME, FilterCapability.MOVE, FilterCapability.REMOVE));
     }
     
     @Override
     protected List<AbstractPatientListFilter> initFilters() {
         if (filters == null) {
-            filters = new ArrayList<AbstractPatientListFilter>();
+            filters = new ArrayList<>();
             
             List<String> values = PropertyUtil.getValues(FAVORITES_PROPERTY, null);
             
@@ -73,7 +74,7 @@ public class FavoritePatientListFilterManager extends AbstractPatientListFilterM
      */
     @Override
     protected void saveFilters() {
-        ArrayList<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         
         for (AbstractPatientListFilter filter : initFilters()) {
             values.add(filter.getEntity().toString());

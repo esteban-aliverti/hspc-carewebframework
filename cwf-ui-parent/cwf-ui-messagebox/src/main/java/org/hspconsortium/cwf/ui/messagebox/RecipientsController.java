@@ -124,7 +124,7 @@ public class RecipientsController extends FrameworkController {
      * @return The value returned by the dialog or null if the dialog was cancelled.
      */
     private static Object show(Collection<UserContactInfo> recipients, boolean showComment) {
-        Map<Object, Object> args = new HashMap<Object, Object>();
+        Map<Object, Object> args = new HashMap<>();
         args.put("recipients", recipients);
         args.put("showComment", showComment);
         return PopupDialog.popup(DIALOG, args, false, false, true).getAttribute("ok");
