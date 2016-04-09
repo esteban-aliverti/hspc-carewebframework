@@ -133,6 +133,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-orders</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-procedures</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-messagebox</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>

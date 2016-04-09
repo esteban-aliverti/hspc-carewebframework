@@ -36,6 +36,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.BaseService;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.Constants;
 
@@ -45,7 +46,6 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.model.primitive.XhtmlDt;
-import ca.uhn.fhir.rest.client.GenericClient;
 
 /**
  * Controller for cover sheet components.
@@ -66,7 +66,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
     
     private String detailTitle;
     
-    private GenericClient fhirClient;
+    private BaseService fhirService;
     
     private String resourcePath;
     
@@ -95,9 +95,22 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
     public void canceled() {
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     protected Object transformData(Object data) {
-        return (data instanceof IDatatype) ? FhirUtil.getDisplayValueForType((IDatatype) data) : data;
+        if (data instanceof IDatatype) {
+            return FhirUtil.getDisplayValueForType((IDatatype) data);
+        }
+        
+        if (data instanceof List) {
+            List<?> c = (List<?>) data;
+            
+            if (!c.isEmpty() && c.get(0) instanceof IDatatype) {
+                return FhirUtil.getDisplayValueForTypes((List<IDatatype>) c, ", ");
+            }
+        }
+        
+        return data;
     }
     
     /**
@@ -125,7 +138,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
             
             @Override
             public void run(ZKThread thread) throws Exception {
-                Bundle bundle = fhirClient.search(resourceClass, uri);
+                Bundle bundle = fhirService.getClient().search(resourceClass, uri);
                 thread.setAttribute("bundle", bundle);
             }
             
@@ -207,12 +220,12 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
         committed();
     }
     
-    public GenericClient getFhirClient() {
-        return fhirClient;
+    public BaseService getFhirService() {
+        return fhirService;
     }
     
-    public void setFhirClient(GenericClient fhirClient) {
-        this.fhirClient = fhirClient;
+    public void setFhirService(BaseService fhirService) {
+        this.fhirService = fhirService;
     }
     
 }

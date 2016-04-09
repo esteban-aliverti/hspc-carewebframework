@@ -30,7 +30,7 @@
 
 		<bean name="reportListViewBase" abstract="true" parent="sharedFormListViewController"
 			scope="prototype">
-			<property name="fhirClient" ref="fhirClient" />
+			<property name="fhirService" ref="fhirBaseService" />
 		</bean>
 		
 	</beans>

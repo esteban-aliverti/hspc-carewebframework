@@ -23,6 +23,8 @@
 		<module>cwf-ui-adversereactions</module>
 		<module>cwf-ui-medicationorders</module>
 		<module>cwf-ui-observations</module>
+		<module>cwf-ui-orders</module>
+		<module>cwf-ui-procedures</module>
 		<module>cwf-ui-messagebox</module>
 	</modules>
 </project>

@@ -51,7 +51,11 @@ public class MainController extends ResourceListView<Observation, Observation> {
     
     @Override
     protected void initModel(List<Observation> entries) {
-        model.addAll(entries);
+        for (Observation observation : entries) {
+            if (observation.getComponent().isEmpty()) {
+                model.add(observation);
+            }
+        }
     }
     
 }
