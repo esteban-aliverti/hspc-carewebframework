@@ -24,13 +24,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.api.property.PropertyUtil;
 
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
@@ -44,10 +42,6 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
     
     
     private static final Log log = LogFactory.getLog(PropertyBasedPatientList.class);
-    
-    private static final String DELIM1 = "|";
-    
-    private static final String DELIM2 = "~";
     
     private final String propertyName;
     
@@ -165,35 +159,17 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
                 try {
                     String filterName = getListName();
                     int max = getListSizeMax();
-                    String dlm = "\\" + DELIM2;
-                    List<String> values = PropertyUtil.getValues(propertyName, filterName);
+                    List<String> patids = PropertyUtil.getValues(propertyName, filterName);
                     
-                    if (values != null) {
-                        for (String value : values) {
+                    if (patids != null) {
+                        for (String patientId : patids) {
                             if (pplList.size() >= max) {
                                 break;
                             }
                             
-                            for (String patAndInstId : StringUtils.trimToEmpty(value).split(dlm)) {
-                                String patientId;
-                                int i = patAndInstId.indexOf(DELIM1);
-                                
-                                if (i > -1) {
-                                    patientId = patAndInstId.substring(0, i);
-                                } else {
-                                    patientId = patAndInstId;
-                                }
-                                
-                                if (!StringUtils.isEmpty(patientId)) {
-                                    try {
-                                        addPatient(getPatient(patientId), false);
-                                        if (pplList.size() >= max) {
-                                            break;
-                                        }
-                                    } catch (Exception e) {}
-                                    
-                                }
-                            }
+                            try {
+                                addPatient(getPatient(patientId), false);
+                            } catch (Exception e) {}
                         }
                     }
                     
@@ -257,27 +233,18 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
         }
         
         try {
-            StringBuilder patids = new StringBuilder();
+            List<String> patids = new ArrayList<>();
             trimList(getListSizeMax());
             
             for (PatientListItem item : pplList) {
                 Patient pat = item.getPatient();
                 
                 if (pat != null) {
-                    String strPatId = pat.getId().getIdPart();
-                    ResourceReferenceDt inst = pat.getManagingOrganization();
-                    String strInstId = inst == null ? "" : inst.getReference().toString();
-                    
-                    if (patids.length() > 0) {
-                        patids.append(DELIM2);
-                    }
-                    
-                    patids.append(strPatId).append(DELIM1).append(strInstId);
+                    patids.add(pat.getId().getIdPart());
                 }
             }
             
-            //getListProperty().saveUserPreference(patids.toString(), propertyName, getListName());
-            saveProperty(patids.toString(), propertyName);
+            saveProperty(propertyName, patids);
         } catch (Exception e) {
             log.error("Error while saving patient list.", e);
         }
@@ -285,15 +252,14 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
     
     /**
      * Saves the patient id string to the appropriate property value. The default is to save as a
-     * user level (property entity id 100) preference. This can be overridden by subclasses for
-     * different behavior.
+     * user level preference. This can be overridden by subclasses for different behavior.
      *
-     * @param patids delimited list of patient & location ids
      * @param propertyName the name of the property definition to use when saving
+     * @param patids List of patient logical ids.
      * @throws Exception Unspecified exception.
      */
-    protected void saveProperty(String patids, String propertyName) throws Exception {
-        PropertyUtil.saveValue(propertyName, getListName(), false, patids);
+    protected void saveProperty(String propertyName, List<String> patids) throws Exception {
+        PropertyUtil.saveValues(propertyName, getListName(), false, patids);
     }
     
     /**
