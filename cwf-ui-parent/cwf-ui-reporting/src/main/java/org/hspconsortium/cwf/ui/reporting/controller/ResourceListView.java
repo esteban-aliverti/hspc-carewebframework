@@ -138,7 +138,7 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
             
             @Override
             public void run(ZKThread thread) throws Exception {
-                Bundle bundle = fhirService.getClient().search(resourceClass, uri);
+                Bundle bundle = fhirService.getClient().search(uri);
                 thread.setAttribute("bundle", bundle);
             }
             

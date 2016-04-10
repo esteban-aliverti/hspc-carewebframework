@@ -23,12 +23,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.carewebframework.common.StrUtil;
 
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance.Reaction;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
@@ -36,7 +35,7 @@ import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
 /**
  * Controller for patient adverse reaction display.
  */
-public class MainController extends ResourceListView<AllergyIntolerance, Reaction> {
+public class MainController extends ResourceListView<AllergyIntolerance, AllergyIntolerance> {
     
     
     private static final long serialVersionUID = 1L;
@@ -52,48 +51,31 @@ public class MainController extends ResourceListView<AllergyIntolerance, Reactio
     @Override
     protected void init() {
         setup(AllergyIntolerance.class, "Adverse Reactions", "Adverse Reaction Detail", "AllergyIntolerance?patient=#", 1,
-            "Date", "Agent", "Manifestation");
+            "Date^^min", "Agent", "Severity^^min", "Reaction");
         super.init();
     }
     
     @Override
-    protected void render(Reaction adr, List<Object> columns) {
-        columns.add(adr.getOnset());
-        columns.add(adr.getSubstance());
-        columns.add(getManifestations(adr.getManifestation()));
+    protected void render(AllergyIntolerance ai, List<Object> columns) {
+        columns.add(ai.getRecordedDate());
+        columns.add(ai.getSubstance());
+        columns.add(ai.getCriticality());
+        columns.add(getReactions(ai.getReaction()));
     }
     
-    private String getManifestations(List<CodeableConceptDt> symptoms) {
+    private String getReactions(List<Reaction> reactions) {
         StringBuilder sb = new StringBuilder();
         
-        for (CodeableConceptDt symptom : symptoms) {
-            String sx = symptom.getText();
-            
-            if (StringUtils.isEmpty(sx)) {
-                sx = FhirUtil.getDisplayValue(symptom);
-            }
-            
-            add(sx, sb);
+        for (Reaction reaction : reactions) {
+            StrUtil.strAppend(sb, FhirUtil.getDisplayValueForTypes(reaction.getManifestation(), ", "));
         }
         
         return sb.toString();
     }
     
-    private void add(String value, StringBuilder sb) {
-        if (!StringUtils.isEmpty(value)) {
-            sb.append(sb.length() == 0 ? "" : ", ").append(value);
-        }
-    }
-    
     @Override
     protected void initModel(List<AllergyIntolerance> entries) {
-        for (AllergyIntolerance adr : entries) {
-            if (!exclusions.contains(adr.getStatusElement())) {
-                for (Reaction reaction : adr.getReaction()) {
-                    model.add(reaction);
-                }
-            }
-        }
+        model.addAll(entries);
     }
     
 }

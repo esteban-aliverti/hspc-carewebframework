@@ -21,30 +21,44 @@ package org.hspconsortium.cwf.ui.orders;
 
 import java.util.List;
 
+import org.carewebframework.common.StrUtil;
+
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.api.IDatatype;
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.DeviceUseRequest;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticOrder;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticOrder.Item;
 import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
+import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
 import ca.uhn.fhir.model.dstu2.resource.NutritionOrder;
-import ca.uhn.fhir.model.dstu2.resource.Order;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.ProcedureRequest;
+import ca.uhn.fhir.model.primitive.BooleanDt;
 
 /**
  * Controller for patient orders display.
  */
-public class MainController extends ResourceListView<Order, IBaseResource> {
+public class MainController extends ResourceListView<IResource, IBaseResource> {
     
     
     private static final long serialVersionUID = 1L;
     
+    // @formatter:off
+    private static final String QUERY = "Patient?_id=#"
+            + "&_revinclude=MedicationOrder:patient"
+            + "&_revinclude=ProcedureRequest:subject"
+            + "&_revinclude=NutritionOrder:patient"
+            + "&_revinclude=DiagnosticOrder:subject"
+            + "&_revinclude=DeviceUseRequest:subject";
+    // @formatter:on
+    
     @Override
     protected void init() {
-        setup(Order.class, "Orders", "Order Detail", "Order?patient=#", 1, "Order", "Date", "Notes");
+        setup(IResource.class, "Orders", "Order Detail", QUERY, 1, "Type^^min", "Date^^min", "Order^^1", "Notes^^1");
         super.init();
     }
     
@@ -64,48 +78,82 @@ public class MainController extends ResourceListView<Order, IBaseResource> {
     }
     
     private void render(ProcedureRequest order, List<Object> columns) {
-        columns.add(order.getCode());
+        columns.add("Procedure");
         columns.add(order.getOrderedOn());
+        columns.add(order.getCode());
         columns.add(order.getNotes());
     }
     
     private void render(NutritionOrder order, List<Object> columns) {
-        columns.add("Dietary");
+        columns.add("Nutrition");
         columns.add(order.getDateTime());
+        columns.add("");
         columns.add("");
     }
     
     private void render(MedicationOrder order, List<Object> columns) {
-        columns.add(order.getMedication());
+        columns.add("Medication");
         columns.add(order.getDateWritten());
-        columns.add(order.getNote());
-    }
-    
-    private void render(DiagnosticOrder order, List<Object> columns) {
+        columns.add(order.getMedication());
+        
         StringBuilder sb = new StringBuilder();
         
-        for (Item item : order.getItem()) {
-            sb.append(sb.length() == 0 ? "" : ", ").append(FhirUtil.getDisplayValueForType(item.getCode()));
+        for (DosageInstruction di : order.getDosageInstruction()) {
+            append(sb, di.getDose(), " ");
+            append(sb, di.getRate(), " ");
+            append(sb, di.getSite(), " ");
+            append(sb, di.getMethod(), " ");
+            append(sb, di.getRoute(), " ");
+            append(sb, di.getTiming(), " ");
+            append(sb, di.getText(), " ");
+            
+            IDatatype prn = di.getAsNeeded();
+            
+            if (prn instanceof BooleanDt && ((BooleanDt) prn).getValue()) {
+                append(sb, "PRN", " ");
+            } else {
+                append(sb, prn, " ");
+            }
         }
         
         columns.add(sb);
+    }
+    
+    private void render(DiagnosticOrder order, List<Object> columns) {
+        columns.add("Diagnostic");
         columns.add(order.getEventFirstRep().getDateTime());
+        StringBuilder sb = new StringBuilder();
+        
+        for (Item item : order.getItem()) {
+            append(sb, item.getCode(), ", ");
+        }
+        
+        columns.add(sb);
         columns.add(order.getNote());
     }
     
     private void render(DeviceUseRequest order, List<Object> columns) {
-        columns.add(order.getDevice().getDisplay());
+        columns.add("Device Use");
         columns.add(order.getOrderedOn());
+        columns.add(order.getDevice().getDisplay());
         columns.add(order.getNotes());
     }
     
+    private void append(StringBuilder sb, IDatatype value, String delimiter) {
+        append(sb, FhirUtil.getDisplayValueForType(value), delimiter);
+    }
+    
+    private void append(StringBuilder sb, String value, String delimiter) {
+        StrUtil.strAppend(sb, value, delimiter);
+    }
+    
     @Override
-    protected void initModel(List<Order> orders) {
-        for (Order order : orders) {
-            for (ResourceReferenceDt detail : order.getDetail()) {
-                model.add(getFhirService().getResource(detail));
-            }
+    protected void initModel(List<IResource> orders) {
+        if (!orders.isEmpty() && orders.get(0) instanceof Patient) {
+            orders.remove(0);
         }
+        
+        model.addAll(orders);
     }
     
 }
