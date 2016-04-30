@@ -28,14 +28,8 @@
  */
 package org.hspconsortium.cwf.ui.democonfig.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.carewebframework.shell.plugins.PluginContainer;
 import org.carewebframework.shell.plugins.PluginController;
 import org.carewebframework.ui.zk.PromptDialog;
-
-import org.zkoss.zk.ui.Component;
 
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
@@ -51,54 +45,11 @@ public class DemoConfigController extends PluginController {
     
     private static final long serialVersionUID = 1L;
     
-    private static final Log log = LogFactory.getLog(DemoConfigController.class);
-    
     private final Bootstrapper bootstrapper;
     
     public DemoConfigController(Bootstrapper bootstrapper) {
         super();
         this.bootstrapper = bootstrapper;
-    }
-    
-    /**
-     * @see org.carewebframework.ui.FrameworkController#doAfterCompose(org.zkoss.zk.ui.Component)
-     */
-    @Override
-    public void doAfterCompose(Component comp) throws Exception {
-        super.doAfterCompose(comp);
-        log.trace("DemoConfigController composed");
-    }
-    
-    /**
-     * @see org.carewebframework.shell.plugins.IPluginEvent#onLoad(org.carewebframework.shell.plugins.PluginContainer)
-     */
-    @Override
-    public void onLoad(PluginContainer container) {
-        super.onLoad(container);
-    }
-    
-    /**
-     * @see org.carewebframework.shell.plugins.IPluginEvent#onUnload()
-     */
-    @Override
-    public void onUnload() {
-        super.onUnload();
-    }
-    
-    /**
-     * @see org.carewebframework.shell.plugins.IPluginEvent#onActivate()
-     */
-    @Override
-    public void onActivate() {
-        super.onActivate();
-    }
-    
-    /**
-     * @see org.carewebframework.shell.plugins.IPluginEvent#onInactivate()
-     */
-    @Override
-    public void onInactivate() {
-        super.onInactivate();
     }
     
     /*************************************************************************
@@ -117,7 +68,7 @@ public class DemoConfigController extends PluginController {
      * Event handler for btnDelPatient on-click events. Deletes the patient from the FHIR server.
      */
     public void onClick$btnDelPatient() {
-        bootstrapper.deleteDemoPatient();
+        bootstrapper.deleteDemoPatients();
     }
     
     /**
@@ -126,13 +77,10 @@ public class DemoConfigController extends PluginController {
      * existing instance.
      */
     public void onClick$btnAddMedAdmins() {
-        Patient patient = PatientContext.getActivePatient();
+        Patient patient = getPatient();
+        
         if (patient != null) {
             bootstrapper.addSampleMedicationAdmins(patient);
-        } else {
-            log.error("No patient selected in patient context. Request ignored.");
-            PromptDialog.showWarning("You must first select a patient before administering a medication",
-                "Please first select a patient");
         }
     }
     
@@ -149,11 +97,10 @@ public class DemoConfigController extends PluginController {
      * existing instance.
      */
     public void onClick$btnAddMedOrders() {
-        Patient patient = PatientContext.getActivePatient();
-        if (patient == null) {
-            log.error("No patient selected in patient context. Request ignored.");
-            PromptDialog.showWarning("You must first select a patient before ordering a medication",
-                "Please first select a patient");
+        Patient patient = getPatient();
+        
+        if (patient != null) {
+            bootstrapper.addSampleMedicationOrders(patient);
         }
     }
     
@@ -170,11 +117,10 @@ public class DemoConfigController extends PluginController {
      * existing instance.
      */
     public void onClick$btnAddConditions() {
-        Patient patient = PatientContext.getActivePatient();
-        if (patient == null) {
-            log.error("No patient selected in patient context. Request ignored.");
-            PromptDialog.showWarning("You must first select a patient before ordering a medication",
-                "Please first select a patient");
+        Patient patient = getPatient();
+        
+        if (patient != null) {
+            bootstrapper.addSampleConditions(patient);
         }
     }
     
@@ -186,4 +132,14 @@ public class DemoConfigController extends PluginController {
         bootstrapper.clearConditions();
     }
     
+    private Patient getPatient() {
+        Patient patient = PatientContext.getActivePatient();
+        
+        if (patient == null) {
+            PromptDialog.showWarning("You must first select a patient before performing this operation.",
+                "Please select a patient");
+        }
+        
+        return patient;
+    }
 }

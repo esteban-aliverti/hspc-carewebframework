@@ -4,12 +4,16 @@
 		<menuitem label="Actions">
 			<menuitem
 				action="zscript:org.hspconsortium.cwf.ui.patientselection.PatientSelection.show();"
-				hint="zscript:org.hspconsortium.cwf.ui.patientselection.PatientSelection.show();"
+				hint="Show patient selection dialog."
 				label="Select a Patient" />
 			<menuitem
 				action="zscript:org.carewebframework.api.event.EventManager.getInstance().fireLocalEvent(&quot;VIEW.REFRESH&quot;, null);"
-				hint="zscript:org.carewebframework.api.event.EventManager.getInstance().fireLocalEvent(&quot;VIEW.REFRESH&quot;, null);"
+				hint="Refresh patient data."
 				label="Refresh" />
+			<menuitem
+				action="zscript:org.hspconsortium.cwf.ui.democonfig.util.DemoUtils.show();"
+				hint="Configure demo data."
+				label="Configure Demo" />
 		</menuitem>
 	</_menubar>
 	<_toolbar>

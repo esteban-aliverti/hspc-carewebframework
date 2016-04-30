@@ -70,13 +70,11 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 		<!-- HSPC Services -->
-		<!--
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-api-eps</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		-->
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-api-ucs</artifactId>
@@ -146,7 +144,12 @@
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-messagebox</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-democonfig</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- CareWeb Framework components -->
 		<dependency>

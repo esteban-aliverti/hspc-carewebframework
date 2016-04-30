@@ -18,7 +18,7 @@
 			<cwp:resource>
 				<cwp:action-resource id="cwfDemoConfigShow"
 					label="${labels.cwfdemoconfig.action.label}"
-					script="zscript:com.cogmedsys.hsp.ui.democonfig.DemoConfiguration.show();" 
+					script="zscript:org.hspconsortium.cwf.ui.democonfig.util.DemoUtils.show();" /> 
 			</cwp:resource>
 		</cwp:plugin>
 		
@@ -31,7 +31,7 @@
 		<bean id="cwfDemoConfigController" scope="prototype"
 			class="org.hspconsortium.cwf.ui.democonfig.controller.DemoConfigController">
 			<constructor-arg>
-				<bean class="org.hspconsortium.cwf.ui.democonfig.Bootstrapper" />
+				<bean class="org.hspconsortium.cwf.ui.democonfig.util.Bootstrapper" />
 			</constructor-arg>
 		</bean>	
 			

@@ -268,8 +268,9 @@ public class MainController extends CaptionedForm implements IPatientContextEven
             for (Message message : messages) {
                 model.add(new MessageWrapper(message));
             }
+            showBusy(null);
         } catch (Exception e) {
-            lstMessages.appendChild(new Listitem(ZKUtil.formatExceptionForDisplay(e)));
+            showBusy(ZKUtil.formatExceptionForDisplay(e));
         }
     }
     

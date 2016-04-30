@@ -28,6 +28,6 @@ public class DemoUtils {
      * Demonstration Configuration Helper Class.
      */
     public static void show() {
-        PopupDialog.popup("~./com/cogmedsys/hsp/ui/democonfig/demoConfigWin.zul", true, true, true);
+        PopupDialog.popup("~./org/hspconsortium/cwf/ui/democonfig/demoConfigWin.zul", true, true, true);
     }
 }

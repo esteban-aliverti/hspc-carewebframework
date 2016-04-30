@@ -31,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Attachment;
@@ -61,12 +60,11 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 /**
  * Currently hard coded but in later iterations, bootstrapper should be configured based on a
  * configuration file to support greater flexibility during demos or connectathons.
- * 
- * @author cnanjo
  */
-@Component("bootstrapper")
 public class Bootstrapper {
     
+    
+    private static final String IMAGE_PATH = "web/org/hspconsortium/cwf/ui/democonfig/images/";
     
     /**
      * Identifier used to define 'set of medication administration resources' to support bulk
@@ -562,7 +560,7 @@ public class Bootstrapper {
     /**
      * Deletes all patient sharing the PATIENT_GROUP_IDENTIFIER
      */
-    public void deleteDemoPatient() {
+    public void deleteDemoPatients() {
         deleteDemoPatient(PATIENT_GROUP_IDENTIFIER);
     }
     
@@ -585,7 +583,7 @@ public class Bootstrapper {
         if (address != null) {
             patient.addAddress(address);//Fix
         }
-        Attachment photo = patient.addPhoto().setData(FhirUtil.getResourceAsByteArray("patient.jpeg"));
+        Attachment photo = patient.addPhoto().setData(FhirUtil.getResourceAsByteArray(IMAGE_PATH + "patient1.jpeg"));
         photo.setContentType("image/jpeg");
         addPatientName(patient, givenName, surname, prefix);
         patient.setGender(gender);
@@ -653,7 +651,7 @@ public class Bootstrapper {
      * Method clears all demo data.
      */
     public void clearData() {
-        deleteDemoPatient();
+        deleteDemoPatients();
         clearMedicationAdministrations();
         clearMedicationOrders();
         clearConditions();
