@@ -28,5 +28,6 @@
 		<module>cwf-ui-procedures</module>
 		<module>cwf-ui-messagebox</module>
 		<module>cwf-ui-democonfig</module>
+		<module>cwf-ui-mockuments</module>
 	</modules>
 </project>

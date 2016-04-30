@@ -19,8 +19,6 @@
  */
 package org.hspconsortium.cwf.ui.documents;
 
-import org.hspconsortium.cwf.api.documents.Document;
-import org.hspconsortium.cwf.ui.reporting.Constants;
 import org.carewebframework.ui.zk.AbstractListitemRenderer;
 
 import org.zkoss.util.media.AMedia;
@@ -32,10 +30,14 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 
+import org.hspconsortium.cwf.fhir.document.Document;
+import org.hspconsortium.cwf.ui.reporting.Constants;
+
 /**
  * Renderer for the document display.
  */
 public class DocumentDisplayRenderer extends AbstractListitemRenderer<Document, Object> {
+    
     
     public DocumentDisplayRenderer() {
         super("", null);

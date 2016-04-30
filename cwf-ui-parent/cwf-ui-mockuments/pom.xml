@@ -7,8 +7,8 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<name>Clinical Documents Plugin</name>
-	<artifactId>cwf-ui-documents</artifactId>
+	<name>Clinical Mock Documents Plugin</name>
+	<artifactId>cwf-ui-mockuments</artifactId>
 	<packaging>jar</packaging>
 	
 	<dependencies>

@@ -19,10 +19,10 @@
  */
 package org.hspconsortium.cwf.ui.documents;
 
-import org.hspconsortium.cwf.api.documents.DocumentService;
+import org.carewebframework.shell.plugins.PluginStatus;
+
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
-import org.carewebframework.shell.plugins.PluginStatus;
 
 /**
  * Updates the enabled status of the plugin.
@@ -31,12 +31,13 @@ import org.carewebframework.shell.plugins.PluginStatus;
  */
 public class ActionStatus extends PluginStatus implements IPatientContextEvent {
     
+    
     /**
      * Returns true if there is no current patient or the current patient has no documents.
      */
     @Override
     public boolean checkDisabled() {
-        return !DocumentService.getInstance().hasDocuments(PatientContext.getActivePatient());
+        return PatientContext.getActivePatient() == null;
     }
     
     /**

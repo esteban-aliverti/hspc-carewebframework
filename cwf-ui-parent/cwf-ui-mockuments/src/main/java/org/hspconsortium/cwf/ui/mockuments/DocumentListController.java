@@ -1,6 +1,6 @@
 /*
  * #%L
- * cwf-ui-documents
+ * cwf-ui-mockuments
  * %%
  * Copyright (C) 2014 - 2016 Healthcare Services Platform Consortium
  * %%
@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.hspconsortium.cwf.ui.documents;
+package org.hspconsortium.cwf.ui.mockuments;
 
 import java.util.Collection;
 import java.util.Date;
@@ -29,18 +29,12 @@ import org.carewebframework.api.query.AbstractQueryFilter;
 import org.carewebframework.api.query.DateQueryFilter.DateType;
 import org.carewebframework.api.query.IQueryContext;
 import org.carewebframework.ui.zk.ListUtil;
-import org.carewebframework.ui.zk.ZKUtil;
 
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
-import org.zkoss.zul.Listitem;
 
 import org.hspconsortium.cwf.fhir.document.Document;
 import org.hspconsortium.cwf.fhir.document.DocumentListDataService;
@@ -75,14 +69,6 @@ public class DocumentListController extends AbstractListController<Document, Doc
     
     private static final long serialVersionUID = 1L;
     
-    private Button btnClear;
-    
-    private Button btnView;
-    
-    private String viewText; //default view selected documents
-    
-    private final String lblBtnViewSelectAll = Labels.getLabel("cwfdocuments.plugin.btn.view.selectall.label");
-    
     private Combobox cboFilter;
     
     private Comboitem cbiSeparator;
@@ -105,10 +91,8 @@ public class DocumentListController extends AbstractListController<Document, Doc
     @Override
     public void initializeController() {
         super.initializeController();
-        viewText = btnView.getLabel();
         getContainer().registerProperties(this, "fixedFilter");
         addFilters(allTypes, null, null);
-        updateSelectCount();
     }
     
     /**
@@ -187,79 +171,9 @@ public class DocumentListController extends AbstractListController<Document, Doc
     }
     
     /**
-     * Update the display count of selected documents.
-     */
-    protected void updateSelectCount() {
-        int selCount = listBox.getSelectedCount();
-        
-        if (selCount == 0) {
-            btnView.setLabel(lblBtnViewSelectAll);
-            btnClear.setDisabled(true);
-        } else {
-            btnView.setLabel(viewText + " (" + selCount + ")");
-            btnClear.setDisabled(false);
-        }
-        
-        btnView.setDisabled(listBox.getItemCount() == 0);
-    }
-    
-    /**
-     * Update selection count.
+     * Selecting document displays view.
      */
     public void onSelect$listBox() {
-        updateSelectCount();
-    }
-    
-    /**
-     * Double-clicking enters document view mode.
-     *
-     * @param event The double click event.
-     */
-    public void onDoubleClick$listBox(Event event) {
-        Component cmpt = ZKUtil.getEventOrigin(event).getTarget();
-        
-        if (cmpt instanceof Listitem) {
-            Events.postEvent("onDeferredOpen", listBox, cmpt);
-        }
-    }
-    
-    /**
-     * Opening the display view after a double-click is deferred to avoid anomalies with selection
-     * of the associated list item.
-     * 
-     * @param event The deferred open event.
-     */
-    public void onDeferredOpen$listBox(Event event) {
-        Listitem item = (Listitem) ZKUtil.getEventOrigin(event).getData();
-        item.setSelected(true);
-        updateSelectCount();
-        onClick$btnView();
-    }
-    
-    /**
-     * Clear selected items
-     */
-    @Override
-    public void clearSelection() {
-        super.clearSelection();
-        updateSelectCount();
-    }
-    
-    /**
-     * Triggers document view mode.
-     */
-    public void onClick$btnView() {
-        Events.postEvent("onViewOpen", root, true);
-    }
-    
-    /**
-     * Returns a list of currently selected documents, or if no documents are selected, of all
-     * documents.
-     *
-     * @return The currently selected documents.
-     */
-    protected List<Document> getSelectedDocuments() {
-        return getObjects(listBox.getSelectedCount() > 0);
     }
     
     /**
@@ -289,8 +203,6 @@ public class DocumentListController extends AbstractListController<Document, Doc
         super.setListModel(model);
         int docCount = model == null ? 0 : model.getSize();
         lblInfo.setValue(docCount + " document(s)");
-        btnView.setDisabled(docCount == 0);
-        updateSelectCount();
     }
     
     @Override

@@ -1,6 +1,6 @@
 /*
  * #%L
- * cwf-ui-documents
+ * cwf-ui-mockuments
  * %%
  * Copyright (C) 2014 - 2016 Healthcare Services Platform Consortium
  * %%
@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.hspconsortium.cwf.ui.documents;
+package org.hspconsortium.cwf.ui.mockuments;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

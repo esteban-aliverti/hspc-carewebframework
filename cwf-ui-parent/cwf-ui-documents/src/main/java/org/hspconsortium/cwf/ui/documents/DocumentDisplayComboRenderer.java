@@ -20,15 +20,17 @@
 package org.hspconsortium.cwf.ui.documents;
 
 import org.carewebframework.ui.zk.AbstractComboitemRenderer;
-import org.hspconsortium.cwf.api.documents.Document;
 
 import org.zkoss.zul.Comboitem;
+
+import org.hspconsortium.cwf.fhir.document.Document;
 
 /**
  * Renderer for the document display combo box selector.
  */
 public class DocumentDisplayComboRenderer extends AbstractComboitemRenderer<Document> {
-
+    
+    
     /**
      * Render the combo item for the specified document.
      *

@@ -1,6 +1,6 @@
 /*
  * #%L
- * cwf-api-documents
+ * cwf-ui-mockuments
  * %%
  * Copyright (C) 2014 - 2016 Healthcare Services Platform Consortium
  * %%
@@ -17,23 +17,28 @@
  * limitations under the License.
  * #L%
  */
-package org.hspconsortium.cwf.api.documents;
+package org.hspconsortium.cwf.ui.mockuments;
 
-import java.util.Iterator;
+import org.carewebframework.ui.zk.AbstractComboitemRenderer;
+
+import org.zkoss.zul.Comboitem;
+
+import org.hspconsortium.cwf.fhir.document.Document;
 
 /**
- * Provides an iterable interface for document types.
- *
- * @author dmartin
+ * Renderer for the document display combo box selector.
  */
-public class DocumentTypeEnumerator implements Iterable<String> {
+public class DocumentDisplayComboRenderer extends AbstractComboitemRenderer<Document> {
     
-    public DocumentTypeEnumerator() {
-    }
     
+    /**
+     * Render the combo item for the specified document.
+     *
+     * @param item Combo item to render.
+     * @param doc The document associated with the list item.
+     */
     @Override
-    public Iterator<String> iterator() {
-        return DocumentService.getInstance().getTypes().iterator();
+    public void renderItem(Comboitem item, Document doc) {
+        item.setLabel(doc.getTitle());
     }
-    
 }

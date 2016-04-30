@@ -34,9 +34,9 @@ import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listitem;
 
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hspconsortium.cwf.api.documents.Document;
-import org.hspconsortium.cwf.api.documents.DocumentDisplayDataService;
-import org.hspconsortium.cwf.api.documents.DocumentService;
+import org.hspconsortium.cwf.fhir.document.Document;
+import org.hspconsortium.cwf.fhir.document.DocumentDisplayDataService;
+import org.hspconsortium.cwf.fhir.document.DocumentService;
 import org.hspconsortium.cwf.ui.reporting.controller.AbstractListController;
 
 /**
@@ -56,7 +56,7 @@ public class DocumentDisplayController extends AbstractListController<Document, 
     private final ComboitemRenderer<Document> comboRenderer = new DocumentDisplayComboRenderer();
     
     public DocumentDisplayController(DocumentService service) {
-        super(new DocumentDisplayDataService(service), "cwfdocuments", "TIU", "documentsPrint.css");
+        super(new DocumentDisplayDataService(service), "cwfdocuments", "DOCUMENT", "documentsPrint.css");
         setPaging(false);
     }
     

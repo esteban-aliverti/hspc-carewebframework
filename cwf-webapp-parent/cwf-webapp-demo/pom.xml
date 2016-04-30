@@ -148,6 +148,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hspconsortium.carewebframework</groupId>
+			<artifactId>cwf-ui-mockuments</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hspconsortium.carewebframework</groupId>
 			<artifactId>cwf-ui-democonfig</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

@@ -55,14 +55,14 @@
 		<bean id="cwfDocumentsListController"
 			class="org.hspconsortium.cwf.ui.documents.DocumentListController"
 			scope="prototype">
-			<constructor-arg ref="documentService" />
+			<constructor-arg ref="fhirDocumentService" />
 			<property name="itemRenderer" ref="cwfDocumentsDocumentListRenderer" />
 		</bean>
 
 		<bean id="cwfDocumentsDisplayController"
 			class="org.hspconsortium.cwf.ui.documents.DocumentDisplayController"
 			scope="prototype">
-			<constructor-arg ref="documentService" />
+			<constructor-arg ref="fhirDocumentService" />
 			<property name="itemRenderer" ref="cwfDocumentsDocumentDisplayRenderer" />
 		</bean>
 
