@@ -24,8 +24,6 @@ import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
@@ -43,16 +41,6 @@ public class DocumentDisplayController extends FrameworkController {
     private Document document;
     
     private Div printRoot;
-    
-    private Combobox cboHeader;
-    
-    private final ComboitemRenderer<Document> comboRenderer = new DocumentDisplayComboRenderer();
-    
-    @Override
-    public void doAfterCompose(Component comp) throws Exception {
-        super.doAfterCompose(comp);
-        cboHeader.setItemRenderer(comboRenderer);
-    }
     
     /**
      * Sets the document to be displayed.

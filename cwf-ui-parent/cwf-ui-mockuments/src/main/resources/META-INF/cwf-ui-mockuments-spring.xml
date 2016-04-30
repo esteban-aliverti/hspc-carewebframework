@@ -11,7 +11,7 @@
 	<beans profile="root">
 
 		<cwp:plugin
-			url="~./org/hspconsortium/cwf/ui/mockuments/mockuments.zul"
+			url="~./org/hspconsortium/cwf/ui/mockuments/documents.zul"
 			id="cwfMockuments" name="Mock Documents Display">
 			<cwp:resource>
 				<cwp:help-resource module="cwfMockumentsHelp" />
@@ -56,8 +56,6 @@
 		<bean id="cwfMockumentsDisplayController"
 			class="org.hspconsortium.cwf.ui.mockuments.DocumentDisplayController"
 			scope="prototype">
-			<constructor-arg ref="fhirDocumentService" />
-			<property name="itemRenderer" ref="cwfMockumentsDocumentDisplayRenderer" />
 		</bean>
 
 	</beans>

@@ -230,9 +230,9 @@ public class PatientHeader extends FrameworkController implements PatientContext
                 addHeader("Identifiers");
             }
             
-            String use = id.getUse().getDisplay();
-            String system = id.getSystem();
-            String value = id.getValue();
+            String use = id.hasUse() ? id.getUse().getDisplay() : "";
+            String system = id.hasSystem() ? id.getSystem() : "";
+            String value = id.hasValue() ? id.getValue() : "";
             
             if (!StringUtils.isEmpty(system)) {
                 value += " (" + system + ")";

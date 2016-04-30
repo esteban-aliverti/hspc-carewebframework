@@ -4,14 +4,9 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<panel id="panel" height="100%" width="100%">
-		<toolbar align="center">
-			<span style="float:left;">
-				<combobox id="cboHeader" placeholder="Quick find..." readonly="true" width="400px"/>
-			</span>
-			<span style="float:right;">
-				<button id="btnPrint" label="${labels.reporting.plugin.btn.print.label}"
-					tooltiptext="${labels.reporting.plugin.btn.print.tooltiptext}" />
-			</span>
+		<toolbar align="end">
+			<button id="btnPrint" label="${labels.reporting.plugin.btn.print.label}"
+				tooltiptext="${labels.reporting.plugin.btn.print.tooltiptext}" />
 		</toolbar>
 		<panelchildren>
 			<div id="printRoot" height="100%" width="100%" />

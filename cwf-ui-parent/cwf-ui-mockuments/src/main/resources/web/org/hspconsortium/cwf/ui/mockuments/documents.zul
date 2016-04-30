@@ -4,15 +4,15 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<splitterview apply="${cwfMockumentsMainController}" height="100%" width="100%"
-		orientation="vertical">
-		<splitterview>
+		horizontal="false">
+		<splitterpane relativeSize="30">
 			<include id="documentList" height="100%" width="100%"
 				src="~./org/hspconsortium/cwf/ui/mockuments/documentsList.zul" />
-		</splitterview>
-		<splitterview>
+		</splitterpane>
+		<splitterpane relativeSize="70">
 			<include id="documentDisplay" height="100%" width="100%"
 				src="~./org/hspconsortium/cwf/ui/mockuments/documentsDisplay.zul" />
-		</splitterview>
+		</splitterpane>
 	</splitterview>
 
 	<style>

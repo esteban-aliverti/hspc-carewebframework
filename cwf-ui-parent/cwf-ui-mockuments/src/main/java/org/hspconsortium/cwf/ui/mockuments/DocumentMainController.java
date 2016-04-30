@@ -22,7 +22,6 @@ package org.hspconsortium.cwf.ui.mockuments;
 import org.carewebframework.shell.plugins.PluginController;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.util.Composer;
 import org.zkoss.zul.Include;
 
 /**
@@ -48,12 +47,6 @@ public class DocumentMainController extends PluginController {
         documentDisplay.setVisible(false);
         attachController(documentList, listController);
         attachController(documentDisplay, displayController);
-    }
-    
-    @Override
-    public void attachController(Component comp, Composer<Component> controller) throws Exception {
-        super.attachController(comp, controller);
-        comp.addForward("onViewOpen", root, null);
     }
     
     public DocumentDisplayController getDisplayController() {
