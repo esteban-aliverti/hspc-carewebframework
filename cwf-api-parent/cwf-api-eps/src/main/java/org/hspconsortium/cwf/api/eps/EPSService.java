@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 import org.carewebframework.api.thread.ThreadUtil;
 import org.carewebframework.common.MiscUtil;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.socraticgrid.hl7.services.eps.accessclients.broker.BrokerServiceSE;
 import org.socraticgrid.hl7.services.eps.accessclients.publication.PublicationServiceSE;
 import org.socraticgrid.hl7.services.eps.accessclients.subscription.SubscriptionServiceSE;
@@ -55,7 +56,6 @@ import org.socraticgrid.hl7.services.eps.model.SubscriptionType;
 import org.socraticgrid.hl7.services.eps.model.User;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.IResource;
 
 /**
  *
@@ -114,6 +114,7 @@ public class EPSService {
     }
     
     private class Subscription {
+        
         
         private final Set<IEventCallback> callbacks = new HashSet<>();
         
@@ -337,8 +338,8 @@ public class EPSService {
      * @param resource The FHIR resource to be published.
      * @return The event id.
      */
-    public String publishResourceToTopic(String topic, IResource resource) {
-        return publishResourceToTopic(topic, resource, "FHIR Resource", resource.getResourceName());
+    public String publishResourceToTopic(String topic, IBaseResource resource) {
+        return publishResourceToTopic(topic, resource, "FHIR Resource", resource.getClass().getName());
     }
     
     /**
@@ -350,7 +351,7 @@ public class EPSService {
      * @param title Event title.
      * @return The event id.
      */
-    public String publishResourceToTopic(String topic, IResource resource, String subject, String title) {
+    public String publishResourceToTopic(String topic, IBaseResource resource, String subject, String title) {
         String data = fhirContext.newJsonParser().encodeResourceToString(resource);
         return publishEvent(topic, data, "application/json", subject, title);
     }

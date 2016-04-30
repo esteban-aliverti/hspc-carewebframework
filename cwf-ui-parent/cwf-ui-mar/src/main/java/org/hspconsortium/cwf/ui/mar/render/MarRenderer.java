@@ -34,15 +34,15 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Vbox;
 
+import org.hl7.fhir.dstu3.exceptions.FHIRException;
+import org.hl7.fhir.dstu3.model.MedicationAdministration;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
+import org.hl7.fhir.dstu3.model.Quantity;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.mar.MedicationActionUtil;
 import org.hspconsortium.cwf.ui.mar.controller.MainController;
 import org.hspconsortium.cwf.ui.mar.model.MarModel;
-import org.socraticgrid.fhir.generated.IQICoreMedicationAdministration;
-import org.socraticgrid.fhir.generated.IQICoreMedicationOrder;
-
-import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
 
 /**
  * Medication Administration Record Grid Renderer. Renderer identifies grid cells with the
@@ -74,11 +74,11 @@ public class MarRenderer implements RowRenderer<List<Object>> {
     public class SignMedAdminListener implements EventListener<MouseEvent> {
         
         
-        private IQICoreMedicationOrder prescription;
+        private MedicationOrder prescription;
         
         private final MainController marController;
         
-        public SignMedAdminListener(MainController marController, IQICoreMedicationOrder prescription) {
+        public SignMedAdminListener(MainController marController, MedicationOrder prescription) {
             this.prescription = prescription;
             this.marController = marController;
         }
@@ -89,11 +89,11 @@ public class MarRenderer implements RowRenderer<List<Object>> {
             marController.initializeMar();
         }
         
-        public IQICoreMedicationOrder getPrescription() {
+        public MedicationOrder getPrescription() {
             return prescription;
         }
         
-        public void setPrescription(IQICoreMedicationOrder prescription) {
+        public void setPrescription(MedicationOrder prescription) {
             this.prescription = prescription;
         }
     }
@@ -120,12 +120,12 @@ public class MarRenderer implements RowRenderer<List<Object>> {
     @Override
     public void render(Row row, List<Object> data, int index) {
         for (Object s : data) {
-            if (s instanceof IQICoreMedicationOrder) {
+            if (s instanceof MedicationOrder) {
                 //    			Button sign = new Button("Administer");
-                //    			sign.addEventListener("onClick", new SignMedAdminListener((IQICoreMedicationOrder)s));
+                //    			sign.addEventListener("onClick", new SignMedAdminListener((MedicationOrder)s));
                 //    			row.appendChild(sign);
                 Cell cell = new Cell();
-                cell.addEventListener("onClick", new SignMedAdminListener(marController, (IQICoreMedicationOrder) s));
+                cell.addEventListener("onClick", new SignMedAdminListener(marController, (MedicationOrder) s));
                 row.appendChild(cell);
             } else if (s != null && !s.equals(imagePlaceholder) && s instanceof String) {
                 String entry = (String) s;
@@ -222,9 +222,9 @@ public class MarRenderer implements RowRenderer<List<Object>> {
      * @param orders
      * @return
      */
-    public static List<String> getOrderSentences(List<IQICoreMedicationOrder> orders) {
+    public static List<String> getOrderSentences(List<MedicationOrder> orders) {
         List<String> sentences = new ArrayList<String>();
-        for (IQICoreMedicationOrder order : orders) {
+        for (MedicationOrder order : orders) {
             sentences.add(generateMedicationOrderSentence(order));
         }
         return sentences;
@@ -237,18 +237,23 @@ public class MarRenderer implements RowRenderer<List<Object>> {
      * @param order
      * @return
      */
-    public static String generateMedicationOrderSentence(IQICoreMedicationOrder order) {
+    public static String generateMedicationOrderSentence(MedicationOrder order) {
         StringBuilder sentence = new StringBuilder();
-        String dispense = order.getMedicationCodeableConcept().getCodingFirstRep().getDisplay();
+        String dispense;
+        try {
+            dispense = FhirUtil.getDisplayValueForType(order.getMedicationCodeableConcept());
+        } catch (FHIRException e) {
+            dispense = "";
+        }
         sentence.append(dispense).append("\n");
         if (order.getDosageInstruction() != null && order.getDosageInstruction().size() > 0) {
-            DosageInstruction dosage = order.getDosageInstruction().get(0);
-            if (dosage.getDose() != null && dosage.getDose() instanceof QuantityDt) {
-                QuantityDt doseAmnt = (QuantityDt) dosage.getDose();
+            MedicationOrderDosageInstructionComponent dosage = order.getDosageInstruction().get(0);
+            if (dosage.getDose() != null && dosage.getDose() instanceof Quantity) {
+                Quantity doseAmnt = (Quantity) dosage.getDose();
                 sentence.append(doseAmnt.getValue()).append(" ").append(getUnitLabel(doseAmnt.getUnit())).append(" ");
             }
-            if (dosage.getRoute().getCodingFirstRep() != null) {
-                sentence.append(dosage.getRoute().getCodingFirstRep().getDisplay()).append(" ");
+            if (dosage.hasRoute()) {
+                sentence.append(FhirUtil.getDisplayValueForType(dosage.getRoute())).append(" ");
             }
             if (dosage.getTiming() != null) {
                 sentence.append(FhirUtil.getFrequencyFromRepeat(order.getDosageInstruction().get(0).getTiming().getRepeat())
@@ -258,20 +263,20 @@ public class MarRenderer implements RowRenderer<List<Object>> {
         return sentence.toString();
     }
     
-    public static void recordAdministrationNotes(List<Object> row, int index, IQICoreMedicationAdministration medAdmin,
-                                                 IQICoreMedicationOrder order, String username) {
+    public static void recordAdministrationNotes(List<Object> row, int index, MedicationAdministration medAdmin,
+                                                 MedicationOrder order, String username) {
         String item = (String) row.get(index);
         if (item == null || item.trim().length() == 0) {
             item = "";
         } else {
             item += "|";
         }
-        QuantityDt adminQty = medAdmin.getDosage().getQuantity();
-        QuantityDt orderQty = (QuantityDt) order.getDosageInstruction().get(0).getDose();
+        Quantity adminQty = medAdmin.getDosage().getQuantity();
+        Quantity orderQty = (Quantity) order.getDosageInstruction().get(0).getDose();
         if (!FhirUtil.equalQuantities(adminQty, orderQty)) {
             item += "Dose adj. " + adminQty.getValue() + " " + getUnitLabel(adminQty.getUnit()) + " at ";
         }
-        item += hourMinuteFormatter.format(medAdmin.getEffectiveTimeDateTime());
+        item += hourMinuteFormatter.format(medAdmin.getEffectiveTime());
         item += " by " + username;
         row.set(index, item);
     }

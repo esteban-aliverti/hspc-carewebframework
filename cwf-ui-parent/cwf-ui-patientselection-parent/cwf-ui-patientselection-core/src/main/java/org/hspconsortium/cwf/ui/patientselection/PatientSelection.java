@@ -22,22 +22,23 @@ package org.hspconsortium.cwf.ui.patientselection;
 import java.util.Iterator;
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.carewebframework.api.FrameworkUtil;
 import org.carewebframework.api.property.PropertyUtil;
 import org.carewebframework.api.security.SecurityUtil;
-import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.carewebframework.common.StrUtil;
 import org.carewebframework.ui.zk.PopupDialog;
 import org.carewebframework.ui.zk.PromptDialog;
 
 import org.zkoss.util.resource.Labels;
 
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+
 /**
  * This is the convenience class for accessing patient selectors.
  */
 public class PatientSelection {
+    
     
     /**
      * Returns the current patient selector. If one has not already been created, it is created from

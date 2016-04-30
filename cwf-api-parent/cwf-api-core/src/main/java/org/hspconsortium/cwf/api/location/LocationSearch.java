@@ -19,10 +19,9 @@
  */
 package org.hspconsortium.cwf.api.location;
 
+import org.hl7.fhir.dstu3.model.Location;
 import org.hspconsortium.cwf.api.query.BaseResourceQuery;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 
@@ -31,20 +30,21 @@ import ca.uhn.fhir.rest.gclient.IQuery;
  */
 public class LocationSearch extends BaseResourceQuery<Location, LocationSearchCriteria> {
     
+    
     public LocationSearch(IGenericClient fhirClient) {
         super(Location.class, fhirClient);
     }
     
     @Override
-    public void buildQuery(LocationSearchCriteria criteria, IQuery<Bundle> query) {
+    public void buildQuery(LocationSearchCriteria criteria, IQuery<?> query) {
         super.buildQuery(criteria, query);
         
         if (criteria.getType() != null) {
-            query.where(Location.TYPE.exactly().code(criteria.getType().getCode()));
+            query.where(Location.TYPE.exactly().code(criteria.getType()));
         }
         
         if (criteria.getStatus() != null) {
-            query.where(Location.STATUS.exactly().code(criteria.getStatus().getCode()));
+            query.where(Location.STATUS.exactly().code(criteria.getStatus().toCode()));
         }
         
         if (criteria.getName() != null) {

@@ -27,38 +27,42 @@ import java.util.List;
 import java.util.Map;
 
 import org.carewebframework.api.spring.SpringUtil;
+
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeSystem;
+import org.hl7.fhir.dstu3.model.CodeSystem.ConceptDefinitionComponent;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Encounter.EncounterLocationComponent;
+import org.hl7.fhir.dstu3.model.Encounter.EncounterParticipantComponent;
+import org.hl7.fhir.dstu3.model.Encounter.EncounterState;
+import org.hl7.fhir.dstu3.model.Enumeration;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.HumanName.NameUse;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Period;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.RelatedPerson;
+import org.hl7.fhir.dstu3.model.UriType;
+import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.api.ClientUtil;
 import org.hspconsortium.cwf.api.query.IResourceQueryEx;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import org.hl7.fhir.instance.model.api.IBaseResource;
-
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.dstu2.resource.RelatedPerson;
-import ca.uhn.fhir.model.dstu2.resource.ValueSet;
-import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
-import ca.uhn.fhir.model.primitive.BoundCodeDt;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.UriDt;
 
 /**
  * Encounter-related utility functions.
  */
 public class EncounterUtil {
     
-    public static final CodingDt primaryType = new CodingDt("http://hl7.org/fhir/v3/ParticipationType", "PPRF");
     
-    private static volatile Map<String, CodeableConceptDt> serviceCategories;
+    public static final Coding primaryType = new Coding("http://hl7.org/fhir/v3/ParticipationType", "PPRF",
+            "primary performer");
+    
+    private static volatile Map<String, CodeableConcept> serviceCategories;
     
     /**
      * Returns a reference to the encounter search engine.
@@ -104,40 +108,40 @@ public class EncounterUtil {
     
     public static Encounter create(Patient patient, Date date, Location location, String sc) {
         Encounter encounter = new Encounter();
-        ResourceReferenceDt pat = new ResourceReferenceDt(patient);
+        Reference pat = new Reference(patient);
         encounter.setPatient(pat);
-        PeriodDt period = new PeriodDt();
-        period.setStart(new DateTimeDt(date));
+        Period period = new Period();
+        period.setStart(date);
         encounter.setPeriod(period);
-        ResourceReferenceDt loc = new ResourceReferenceDt(location);
-        Encounter.Location encloc = encounter.addLocation();
+        Reference loc = new Reference(location);
+        EncounterLocationComponent encloc = encounter.addLocation();
         encloc.setPeriod(period);
         encloc.setLocation(loc);
-        CodeableConceptDt type = encounter.addType();
-        CodeableConceptDt cat = getServiceCategory(sc);
+        CodeableConcept type = encounter.addType();
+        CodeableConcept cat = getServiceCategory(sc);
         type.setText(cat.getText());
-        type.setCoding(cat.getCoding());
+        type.getCoding().addAll(cat.getCoding());
         return encounter;
     }
     
-    public static CodeableConceptDt createServiceCategory(String sc, String shortDx, String longDx) {
-        CodeableConceptDt cpt = new CodeableConceptDt();
+    public static CodeableConcept createServiceCategory(String sc, String shortDx, String longDx) {
+        CodeableConcept cpt = new CodeableConcept();
         cpt.setText(longDx);
-        CodingDt coding = new CodingDt();
+        Coding coding = new Coding();
         coding.setCode(sc);
         coding.setDisplay(shortDx);
         cpt.getCoding().add(coding);
         return cpt;
     }
     
-    public static CodeableConceptDt getServiceCategory(String category) {
+    public static CodeableConcept getServiceCategory(String category) {
         initServiceCategories();
         
         if (category == null) {
             return null;
         }
         
-        CodeableConceptDt cat = serviceCategories.get(category);
+        CodeableConcept cat = serviceCategories.get(category);
         
         if (cat == null) {
             cat = createServiceCategory(category, "Unknown", "Unknown service category");
@@ -146,7 +150,7 @@ public class EncounterUtil {
         return cat;
     }
     
-    public static Collection<CodeableConceptDt> getServiceCategories() {
+    public static Collection<CodeableConcept> getServiceCategories() {
         initServiceCategories();
         return serviceCategories.values();
     }
@@ -159,19 +163,19 @@ public class EncounterUtil {
     
     private static synchronized void loadServiceCategories() {
         if (serviceCategories == null) {
-            Map<String, CodeableConceptDt> map = new LinkedHashMap<String, CodeableConceptDt>();
+            Map<String, CodeableConcept> map = new LinkedHashMap<String, CodeableConcept>();
             Bundle bundle = ClientUtil.getFhirClient().search().forResource(ValueSet.class)
-                    .where(ValueSet.NAME.matchesExactly().value("EncounterType")).execute();
-                    
-            for (ValueSet vs : FhirUtil.getEntries(bundle, ValueSet.class)) {
-                UriDt system = vs.getCodeSystem().getSystemElement();
+                    .where(CodeSystem.NAME.matchesExactly().value("EncounterType")).returnBundle(Bundle.class).execute();
+            
+            for (CodeSystem cs : FhirUtil.getEntries(bundle, CodeSystem.class)) {
+                UriType system = cs.getUrlElement();
                 
-                for (ValueSet.CodeSystemConcept concept : vs.getCodeSystem().getConcept()) {
-                    CodeableConceptDt cc = new CodeableConceptDt();
-                    CodingDt coding = cc.addCoding();
+                for (ConceptDefinitionComponent concept : cs.getConcept()) {
+                    CodeableConcept cc = new CodeableConcept();
+                    Coding coding = cc.addCoding();
                     coding.setCode(concept.getCode());
                     coding.setDisplay(concept.getDisplay());
-                    coding.setSystem(system);
+                    coding.setSystemElement(system);
                     cc.setText(concept.getDefinition());
                     map.put(coding.getCode(), cc);
                 }
@@ -184,23 +188,23 @@ public class EncounterUtil {
     }
     
     public static String getServiceCategory(Encounter encounter) {
-        CodeableConceptDt cpt = encounter == null ? null : FhirUtil.getFirst(encounter.getType());
-        CodingDt coding = cpt == null ? null : cpt.getCodingFirstRep();
+        CodeableConcept cpt = encounter == null ? null : FhirUtil.getFirst(encounter.getType());
+        Coding coding = cpt == null ? null : FhirUtil.getFirst(cpt.getCoding());
         return coding == null ? null : coding.getCode();
     }
     
     public static boolean isLocked(Encounter encounter) {
-        BoundCodeDt<EncounterStateEnum> status = encounter.getStatusElement();
-        return status != null && status.getValueAsEnum() == EncounterStateEnum.FINISHED;
+        Enumeration<EncounterState> status = encounter.getStatusElement();
+        return status != null && status.getValue() == EncounterState.FINISHED;
     }
     
     public static boolean isPrepared(Encounter encounter) {
-        return encounter != null && !encounter.getLocationFirstRep().isEmpty()
-                && !encounter.getParticipantFirstRep().isEmpty() && getServiceCategory(encounter) != null;
+        return encounter != null && !encounter.getLocation().isEmpty() && !encounter.getParticipant().isEmpty()
+                && getServiceCategory(encounter) != null;
     }
     
-    public static Participant getParticipantByType(Encounter encounter, CodingDt participationType) {
-        for (Participant p : encounter.getParticipant()) {
+    public static EncounterParticipantComponent getParticipantByType(Encounter encounter, Coding participationType) {
+        for (EncounterParticipantComponent p : encounter.getParticipant()) {
             if (hasType(p, participationType)) {
                 return p;
             }
@@ -209,12 +213,12 @@ public class EncounterUtil {
         return null;
     }
     
-    public static boolean isPrimary(Participant participant) {
+    public static boolean isPrimary(EncounterParticipantComponent participant) {
         return hasType(participant, primaryType);
     }
     
-    public static boolean removeType(Participant participant, CodingDt participationType) {
-        CodeableConceptDt cpt;
+    public static boolean removeType(EncounterParticipantComponent participant, Coding participationType) {
+        CodeableConcept cpt;
         boolean found = false;
         
         while ((cpt = findType(participant, participationType)) != null) {
@@ -225,9 +229,9 @@ public class EncounterUtil {
         return found;
     }
     
-    public static boolean addType(Participant participant, CodingDt participationType) {
+    public static boolean addType(EncounterParticipantComponent participant, Coding participationType) {
         if (!hasType(participant, participationType)) {
-            CodeableConceptDt cpt = participant.addType();
+            CodeableConcept cpt = participant.addType();
             cpt.getCoding().add(participationType);
             return true;
         }
@@ -235,14 +239,14 @@ public class EncounterUtil {
         return false;
     }
     
-    public static boolean hasType(Participant participant, CodingDt participationType) {
+    public static boolean hasType(EncounterParticipantComponent participant, Coding participationType) {
         return findType(participant, participationType) != null;
     }
     
-    private static CodeableConceptDt findType(Participant participant, CodingDt participationType) {
+    private static CodeableConcept findType(EncounterParticipantComponent participant, Coding participationType) {
         if (participant != null) {
-            for (CodeableConceptDt tp : participant.getType()) {
-                for (CodingDt coding : tp.getCoding()) {
+            for (CodeableConcept tp : participant.getType()) {
+                for (Coding coding : tp.getCoding()) {
                     if (coding.getSystem().equals(participationType.getSystem())
                             && coding.getCode().equals(participationType.getCode())) {
                         return tp;
@@ -254,30 +258,31 @@ public class EncounterUtil {
         return null;
     }
     
-    public static Participant getPrimaryParticipant(Encounter encounter) {
+    public static EncounterParticipantComponent getPrimaryParticipant(Encounter encounter) {
         return getParticipantByType(encounter, primaryType);
     }
     
-    public static HumanNameDt getName(Participant participant) {
+    public static HumanName getName(EncounterParticipantComponent participant) {
         IBaseResource resource = ClientUtil.getResource(participant.getIndividual());
-        return resource instanceof Practitioner ? ((Practitioner) resource).getName()
+        return resource instanceof Practitioner
+                ? FhirUtil.getName(((Practitioner) resource).getName(), NameUse.USUAL, NameUse.OFFICIAL)
                 : resource instanceof RelatedPerson ? ((RelatedPerson) resource).getName() : null;
     }
     
-    public static Practitioner getPractitioner(Participant participant) {
+    public static Practitioner getPractitioner(EncounterParticipantComponent participant) {
         if (participant == null) {
             return null;
         }
         
-        ResourceReferenceDt resource = participant.getIndividual();
+        Reference resource = participant.getIndividual();
         IBaseResource ele = resource.getResource();
         return ele instanceof Practitioner ? (Practitioner) ele : null;
     }
     
-    public static List<Practitioner> getPractitioners(List<Participant> participants) {
+    public static List<Practitioner> getPractitioners(List<EncounterParticipantComponent> participants) {
         List<Practitioner> list = new ArrayList<>();
         
-        for (Participant participant : participants) {
+        for (EncounterParticipantComponent participant : participants) {
             Practitioner practitioner = getPractitioner(participant);
             
             if (practitioner != null) {
@@ -295,11 +300,11 @@ public class EncounterUtil {
      * @return The encounter location corresponding to the specified physical type, or null if none
      *         found.
      */
-    public static Encounter.Location getLocationByPhysicalType(Encounter encounter, String physicalType) {
-        for (Encounter.Location encounterLocation : encounter.getLocation()) {
+    public static EncounterLocationComponent getLocationByPhysicalType(Encounter encounter, String physicalType) {
+        for (EncounterLocationComponent encounterLocation : encounter.getLocation()) {
             Location location = ClientUtil.getResource(encounterLocation.getLocation(), Location.class);
             
-            if (physicalType.equals(location.getPhysicalType().getCodingFirstRep().getCode())) {
+            if (physicalType.equals(FhirUtil.getFirst(location.getPhysicalType().getCoding()).getCode())) {
                 return encounterLocation;
             }
         }

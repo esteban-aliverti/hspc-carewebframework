@@ -21,8 +21,6 @@ package org.hspconsortium.cwf.api.documents;
 
 import java.util.Date;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.carewebframework.api.query.AbstractQueryServiceEx;
 import org.carewebframework.api.query.IQueryContext;
 import org.carewebframework.api.query.IQueryResult;
@@ -30,10 +28,13 @@ import org.carewebframework.api.query.QueryUtil;
 import org.carewebframework.common.DateRange;
 import org.carewebframework.common.DateUtil;
 
+import org.hl7.fhir.dstu3.model.Patient;
+
 /**
  * Data service wrapper for documents service.
  */
 public class DocumentListDataService extends AbstractQueryServiceEx<DocumentService, Document> {
+    
     
     public DocumentListDataService(DocumentService service) {
         super(service);
@@ -45,8 +46,8 @@ public class DocumentListDataService extends AbstractQueryServiceEx<DocumentServ
         Date startDate = dateRange.getStartDate();
         Date endDate = DateUtil.endOfDay(dateRange.getEndDate());
         Patient patient = (Patient) context.getParam("patient");
-        return QueryUtil.packageResult(service.retrieveReferences(patient, startDate, endDate,
-            (String) context.getParam("type")));
+        return QueryUtil
+                .packageResult(service.retrieveReferences(patient, startDate, endDate, (String) context.getParam("type")));
     }
     
     @Override

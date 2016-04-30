@@ -23,26 +23,25 @@ import java.util.List;
 
 import org.carewebframework.common.StrUtil;
 
+import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.DeviceUseRequest;
+import org.hl7.fhir.dstu3.model.DiagnosticOrder;
+import org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
+import org.hl7.fhir.dstu3.model.NutritionOrder;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.ProcedureRequest;
+import org.hl7.fhir.dstu3.model.Type;
+import org.hl7.fhir.instance.model.api.IBaseDatatype;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
-import ca.uhn.fhir.model.api.IDatatype;
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.DeviceUseRequest;
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticOrder;
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticOrder.Item;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
-import ca.uhn.fhir.model.dstu2.resource.NutritionOrder;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.ProcedureRequest;
-import ca.uhn.fhir.model.primitive.BooleanDt;
-
 /**
  * Controller for patient orders display.
  */
-public class MainController extends ResourceListView<IResource, IBaseResource> {
+public class MainController extends ResourceListView<IBaseResource, IBaseResource> {
     
     
     private static final long serialVersionUID = 1L;
@@ -58,7 +57,7 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
     
     @Override
     protected void init() {
-        setup(IResource.class, "Orders", "Order Detail", QUERY, 1, "Type^^min", "Date^^min", "Order^^1", "Notes^^1");
+        setup(IBaseResource.class, "Orders", "Order Detail", QUERY, 1, "Type^^min", "Date^^min", "Order^^1", "Notes^^1");
         super.init();
     }
     
@@ -98,7 +97,7 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
         
         StringBuilder sb = new StringBuilder();
         
-        for (DosageInstruction di : order.getDosageInstruction()) {
+        for (MedicationOrderDosageInstructionComponent di : order.getDosageInstruction()) {
             append(sb, di.getDose(), " ");
             append(sb, di.getRate(), " ");
             append(sb, di.getSite(), " ");
@@ -107,9 +106,9 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
             append(sb, di.getTiming(), " ");
             append(sb, di.getText(), " ");
             
-            IDatatype prn = di.getAsNeeded();
+            Type prn = di.getAsNeeded();
             
-            if (prn instanceof BooleanDt && ((BooleanDt) prn).getValue()) {
+            if (prn instanceof BooleanType && ((BooleanType) prn).getValue()) {
                 append(sb, "PRN", " ");
             } else {
                 append(sb, prn, " ");
@@ -121,10 +120,10 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
     
     private void render(DiagnosticOrder order, List<Object> columns) {
         columns.add("Diagnostic");
-        columns.add(order.getEventFirstRep().getDateTime());
+        columns.add(order.hasEvent() ? order.getEvent().get(0).getDateTime() : null);
         StringBuilder sb = new StringBuilder();
         
-        for (Item item : order.getItem()) {
+        for (DiagnosticOrderItemComponent item : order.getItem()) {
             append(sb, item.getCode(), ", ");
         }
         
@@ -139,7 +138,7 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
         columns.add(order.getNotes());
     }
     
-    private void append(StringBuilder sb, IDatatype value, String delimiter) {
+    private void append(StringBuilder sb, IBaseDatatype value, String delimiter) {
         append(sb, FhirUtil.getDisplayValueForType(value), delimiter);
     }
     
@@ -148,7 +147,7 @@ public class MainController extends ResourceListView<IResource, IBaseResource> {
     }
     
     @Override
-    protected void initModel(List<IResource> orders) {
+    protected void initModel(List<IBaseResource> orders) {
         if (!orders.isEmpty() && orders.get(0) instanceof Patient) {
             orders.remove(0);
         }

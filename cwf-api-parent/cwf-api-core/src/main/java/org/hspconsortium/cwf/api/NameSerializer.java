@@ -21,40 +21,41 @@ package org.hspconsortium.cwf.api;
 
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.primitive.StringDt;
-
 import org.carewebframework.common.ISerializer;
+
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.StringType;
 
 /**
  * CCOW serializer / deserializer for HumanName class.
  */
-public class NameSerializer implements ISerializer<HumanNameDt> {
+public class NameSerializer implements ISerializer<HumanName> {
+    
     
     private static final String NAME_DELIM = "^";
     
     @Override
-    public String serialize(HumanNameDt value) {
+    public String serialize(HumanName value) {
         return getComponent(value.getFamily(), 0) + NAME_DELIM + getComponent(value.getGiven(), 0) + NAME_DELIM
                 + getComponent(value.getGiven(), 1) + NAME_DELIM + getComponent(value.getSuffix(), 0) + NAME_DELIM
                 + getComponent(value.getPrefix(), 0) + NAME_DELIM + getComponent(value.getSuffix(), 1) + NAME_DELIM
                 + value.getUse();
     }
     
-    private String getComponent(List<StringDt> list, int index) {
+    private String getComponent(List<StringType> list, int index) {
         if (index >= list.size()) {
             return "";
         }
         
-        StringDt value = list.get(index);
+        StringType value = list.get(index);
         String result = value.getValue();
         return result == null ? "" : result;
     }
     
     @Override
-    public HumanNameDt deserialize(String value) {
+    public HumanName deserialize(String value) {
         String pcs[] = value.split("\\" + NAME_DELIM);
-        HumanNameDt result = new HumanNameDt();
+        HumanName result = new HumanName();
         int i = 0;
         
         if ((value = getComponent(pcs, i++)) != null) {
@@ -98,7 +99,7 @@ public class NameSerializer implements ISerializer<HumanNameDt> {
     }
     
     @Override
-    public Class<HumanNameDt> getType() {
-        return HumanNameDt.class;
+    public Class<HumanName> getType() {
+        return HumanName.class;
     }
 }

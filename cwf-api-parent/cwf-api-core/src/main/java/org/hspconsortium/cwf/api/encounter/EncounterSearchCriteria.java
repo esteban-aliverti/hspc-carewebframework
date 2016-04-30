@@ -19,9 +19,8 @@
  */
 package org.hspconsortium.cwf.api.encounter;
 
-import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Period;
 import org.hspconsortium.cwf.api.SearchCriteria;
 
 /**
@@ -29,11 +28,12 @@ import org.hspconsortium.cwf.api.SearchCriteria;
  */
 public class EncounterSearchCriteria extends SearchCriteria {
     
+    
     private Patient patient;
     
     private String type;
     
-    private PeriodDt period;
+    private Period period;
     
     public EncounterSearchCriteria() {
         super("Insufficent search parameters.");
@@ -90,7 +90,7 @@ public class EncounterSearchCriteria extends SearchCriteria {
      * 
      * @return Search time window.
      */
-    public PeriodDt getPeriod() {
+    public Period getPeriod() {
         return period;
     }
     
@@ -99,7 +99,7 @@ public class EncounterSearchCriteria extends SearchCriteria {
      * 
      * @param period Search time window.
      */
-    public void setPeriod(PeriodDt period) {
+    public void setPeriod(Period period) {
         this.period = period;
     }
     

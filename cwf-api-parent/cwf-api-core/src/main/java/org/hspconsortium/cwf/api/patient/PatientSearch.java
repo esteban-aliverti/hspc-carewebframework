@@ -19,12 +19,12 @@
  */
 package org.hspconsortium.cwf.api.patient;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.query.BaseResourceQuery;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 
@@ -33,20 +33,24 @@ import ca.uhn.fhir.rest.gclient.IQuery;
  */
 public class PatientSearch extends BaseResourceQuery<Patient, PatientSearchCriteria> {
     
+    
     public PatientSearch(IGenericClient fhirClient) {
         super(Patient.class, fhirClient);
     }
     
     @Override
-    public void buildQuery(PatientSearchCriteria criteria, IQuery<Bundle> query) {
+    public void buildQuery(PatientSearchCriteria criteria, IQuery<?> query) {
         super.buildQuery(criteria, query);
+        Identifier id = criteria.getMRN();
         
-        if (criteria.getMRN() != null) {
-            query.where(Patient.IDENTIFIER.exactly().identifier(criteria.getMRN()));
+        if (id != null) {
+            query.where(Patient.IDENTIFIER.exactly().systemAndIdentifier(id.getSystem(), id.getValue()));
         }
         
-        if (criteria.getSSN() != null) {
-            query.where(Patient.IDENTIFIER.exactly().identifier(criteria.getSSN()));
+        id = criteria.getSSN();
+        
+        if (id != null) {
+            query.where(Patient.IDENTIFIER.exactly().systemAndIdentifier(id.getSystem(), id.getValue()));
         }
         
         if (criteria.getBirth() != null) {
@@ -58,7 +62,7 @@ public class PatientSearch extends BaseResourceQuery<Patient, PatientSearchCrite
         }
         
         if (criteria.getName() != null) {
-            HumanNameDt name = criteria.getName();
+            HumanName name = criteria.getName();
             
             if (!name.getFamily().isEmpty()) {
                 query.where(Patient.FAMILY.matches().values(FhirUtil.toStringList(name.getFamily())));

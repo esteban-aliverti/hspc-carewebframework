@@ -21,25 +21,26 @@ package org.hspconsortium.cwf.ui.patientselection;
 
 import java.util.Date;
 
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-
 import org.apache.commons.lang.StringUtils;
 
-import org.hspconsortium.cwf.api.patientlist.PatientListItem;
 import org.carewebframework.common.DateUtil;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.carewebframework.ui.zk.AbstractListitemRenderer;
 
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listitem;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.HumanName.NameUse;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patientlist.PatientListItem;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+
 /**
  * Renderer for patient list items.
  */
 public class PatientListItemRenderer extends AbstractListitemRenderer<Object, Object> {
+    
     
     private static final PatientListItemRenderer instance = new PatientListItemRenderer();
     
@@ -85,7 +86,7 @@ public class PatientListItemRenderer extends AbstractListitemRenderer<Object, Ob
         String info = patientListItem.getInfo();
         
         if (patient != null) {
-            HumanNameDt name = FhirUtil.getName(patient.getName(), NameUseEnum.USUAL, null);
+            HumanName name = FhirUtil.getName(patient.getName(), NameUse.USUAL, null);
             
             if (name == null) {
                 name = FhirUtil.parseName(Labels.getLabel("patientselection.warn.unknown.patient"));

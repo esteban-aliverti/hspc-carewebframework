@@ -25,12 +25,11 @@ import java.util.Set;
 
 import org.carewebframework.common.StrUtil;
 
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceReactionComponent;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceStatus;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance.Reaction;
-import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
 
 /**
  * Controller for patient adverse reaction display.
@@ -40,12 +39,12 @@ public class MainController extends ResourceListView<AllergyIntolerance, Allergy
     
     private static final long serialVersionUID = 1L;
     
-    private static final Set<AllergyIntoleranceStatusEnum> exclusions = new HashSet<>();
+    private static final Set<AllergyIntoleranceStatus> exclusions = new HashSet<>();
     
     static {
-        exclusions.add(AllergyIntoleranceStatusEnum.ENTERED_IN_ERROR);
-        exclusions.add(AllergyIntoleranceStatusEnum.REFUTED);
-        exclusions.add(AllergyIntoleranceStatusEnum.RESOLVED);
+        exclusions.add(AllergyIntoleranceStatus.ENTEREDINERROR);
+        exclusions.add(AllergyIntoleranceStatus.REFUTED);
+        exclusions.add(AllergyIntoleranceStatus.RESOLVED);
     }
     
     @Override
@@ -63,10 +62,10 @@ public class MainController extends ResourceListView<AllergyIntolerance, Allergy
         columns.add(getReactions(ai.getReaction()));
     }
     
-    private String getReactions(List<Reaction> reactions) {
+    private String getReactions(List<AllergyIntoleranceReactionComponent> reactions) {
         StringBuilder sb = new StringBuilder();
         
-        for (Reaction reaction : reactions) {
+        for (AllergyIntoleranceReactionComponent reaction : reactions) {
             StrUtil.strAppend(sb, FhirUtil.getDisplayValueForTypes(reaction.getManifestation(), ", "));
         }
         

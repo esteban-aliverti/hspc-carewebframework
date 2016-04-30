@@ -20,28 +20,28 @@
 package org.hspconsortium.cwf.api.context;
 
 import static org.junit.Assert.assertEquals;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.HumanName.NameUse;
 import org.hspconsortium.cwf.api.NameSerializer;
-
 import org.junit.Test;
 
 public class NameSerializerTest {
     
+    
     @Test
     public void test() {
         NameSerializer ns = new NameSerializer();
-        HumanNameDt name = new HumanNameDt();
+        HumanName name = new HumanName();
         name.addFamily("Martin");
         name.addGiven("Douglas");
         name.addGiven("Kent");
         name.addPrefix("Dr.");
         name.addSuffix("M.D.");
-        name.getUseElement().setValueAsEnum(NameUseEnum.OFFICIAL);
+        name.getUseElement().setValue(NameUse.OFFICIAL);
         String s = ns.serialize(name);
         System.out.println(s);
-        HumanNameDt name2 = ns.deserialize(s);
+        HumanName name2 = ns.deserialize(s);
         assertEquals(name.getFamily(), name2.getFamily());
         assertEquals(name.getGiven(), name2.getGiven());
         assertEquals(name.getPrefix(), name2.getPrefix());

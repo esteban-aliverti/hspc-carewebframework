@@ -19,26 +19,28 @@
  */
 package org.hspconsortium.cwf.ui.patientselection.v1;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
-import org.hspconsortium.cwf.ui.patientselection.Constants;
-import org.hspconsortium.cwf.ui.patientselection.IPatientSelector;
-import org.hspconsortium.cwf.ui.patientselection.PatientSelectorFactoryBase;
 import org.carewebframework.ui.zk.PopupDialog;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.ui.patientselection.Constants;
+import org.hspconsortium.cwf.ui.patientselection.IPatientSelector;
+import org.hspconsortium.cwf.ui.patientselection.PatientSelectorFactoryBase;
+
 /**
  * This is the patient selection factory.
  */
 public class PatientSelectorFactory extends PatientSelectorFactoryBase {
     
+    
     public static class PatientSelector implements IPatientSelector {
         
-        private final Window dlg = PopupDialog.popup(ZKUtil.getResourcePath(PatientSelectorFactory.class)
-                + "patientSelection.zul", false, true, false);
+        
+        private final Window dlg = PopupDialog
+                .popup(ZKUtil.getResourcePath(PatientSelectorFactory.class) + "patientSelection.zul", false, true, false);
         
         @Override
         public Patient select() {

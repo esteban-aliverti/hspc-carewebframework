@@ -55,6 +55,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.event.ListDataEvent;
 import org.zkoss.zul.event.ListDataListener;
 
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
 import org.hspconsortium.cwf.api.ucs.MessageService;
@@ -63,8 +64,6 @@ import org.hspconsortium.cwf.api.ucs.Urgency;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.socraticgrid.hl7.services.uc.model.Message;
 import org.socraticgrid.hl7.services.uc.model.UserContactInfo;
-
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Controller for main message display.
@@ -350,8 +349,8 @@ public class MainController extends CaptionedForm implements IPatientContextEven
             return;
         }
         
-        if (radAll.isChecked()
-                || (message.hasPatient() && patient != null && message.getPatientId().equals(patient.getId().getIdPart()))) {
+        if (radAll.isChecked() || (message.hasPatient() && patient != null
+                && message.getPatientId().equals(patient.getIdElement().getIdPart()))) {
             model.add(message);
         }
         

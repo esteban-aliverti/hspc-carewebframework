@@ -19,11 +19,11 @@
  */
 package org.hspconsortium.cwf.ui.patientselection;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.carewebframework.ui.zk.IRenderer;
 
 import org.zkoss.zk.ui.Component;
+
+import org.hl7.fhir.dstu3.model.Patient;
 
 /**
  * Interface for rendering detail view of patient in patient selection dialog.

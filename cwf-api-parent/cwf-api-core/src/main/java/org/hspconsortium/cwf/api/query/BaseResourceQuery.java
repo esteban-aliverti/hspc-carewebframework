@@ -21,12 +21,12 @@ package org.hspconsortium.cwf.api.query;
 
 import java.util.List;
 
+import org.hl7.fhir.dstu3.model.BaseResource;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.api.SearchCriteria;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
@@ -43,7 +43,8 @@ import ca.uhn.fhir.rest.gclient.StringClientParam;
  * @param <R> The resource class
  * @param <C> The criteria class.
  */
-public class BaseResourceQuery<R extends IResource, C extends SearchCriteria> implements IResourceQueryEx<R, C> {
+public class BaseResourceQuery<R extends IBaseResource, C extends SearchCriteria> implements IResourceQueryEx<R, C> {
+    
     
     private final IGenericClient fhirClient;
     
@@ -62,11 +63,11 @@ public class BaseResourceQuery<R extends IResource, C extends SearchCriteria> im
      * @param criteria Research search criteria.
      * @param query The query object.
      */
-    protected void buildQuery(C criteria, IQuery<Bundle> query) {
+    protected void buildQuery(C criteria, IQuery<?> query) {
         criteria.validate();
         
         if (criteria.getMaximum() > 0) {
-            query.limitTo(criteria.getMaximum());
+            query.count(criteria.getMaximum());
         }
         
         if (criteria.getId() != null) {
@@ -80,7 +81,7 @@ public class BaseResourceQuery<R extends IResource, C extends SearchCriteria> im
      * @return The newly created query object.
      */
     @Override
-    public IQuery<Bundle> createQuery() {
+    public IQuery<?> createQuery() {
         return fhirClient.search().forResource(resourceClass);
     }
     
@@ -92,7 +93,7 @@ public class BaseResourceQuery<R extends IResource, C extends SearchCriteria> im
      */
     @Override
     public List<R> search(C criteria) {
-        IQuery<Bundle> query = createQuery();
+        IQuery<?> query = createQuery();
         buildQuery(criteria, query);
         return search(query);
     }
@@ -105,7 +106,7 @@ public class BaseResourceQuery<R extends IResource, C extends SearchCriteria> im
      * @return List of matching resources. May return null to indicate no matches.
      */
     @Override
-    public List<R> search(IQuery<Bundle> query) {
-        return FhirUtil.getEntries(query.execute(), resourceClass);
+    public List<R> search(IQuery<?> query) {
+        return FhirUtil.getEntries(query.returnBundle(Bundle.class).execute(), resourceClass);
     }
 }

@@ -19,8 +19,6 @@
  */
 package org.hspconsortium.cwf.api.location;
 
-import ca.uhn.fhir.model.dstu2.resource.Location;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,10 +29,13 @@ import org.carewebframework.api.context.ISharedContext;
 import org.carewebframework.api.context.ManagedContext;
 import org.carewebframework.api.property.PropertyUtil;
 
+import org.hl7.fhir.dstu3.model.Location;
+
 /**
  * Wrapper for shared user location context.
  */
 public class LocationContext extends ManagedContext<Location> {
+    
     
     private static final Log log = LogFactory.getLog(LocationContext.class);
     
@@ -93,7 +94,7 @@ public class LocationContext extends ManagedContext<Location> {
      * @param location The location.
      */
     public static void setDefaultLocation(Location location) {
-        PropertyUtil.saveValue(PROPERTY_DEFAULT_LOCATION, null, false, location.getId().getIdPart());
+        PropertyUtil.saveValue(PROPERTY_DEFAULT_LOCATION, null, false, location.getIdElement().getIdPart());
     }
     
     /**

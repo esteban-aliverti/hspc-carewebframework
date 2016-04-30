@@ -24,11 +24,10 @@ import java.util.List;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Vlayout;
 
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory.FamilyMemberHistoryConditionComponent;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory.Condition;
 
 /**
  * Controller for family history display.
@@ -53,7 +52,7 @@ public class MainController extends ResourceListView<FamilyMemberHistory, Family
             Vlayout cmp = new Vlayout();
             columns.add(cmp);
             
-            for (Condition condition : relation.getCondition()) {
+            for (FamilyMemberHistoryConditionComponent condition : relation.getCondition()) {
                 String value = null;
                 
                 switch (i) {

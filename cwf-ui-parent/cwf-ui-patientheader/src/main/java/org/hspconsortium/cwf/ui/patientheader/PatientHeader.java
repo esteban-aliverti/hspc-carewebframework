@@ -44,20 +44,19 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Toolbar;
 
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.ContactPoint;
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Patient.PatientCommunicationComponent;
+import org.hl7.fhir.dstu3.model.StringType;
+import org.hl7.fhir.dstu3.model.Type;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.patientselection.PatientSelection;
-
-import ca.uhn.fhir.model.api.IDatatype;
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.Patient.Communication;
-import ca.uhn.fhir.model.primitive.BooleanDt;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.StringDt;
 
 /**
  * Controller for patient header plugin.
@@ -143,7 +142,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
         lblName.setSclass(null);
         setLabel(lblDOB, formatDateAndAge(patient.getBirthDate()), lblDOBLabel);
         setLabel(lblDOD, formatDOD(patient.getDeceased()), lblDODLabel);
-        setLabel(lblGender, patient.getGender(), null);
+        setLabel(lblGender, patient.hasGender() ? patient.getGender().getDisplay() : null, null);
         Clients.resize(root);
     }
     
@@ -152,18 +151,18 @@ public class PatientHeader extends FrameworkController implements PatientContext
         return null;
     }
     
-    private String formatDOD(IDatatype value) {
+    private String formatDOD(Type value) {
         if (value == null) {
             return null;
         }
         
-        DateDt dod = FhirUtil.getTyped(value, DateDt.class);
+        DateType dod = FhirUtil.getTyped(value, DateType.class);
         
         if (dod != null) {
             return formatDateAndAge(dod.getValue());
         }
         
-        BooleanDt isDead = FhirUtil.getTyped(value, BooleanDt.class);
+        BooleanType isDead = FhirUtil.getTyped(value, BooleanType.class);
         
         if (isDead != null && isDead.getValue()) {
             return "unknown";
@@ -205,7 +204,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
         
         needsHeader = true;
         
-        for (HumanNameDt name : patient.getName()) {
+        for (HumanName name : patient.getName()) {
             
             String nm = FhirUtil.formatName(name);
             
@@ -225,13 +224,13 @@ public class PatientHeader extends FrameworkController implements PatientContext
         
         needsHeader = true;
         
-        for (IdentifierDt id : patient.getIdentifier()) {
+        for (Identifier id : patient.getIdentifier()) {
             if (needsHeader) {
                 needsHeader = false;
                 addHeader("Identifiers");
             }
             
-            String use = id.getUse();
+            String use = id.getUse().getDisplay();
             String system = id.getSystem();
             String value = id.getValue();
             
@@ -246,7 +245,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
         
         needsHeader = true;
         
-        for (Communication comm : patient.getCommunication()) {
+        for (PatientCommunicationComponent comm : patient.getCommunication()) {
             if (needsHeader) {
                 needsHeader = false;
                 addHeader("Communication");
@@ -264,27 +263,25 @@ public class PatientHeader extends FrameworkController implements PatientContext
         
         needsHeader = true;
         
-        List<ContactPointDt> telecoms = new ArrayList<>(patient.getTelecom());
-        Collections.sort(telecoms, new Comparator<ContactPointDt>() {
+        List<ContactPoint> telecoms = new ArrayList<>(patient.getTelecom());
+        Collections.sort(telecoms, new Comparator<ContactPoint>() {
             
             
             @Override
-            public int compare(ContactPointDt cp1, ContactPointDt cp2) {
-                int rank1 = cp1.getRank() == null ? 0 : cp1.getRank();
-                int rank2 = cp2.getRank() == null ? 0 : cp2.getRank();
-                return rank1 - rank2;
+            public int compare(ContactPoint cp1, ContactPoint cp2) {
+                return cp1.getRank() - cp2.getRank();
             }
             
         });
         
-        for (ContactPointDt telecom : telecoms) {
+        for (ContactPoint telecom : telecoms) {
             if (needsHeader) {
                 needsHeader = false;
                 addHeader("Contact Details");
             }
             
-            String type = telecom.getSystem();
-            String use = telecom.getUse();
+            String type = telecom.hasSystem() ? telecom.getSystem().getDisplay() : "";
+            String use = telecom.hasUse() ? telecom.getUse().getDisplay() : "";
             
             if (!StringUtils.isEmpty(use)) {
                 type += " (" + use + ")";
@@ -296,14 +293,14 @@ public class PatientHeader extends FrameworkController implements PatientContext
         // Address(es)
         needsHeader = true;
         
-        for (AddressDt address : patient.getAddress()) {
+        for (Address address : patient.getAddress()) {
             if (needsHeader) {
                 needsHeader = false;
                 addHeader("Addresses");
             }
             
-            String type = address.getType();
-            String use = address.getUse();
+            String type = address.hasType() ? address.getType().getDisplay() : "";
+            String use = address.hasUse() ? address.getUse().getDisplay() : "";
             
             if (!StringUtils.isEmpty(type)) {
                 use += " (" + type + ")";
@@ -311,7 +308,7 @@ public class PatientHeader extends FrameworkController implements PatientContext
             
             addDetail(" ", use);
             
-            for (StringDt line : address.getLine()) {
+            for (StringType line : address.getLine()) {
                 addDetail(line.getValue(), null);
             }
             

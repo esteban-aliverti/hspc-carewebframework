@@ -45,15 +45,14 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.ucs.MessageService;
 import org.hspconsortium.cwf.api.ucs.ScheduledMessage;
 import org.hspconsortium.cwf.api.ucs.Urgency;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.socraticgrid.hl7.services.uc.model.UserContactInfo;
-
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Controller for creating or editing a scheduled message.
@@ -149,9 +148,9 @@ public class ScheduleController extends FrameworkController {
                 pnlAssociate.setVisible(false);
             } else {
                 String name = FhirUtil.formatName(patient.getName());
-                IdentifierDt mrn = FhirUtil.getMRN(patient);
+                Identifier mrn = FhirUtil.getMRN(patient);
                 lblPatient.setValue(name + " (" + (mrn == null ? "" : mrn.getValue()) + ")");
-                chkAssociate.setValue(patient.getId().getIdPart());
+                chkAssociate.setValue(patient.getIdElement().getIdPart());
             }
         }
         

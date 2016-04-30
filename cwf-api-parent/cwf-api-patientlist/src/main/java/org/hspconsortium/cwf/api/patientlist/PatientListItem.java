@@ -19,8 +19,7 @@
  */
 package org.hspconsortium.cwf.api.patientlist;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
@@ -29,6 +28,7 @@ import org.hspconsortium.cwf.fhir.common.FhirUtil;
  * information.
  */
 public class PatientListItem implements Comparable<PatientListItem> {
+    
     
     private final Patient patient;
     
@@ -84,8 +84,8 @@ public class PatientListItem implements Comparable<PatientListItem> {
      */
     @Override
     public boolean equals(Object object) {
-        return patient == null || !(object instanceof PatientListItem) ? false : FhirUtil.areEqual(patient,
-            ((PatientListItem) object).patient);
+        return patient == null || !(object instanceof PatientListItem) ? false
+                : FhirUtil.areEqual(patient, ((PatientListItem) object).patient);
     }
     
     /**

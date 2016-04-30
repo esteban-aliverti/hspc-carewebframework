@@ -47,25 +47,23 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Textbox;
 
+import org.hl7.fhir.dstu3.exceptions.FHIRException;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.MedicationAdministration;
+import org.hl7.fhir.dstu3.model.MedicationAdministration.MedicationAdministrationDosageComponent;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Quantity;
+import org.hl7.fhir.dstu3.model.Timing;
+import org.hl7.fhir.dstu3.model.Timing.TimingRepeatComponent;
 import org.hspconsortium.cwf.api.eps.EPSService;
 import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.fhir.medication.MedicationService;
 import org.hspconsortium.cwf.ui.mar.MedicationActionUtil;
-import org.socraticgrid.fhir.generated.IQICoreMedicationAdministration;
-import org.socraticgrid.fhir.generated.IQICoreMedicationOrder;
-import org.socraticgrid.fhir.generated.QICoreMedicationAdministrationAdapter;
-import org.socraticgrid.fhir.generated.QICoreMedicationOrderAdapter;
-import org.socraticgrid.fhir.generated.QICorePatientAdapter;
-
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
-import ca.uhn.fhir.model.dstu2.composite.TimingDt;
-import ca.uhn.fhir.model.dstu2.composite.TimingDt.Repeat;
-import ca.uhn.fhir.model.dstu2.resource.MedicationAdministration.Dosage;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.BooleanDt;
 
 /**
  * 
@@ -152,14 +150,14 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * Convenience identifier to group medication administrations created using the MAR. This
      * identifier can be useful for bulk updates and deletes.
      */
-    private final IdentifierDt generatedMedAdminsIdentifier = new IdentifierDt()
+    private final Identifier generatedMedAdminsIdentifier = new Identifier()
             .setSystem("urn:cogmedsys:hsp:model:medicationadministration").setValue("gen");
     
     /**
      * Convenience identifier to group medication administrations created using the MAR. This
      * identifier can be useful for bulk updates and deletes.
      */
-    private final IdentifierDt generatedMedOrderIdentifier = new IdentifierDt()
+    private final Identifier generatedMedOrderIdentifier = new Identifier()
             .setSystem("urn:cogmedsys:hsp:model:medicationorder").setValue("gen");
     
     /**
@@ -257,7 +255,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
     /**
      * Method populates the administrable medications for the patient
      */
-    public void populateMedSelector(IQICoreMedicationOrder order) {//TODO For demo only. In future, reference a repository
+    public void populateMedSelector(MedicationOrder order) {//TODO For demo only. In future, reference a repository
         Map<String, Comboitem> meds = new HashMap<String, Comboitem>();
         medSelector.getItems().clear();
         Comboitem metoprolol = new Comboitem();
@@ -312,13 +310,15 @@ public class SimpleMedicationAdministrationController extends PluginController {
         medSelector.appendChild(bisacodyl);
         medSelector.appendChild(acetazolamide);
         
-        CodingDt selectedMed = null;
+        Coding selectedMed = null;
         if (order != null) {
-            selectedMed = order.getMedicationCodeableConcept().getCodingFirstRep();
-            Comboitem item = meds.get(selectedMed.getCode());
-            if (item != null) {
-                medSelector.setSelectedItem(item);
-            }
+            try {
+                selectedMed = FhirUtil.getFirst(order.getMedicationCodeableConcept().getCoding());
+                Comboitem item = meds.get(selectedMed.getCode());
+                if (item != null) {
+                    medSelector.setSelectedItem(item);
+                }
+            } catch (FHIRException e) {}
         }
     }
     
@@ -327,7 +327,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * 
      * @param order
      */
-    public void populateDoseUnitSelector(IQICoreMedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
+    public void populateDoseUnitSelector(MedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
         doseUnitSelector.getItems().clear();
         Comboitem tablet = new Comboitem();
         tablet.setValue("{tbl}");
@@ -339,7 +339,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
         doseUnitSelector.appendChild(mg);
         
         if (order != null) {
-            QuantityDt qty = (QuantityDt) order.getDosageInstruction().get(0).getDose();//TODO Fix in code generator
+            Quantity qty = (Quantity) order.getDosageInstruction().get(0).getDose();//TODO Fix in code generator
             for (Comboitem item : doseUnitSelector.getItems()) {
                 if (item.getValue().equals(qty.getUnit())) {
                     doseUnitSelector.setSelectedItem(item);
@@ -354,7 +354,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * 
      * @param order
      */
-    public void populateFrequencySelector(IQICoreMedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
+    public void populateFrequencySelector(MedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
         if (frequencySelector != null) {//frequencySelector will be null for medication administrations
             frequencySelector.getItems().clear();
             Comboitem qd = new Comboitem();
@@ -373,7 +373,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * 
      * @param order
      */
-    public void populateRouteOfAdminSelector(IQICoreMedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
+    public void populateRouteOfAdminSelector(MedicationOrder order) {//TODO For demo only. In future, reference a knowledge base
         routeOfAdminSelector.getItems().clear();
         Comboitem oral = new Comboitem();
         oral.setValue("26643006");
@@ -385,7 +385,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
         routeOfAdminSelector.appendChild(topical);
         
         if (order != null) {
-            CodingDt route = order.getDosageInstruction().get(0).getRoute().getCodingFirstRep();//TODO Fix in code generator
+            Coding route = FhirUtil.getFirst(order.getDosageInstruction().get(0).getRoute().getCoding());//TODO Fix in code generator
             for (Comboitem item : routeOfAdminSelector.getItems()) {
                 if (item.getValue().equals(route.getCode())) {
                     routeOfAdminSelector.setSelectedItem(item);
@@ -463,7 +463,7 @@ public class SimpleMedicationAdministrationController extends PluginController {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
         try {
-            IQICoreMedicationOrder order = (IQICoreMedicationOrder) arg.get(MedicationActionUtil.MED_ORDER_KEY);
+            MedicationOrder order = (MedicationOrder) arg.get(MedicationActionUtil.MED_ORDER_KEY);
             populateMedSelector(order);
             populateDoseUnitSelector(order);
             populateFrequencySelector(order);
@@ -521,13 +521,12 @@ public class SimpleMedicationAdministrationController extends PluginController {
     public void onClick$btnMarAdminister(Event event) {
         
         Patient patient = PatientContext.getActivePatient();
-        QICorePatientAdapter patientAdapter = new QICorePatientAdapter(patient);
         
         MedicationInterventionFormHelper formHelper = new MedicationInterventionFormHelper(this);
         formHelper.initialize();
         
         if (formHelper.meetsMedicationAdministrationRequirements()) {
-            IQICoreMedicationAdministration administration = buildMedicationAdministration(formHelper, patientAdapter);
+            MedicationAdministration administration = buildMedicationAdministration(formHelper, patient);
             try {
                 medicationService.createMedicationAdministration(administration);
                 try {
@@ -556,13 +555,12 @@ public class SimpleMedicationAdministrationController extends PluginController {
     public void onClick$btnOrderMedication(Event event) {
         
         Patient patient = PatientContext.getActivePatient();
-        QICorePatientAdapter patientAdapter = new QICorePatientAdapter(patient);
         
         MedicationInterventionFormHelper formHelper = new MedicationInterventionFormHelper(this);
         formHelper.initialize();
         
         if (formHelper.meetsOrderRequirements()) {
-            IQICoreMedicationOrder order = buildMedicationOrder(formHelper, patientAdapter);
+            MedicationOrder order = buildMedicationOrder(formHelper, patient);
             try {
                 medicationService.createMedicationOrder(order);
             } catch (Exception e) {
@@ -583,20 +581,20 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * @param patient
      * @return
      */
-    public IQICoreMedicationAdministration buildMedicationAdministration(MedicationInterventionFormHelper formHelper,
-                                                                         QICorePatientAdapter patient) {
-        IQICoreMedicationOrder order = (IQICoreMedicationOrder) arg.get(MedicationActionUtil.MED_ORDER_KEY);
-        IQICoreMedicationAdministration administration = new QICoreMedicationAdministrationAdapter();
-        administration.setPrescriptionResource((QICoreMedicationOrderAdapter) order);
-        administration.setMedicationCodeableConcept(formHelper.getSelectedMedication());
-        Date administrationTime = new Date();
-        administration.setEffectiveTimeDateTime(administrationTime);
-        Dosage dose = new Dosage();
+    public MedicationAdministration buildMedicationAdministration(MedicationInterventionFormHelper formHelper,
+                                                                  Patient patient) {
+        MedicationOrder order = (MedicationOrder) arg.get(MedicationActionUtil.MED_ORDER_KEY);
+        MedicationAdministration administration = new MedicationAdministration();
+        administration.setPrescriptionTarget(order);
+        administration.setMedication(formHelper.getSelectedMedication());
+        DateTimeType administrationTime = new DateTimeType();
+        administration.setEffectiveTime(administrationTime);
+        MedicationAdministrationDosageComponent dose = new MedicationAdministrationDosageComponent();
         administration.setDosage(dose);
         dose.setQuantity(formHelper.getDoseQuantity());
         administration.addIdentifier(generatedMedAdminsIdentifier);
         dose.setRoute(formHelper.getSelectedRoute());
-        administration.setPatientResource(patient);
+        administration.setPatientTarget(patient);
         return administration;
     }
     
@@ -607,28 +605,27 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * @param patient
      * @return
      */
-    public IQICoreMedicationOrder buildMedicationOrder(MedicationInterventionFormHelper formHelper,
-                                                       QICorePatientAdapter patient) {
-        IQICoreMedicationOrder order = new QICoreMedicationOrderAdapter();
+    public MedicationOrder buildMedicationOrder(MedicationInterventionFormHelper formHelper, Patient patient) {
+        MedicationOrder order = new MedicationOrder();
         order.addIdentifier(generatedMedOrderIdentifier);
-        order.setMedicationCodeableConcept(formHelper.getSelectedMedication());
+        order.setMedication(formHelper.getSelectedMedication());
         Date administrationTime = new Date();
         order.setDateWritten(administrationTime);
-        DosageInstruction dosageInstructions = new DosageInstruction();
+        MedicationOrderDosageInstructionComponent dosageInstructions = new MedicationOrderDosageInstructionComponent();
         order.addDosageInstruction(dosageInstructions);
         dosageInstructions.setDose(formHelper.getDoseQuantity());//TODO Fix getAdaptee indirection in code generator
-        dosageInstructions.setAsNeeded(new BooleanDt(formHelper.getIsPRNMed()));
+        //dosageInstructions.setAsNeeded(formHelper.getIsPRNMed());
         dosageInstructions.setAsNeeded(formHelper.getSelectedPrnReason());
         dosageInstructions.setRoute(formHelper.getSelectedRoute());
         
         if (formHelper.getSelectedFrequency() != null) {
-            TimingDt timing = new TimingDt();
-            Repeat repeat = formHelper.getTimingRepeat();
+            Timing timing = new Timing();
+            TimingRepeatComponent repeat = formHelper.getTimingRepeat();
             timing.setRepeat(repeat);
             dosageInstructions.setTiming(timing);
         }
         
-        order.setPatientResource(patient);
+        order.setPatientTarget(patient);
         
         return order;
     }
@@ -639,8 +636,8 @@ public class SimpleMedicationAdministrationController extends PluginController {
      * 
      * @param medAdmin
      */
-    public void publishJsonPayloadToEpsTopic(IQICoreMedicationAdministration medAdmin, String epsTopic) {
-        epsService.publishResourceToTopic(epsTopic, medAdmin.getAdaptee(), "New Medication Administration",
+    public void publishJsonPayloadToEpsTopic(MedicationAdministration medAdmin, String epsTopic) {
+        epsService.publishResourceToTopic(epsTopic, medAdmin, "New Medication Administration",
             "New Medication Administration");
     }
 }

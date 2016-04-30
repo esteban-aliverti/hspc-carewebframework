@@ -35,7 +35,7 @@ import org.carewebframework.api.domain.DomainFactoryRegistry;
 import org.carewebframework.api.domain.IDomainFactory;
 import org.carewebframework.common.DateRange;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
 
 /**
  * Base class for patient list implementations.
@@ -114,7 +114,7 @@ public abstract class AbstractPatientList implements IPatientList {
         List<Patient> results = patientFactory.fetchObjects(Patient.class, ids.keySet().toArray(ary));
         
         for (Patient patient : results) {
-            String info = ids.get(patient.getId().getIdPart());
+            String info = ids.get(patient.getIdElement().getIdPart());
             PatientListItem item = new PatientListItem(patient, info);
             
             if (!items.contains(item)) {

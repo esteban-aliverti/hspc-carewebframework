@@ -1,0 +1,62 @@
+<?taglib uri="http://www.carewebframework.org/tld/security" prefix="sec"?>
+<?taglib uri="http://www.carewebframework.org/tld/core" prefix="rc"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:w="http://www.zkoss.org/2005/zk/client"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<div apply="${cwfDemoConfigController}">
+		<tabbox mold="accordion">
+			<tabs>
+				<tab label="Patients" />
+				<tab label="Medication Administrations" />
+				<tab label="Medication Orders" />
+				<tab label="Conditions" />
+			</tabs>
+			<tabpanels>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.patienttab.welcome.msg}" />
+						<button id="btnAddPatient" label="Add three patients" />
+						<button id="btnDelPatient"
+							label="Delete all patients" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.medadmintab.welcome.msg}" />
+						<button id="btnAddMedAdmins"
+							label="Add new medication admins" />
+						<button id="btnDelMedAdmins"
+							label="Delete medication admins" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.medordertab.welcome.msg}" />
+						<button id="btnAddMedOrders"
+							label="Add new medication orders" />
+						<button id="btnDelMedOrders"
+							label="Delete medication orders" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.conditiontab.welcome.msg}" />
+						<button id="btnAddConditions"
+							label="Add new conditions" />
+						<button id="btnDelConditions"
+							label="Delete conditions" />
+					</vbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+
+</zk>

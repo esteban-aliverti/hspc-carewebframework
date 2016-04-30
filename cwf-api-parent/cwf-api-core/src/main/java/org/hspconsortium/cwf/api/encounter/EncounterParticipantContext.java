@@ -19,10 +19,6 @@
  */
 package org.hspconsortium.cwf.api.encounter;
 
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,28 +27,34 @@ import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
 import org.carewebframework.api.context.ISharedContext;
 import org.carewebframework.api.context.ManagedContext;
+
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Encounter.EncounterParticipantComponent;
+import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hspconsortium.cwf.api.encounter.EncounterContext.IEncounterContextEvent;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 /**
  * Wrapper for shared participant context.
  */
-public class EncounterParticipantContext extends ManagedContext<Participant> implements IEncounterContextEvent {
+public class EncounterParticipantContext extends ManagedContext<EncounterParticipantComponent> implements IEncounterContextEvent {
+    
     
     private static final Log log = LogFactory.getLog(EncounterParticipantContext.class);
     
-    private static final String SUBJECT_NAME = "Participant";
+    private static final String SUBJECT_NAME = "EncounterParticipantComponent";
     
     public interface IEncounterParticipantContextEvent extends IContextEvent {};
     
     /**
      * Returns the managed participant context.
      * 
-     * @return Participant context.
+     * @return EncounterParticipantComponent context.
      */
     @SuppressWarnings("unchecked")
-    static public ISharedContext<Participant> getParticipantContext() {
-        return (ISharedContext<Participant>) ContextManager.getInstance().getSharedContext(
-            EncounterParticipantContext.class.getName());
+    static public ISharedContext<EncounterParticipantComponent> getParticipantContext() {
+        return (ISharedContext<EncounterParticipantComponent>) ContextManager.getInstance()
+                .getSharedContext(EncounterParticipantContext.class.getName());
     }
     
     /**
@@ -60,7 +62,7 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * 
      * @return Current participant.
      */
-    public static Participant getActiveParticipant() {
+    public static EncounterParticipantComponent getActiveParticipant() {
         return getParticipantContext().getContextObject(false);
     }
     
@@ -69,7 +71,7 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * 
      * @param participant The participant.
      */
-    public static void changeParticipant(Participant participant) {
+    public static void changeParticipant(EncounterParticipantComponent participant) {
         try {
             getParticipantContext().requestContextChange(participant);
         } catch (Exception e) {
@@ -82,11 +84,11 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * 
      * @return Current practitioner.
      */
-    public static Participant getActivePractitioner() {
-        Participant participant = getParticipantContext().getContextObject(false);
+    public static EncounterParticipantComponent getActivePractitioner() {
+        EncounterParticipantComponent participant = getParticipantContext().getContextObject(false);
         
-        return participant == null ? null : participant.getIndividual().getResource() instanceof Practitioner ? participant
-                : null;
+        return participant == null ? null
+                : participant.getIndividual().getResource() instanceof Practitioner ? participant : null;
     }
     
     /**
@@ -101,7 +103,7 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * 
      * @param participant Initial value for context.
      */
-    public EncounterParticipantContext(Participant participant) {
+    public EncounterParticipantContext(EncounterParticipantComponent participant) {
         super(SUBJECT_NAME, IEncounterParticipantContextEvent.class, participant);
     }
     
@@ -120,7 +122,7 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * Creates a CCOW context from the specified participant object.
      */
     @Override
-    protected ContextItems toCCOWContext(Participant participant) {
+    protected ContextItems toCCOWContext(EncounterParticipantComponent participant) {
         //TODO: contextItems.setItem(...);
         return contextItems;
     }
@@ -129,11 +131,11 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
      * Returns a participant instance based on the specified CCOW context.
      */
     @Override
-    protected Participant fromCCOWContext(ContextItems contextItems) {
-        Participant participant = null;
+    protected EncounterParticipantComponent fromCCOWContext(ContextItems contextItems) {
+        EncounterParticipantComponent participant = null;
         
         try {
-            participant = new Participant();
+            participant = new EncounterParticipantComponent();
             //TODO: Populate participant object from context items.
             return participant;
         } catch (Exception e) {
@@ -165,7 +167,7 @@ public class EncounterParticipantContext extends ManagedContext<Participant> imp
     @Override
     public String pending(boolean silent) {
         Encounter encounter = EncounterContext.getEncounterContext().getContextObject(true);
-        changeParticipant(encounter == null ? null : encounter.getParticipantFirstRep());
+        changeParticipant(encounter == null ? null : FhirUtil.getFirst(encounter.getParticipant()));
         return null;
     }
 }

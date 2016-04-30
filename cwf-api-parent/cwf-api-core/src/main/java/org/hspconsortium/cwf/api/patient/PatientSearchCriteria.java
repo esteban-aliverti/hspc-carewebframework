@@ -25,12 +25,11 @@ import org.apache.commons.lang.StringUtils;
 
 import org.carewebframework.common.DateUtil;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
 import org.hspconsortium.cwf.api.SearchCriteria;
+import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.valueset.IdentifierTypeCodesEnum;
 
 /**
  * Represents search criteria supported by FHIR.
@@ -40,11 +39,11 @@ public class PatientSearchCriteria extends SearchCriteria {
     
     private static final String ERROR_MISSING_REQUIRED = "@patientsearch.error.missing.required";
     
-    private HumanNameDt name;
+    private HumanName name;
     
-    private IdentifierDt mrn;
+    private Identifier mrn;
     
-    private IdentifierDt ssn;
+    private Identifier ssn;
     
     private String gender;
     
@@ -125,7 +124,7 @@ public class PatientSearchCriteria extends SearchCriteria {
      * 
      * @return Patient name criterion.
      */
-    public HumanNameDt getName() {
+    public HumanName getName() {
         return name;
     }
     
@@ -143,7 +142,7 @@ public class PatientSearchCriteria extends SearchCriteria {
      * 
      * @param name Patient name.
      */
-    public void setName(HumanNameDt name) {
+    public void setName(HumanName name) {
         this.name = name;
     }
     
@@ -152,7 +151,7 @@ public class PatientSearchCriteria extends SearchCriteria {
      * 
      * @return MRN criterion.
      */
-    public IdentifierDt getMRN() {
+    public Identifier getMRN() {
         return mrn;
     }
     
@@ -162,8 +161,8 @@ public class PatientSearchCriteria extends SearchCriteria {
      * @param mrn MRN.
      */
     public void setMRN(String mrn) {
-        this.mrn = new IdentifierDt();
-        this.mrn.setType(IdentifierTypeCodesEnum.MR);
+        this.mrn = new Identifier();
+        this.mrn.setType(FhirTerminology.IDENT_MRN);
         this.mrn.setValue(mrn);
     }
     
@@ -172,7 +171,7 @@ public class PatientSearchCriteria extends SearchCriteria {
      * 
      * @return SSN criterion.
      */
-    public IdentifierDt getSSN() {
+    public Identifier getSSN() {
         return ssn;
     }
     
@@ -182,10 +181,9 @@ public class PatientSearchCriteria extends SearchCriteria {
      * @param ssn SSN.
      */
     public void setSSN(String ssn) {
-        this.ssn = new IdentifierDt();
-        this.ssn.setType(IdentifierTypeCodesEnum.SOCIAL_BENEFICIARY_IDENTIFIER);
+        this.ssn = new Identifier();
+        this.ssn.setType(FhirTerminology.IDENT_SSN);
         this.ssn.setValue(ssn);
-        this.ssn.setSystem("http://hl7.org/fhir/sid/us-ssn");
     }
     
     /**

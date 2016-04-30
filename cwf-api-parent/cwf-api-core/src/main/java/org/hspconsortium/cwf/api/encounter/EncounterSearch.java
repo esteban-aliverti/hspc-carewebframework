@@ -21,10 +21,9 @@ package org.hspconsortium.cwf.api.encounter;
 
 import java.util.Date;
 
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.hspconsortium.cwf.api.query.BaseResourceQuery;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
 
@@ -33,12 +32,13 @@ import ca.uhn.fhir.rest.gclient.IQuery;
  */
 public class EncounterSearch extends BaseResourceQuery<Encounter, EncounterSearchCriteria> {
     
+    
     public EncounterSearch(IGenericClient fhirClient) {
         super(Encounter.class, fhirClient);
     }
     
     @Override
-    public void buildQuery(EncounterSearchCriteria criteria, IQuery<Bundle> query) {
+    public void buildQuery(EncounterSearchCriteria criteria, IQuery<?> query) {
         super.buildQuery(criteria, query);
         
         if (criteria.getPatient() != null) {

@@ -25,22 +25,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.hspconsortium.cwf.api.ClientUtil;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
 import org.springframework.util.StringUtils;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Binary;
-import ca.uhn.fhir.model.dstu2.resource.DocumentReference;
-import ca.uhn.fhir.model.dstu2.resource.DocumentReference.Context;
+import org.hl7.fhir.dstu3.model.Binary;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DocumentReference;
+import org.hl7.fhir.dstu3.model.DocumentReference.DocumentReferenceContextComponent;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hspconsortium.cwf.api.ClientUtil;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 /**
  * Model object wrapping a document reference and its contents (lazily loaded).
  */
 public class Document implements Comparable<Document> {
+    
     
     private static final byte[] EMPTY_CONTENT = {};
     
@@ -62,7 +62,7 @@ public class Document implements Comparable<Document> {
         String title = reference.getDescription();
         
         if (title == null) {
-            CodingDt coding = reference.getType().getCodingFirstRep();
+            Coding coding = FhirUtil.getFirst(reference.getType().getCoding());
             title = coding == null ? null : coding.getDisplay();
         }
         
@@ -74,25 +74,25 @@ public class Document implements Comparable<Document> {
     }
     
     public String getLocationName() {
-        Context ctx = reference.getContext();
-        CodeableConceptDt facilityType = ctx == null ? null : ctx.getFacilityType();
-        CodingDt coding = facilityType == null ? null : FhirUtil.getFirst(facilityType.getCoding());
+        DocumentReferenceContextComponent ctx = reference.getContext();
+        CodeableConcept facilityType = ctx == null ? null : ctx.getFacilityType();
+        Coding coding = facilityType == null ? null : FhirUtil.getFirst(facilityType.getCoding());
         return coding == null ? "" : coding.getDisplay().toString();
     }
     
     public String getAuthorName() {
-        ResourceReferenceDt resource = FhirUtil.getFirst(reference.getAuthor());
+        Reference resource = FhirUtil.getFirst(reference.getAuthor());
         return resource == null ? "" : resource.getDisplay().toString();
     }
     
     public Collection<String> getTypes() {
         if (types == null) {
             types = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-            CodeableConceptDt dt = reference.getType();
-            List<CodingDt> codings = dt == null ? null : dt.getCoding();
+            CodeableConcept dt = reference.getType();
+            List<Coding> codings = dt == null ? null : dt.getCoding();
             
             if (codings != null) {
-                for (CodingDt coding : codings) {
+                for (Coding coding : codings) {
                     String type = coding.getDisplay().toString();
                     
                     if (!StringUtils.isEmpty(type)) {
@@ -111,16 +111,16 @@ public class Document implements Comparable<Document> {
     }
     
     public String getContentType() {
-        return reference.getContentFirstRep().getAttachment().getContentType();
+        return FhirUtil.getFirst(reference.getContent()).getAttachment().getContentType();
     }
     
     public byte[] getContent() {
         if (content == null) {
-            content = reference.getContentFirstRep().getAttachment().getData();
+            content = FhirUtil.getFirst(reference.getContent()).getAttachment().getData();
             
             if (content == null || content.length == 0) {
                 Binary binary = ClientUtil.getFhirClient().read(Binary.class,
-                    reference.getContentFirstRep().getAttachment().getUrl());
+                    FhirUtil.getFirst(reference.getContent()).getAttachment().getUrl());
                 content = binary.getContent();
             }
             

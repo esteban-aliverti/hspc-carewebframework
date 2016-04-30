@@ -26,13 +26,15 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.carewebframework.api.spring.SpringUtil;
+
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeSystem;
+import org.hl7.fhir.dstu3.model.CodeSystem.ConceptDefinitionComponent;
+import org.hl7.fhir.dstu3.model.DocumentReference;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.ClientUtil;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.DocumentReference;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.ValueSet;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 
@@ -40,6 +42,7 @@ import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
  * This is the documents api implementation.
  */
 public class DocumentService {
+    
     
     public static DocumentService getInstance() {
         return SpringUtil.getBean("documentService", DocumentService.class);
@@ -61,8 +64,8 @@ public class DocumentService {
     public List<Document> retrieveReferences(Patient patient, Date startDate, Date endDate, String type) {
         ReferenceClientParam subject = new ReferenceClientParam(DocumentReference.SP_SUBJECT + ":Patient");
         
-        IQuery<Bundle> query = ClientUtil.getFhirClient().search().forResource(DocumentReference.class)
-                .where(subject.hasId(patient.getId().getIdPart()));
+        IQuery<?> query = ClientUtil.getFhirClient().search().forResource(DocumentReference.class)
+                .where(subject.hasId(patient.getIdElement().getIdPart()));
         //.forResource("Patient/" + patient.getId().getIdPart() + "/DocumentReference");
         
         if (startDate != null) {
@@ -78,7 +81,7 @@ public class DocumentService {
             
         }
         
-        Bundle bundle = query.execute();
+        Bundle bundle = query.returnBundle(Bundle.class).execute();
         List<DocumentReference> list = FhirUtil.getEntries(bundle, DocumentReference.class);
         List<Document> results = new ArrayList<>(list.size());
         
@@ -93,11 +96,11 @@ public class DocumentService {
         TreeSet<String> results = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         
         try {
-            Bundle bundle = ClientUtil.getFhirClient().search().forResource(ValueSet.class)
-                    .where(ValueSet.NAME.matchesExactly().value("DocumentType")).execute();
-                    
-            for (ValueSet vs : FhirUtil.getEntries(bundle, ValueSet.class)) {
-                for (ValueSet.CodeSystemConcept concept : vs.getCodeSystem().getConcept()) {
+            Bundle bundle = ClientUtil.getFhirClient().search().forResource(CodeSystem.class)
+                    .where(CodeSystem.NAME.matchesExactly().value("DocumentType")).returnBundle(Bundle.class).execute();
+            
+            for (CodeSystem cs : FhirUtil.getEntries(bundle, CodeSystem.class)) {
+                for (ConceptDefinitionComponent concept : cs.getConcept()) {
                     results.add(concept.getDisplay().toString());
                 }
             }

@@ -24,28 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.hspconsortium.cwf.api.patient.PatientContext;
-import org.hspconsortium.cwf.api.patientlist.AbstractPatientListFilter;
-import org.hspconsortium.cwf.api.patientlist.FavoritePatientList;
-import org.hspconsortium.cwf.api.patientlist.IPatientList;
-import org.hspconsortium.cwf.api.patientlist.IPatientListFilterManager;
-import org.hspconsortium.cwf.api.patientlist.IPatientListFilterManager.FilterCapability;
-import org.hspconsortium.cwf.api.patientlist.IPatientListItemManager;
-import org.hspconsortium.cwf.api.patientlist.IPatientListRegistry;
-import org.hspconsortium.cwf.api.patientlist.PatientListException;
-import org.hspconsortium.cwf.api.patientlist.PatientListItem;
-import org.hspconsortium.cwf.ui.patientselection.Constants;
-import org.hspconsortium.cwf.ui.patientselection.IPatientDetailRenderer;
-import org.hspconsortium.cwf.ui.patientselection.PatientDetailRenderer;
-import org.hspconsortium.cwf.ui.patientselection.PatientListFilterRenderer;
-import org.hspconsortium.cwf.ui.patientselection.PatientListItemRenderer;
-import org.hspconsortium.cwf.ui.patientselection.PatientSearchUtil;
 import org.carewebframework.common.DateRange;
 import org.carewebframework.shell.CareWebUtil;
 import org.carewebframework.ui.FrameworkController;
@@ -74,10 +56,29 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.api.patientlist.AbstractPatientListFilter;
+import org.hspconsortium.cwf.api.patientlist.FavoritePatientList;
+import org.hspconsortium.cwf.api.patientlist.IPatientList;
+import org.hspconsortium.cwf.api.patientlist.IPatientListFilterManager;
+import org.hspconsortium.cwf.api.patientlist.IPatientListFilterManager.FilterCapability;
+import org.hspconsortium.cwf.api.patientlist.IPatientListItemManager;
+import org.hspconsortium.cwf.api.patientlist.IPatientListRegistry;
+import org.hspconsortium.cwf.api.patientlist.PatientListException;
+import org.hspconsortium.cwf.api.patientlist.PatientListItem;
+import org.hspconsortium.cwf.ui.patientselection.Constants;
+import org.hspconsortium.cwf.ui.patientselection.IPatientDetailRenderer;
+import org.hspconsortium.cwf.ui.patientselection.PatientDetailRenderer;
+import org.hspconsortium.cwf.ui.patientselection.PatientListFilterRenderer;
+import org.hspconsortium.cwf.ui.patientselection.PatientListItemRenderer;
+import org.hspconsortium.cwf.ui.patientselection.PatientSearchUtil;
+
 /**
  * Controller for patient selection dialog.
  */
 public class PatientSelectionController extends FrameworkController {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -207,6 +208,7 @@ public class PatientSelectionController extends FrameworkController {
      * Handles drag/drop events for filters in filter management mode.
      */
     private final EventListener<Event> filterDropListener = new EventListener<Event>() {
+        
         
         @Override
         public void onEvent(Event event) throws Exception {
@@ -532,10 +534,10 @@ public class PatientSelectionController extends FrameworkController {
             filterManager = managedList.getFilterManager();
             pnlManagedListFilters.setVisible(filterManager != null);
             btnManagedListFilterNew.setVisible(filterManager != null && filterManager.hasCapability(FilterCapability.ADD));
-            btnManagedListFilterDelete.setVisible(filterManager != null
-                    && filterManager.hasCapability(FilterCapability.REMOVE));
-            btnManagedListFilterRename.setVisible(filterManager != null
-                    && filterManager.hasCapability(FilterCapability.RENAME));
+            btnManagedListFilterDelete
+                    .setVisible(filterManager != null && filterManager.hasCapability(FilterCapability.REMOVE));
+            btnManagedListFilterRename
+                    .setVisible(filterManager != null && filterManager.hasCapability(FilterCapability.RENAME));
             
             if (filterManager != null) {
                 lstManagedListFilter.setModel(new ListModelList<AbstractPatientListFilter>(managedList.getFilters()));
@@ -614,8 +616,8 @@ public class PatientSelectionController extends FrameworkController {
             btnOK.setDisabled(false);
             btnManageList.setDisabled(true);
         } else {
-            btnManageList.setDisabled(activeList == null
-                    || (activeList.getItemManager() == null && activeList.getFilterManager() == null));
+            btnManageList.setDisabled(
+                activeList == null || (activeList.getItemManager() == null && activeList.getFilterManager() == null));
             btnOK.setDisabled(activePatient == null);
         }
     }
@@ -703,8 +705,8 @@ public class PatientSelectionController extends FrameworkController {
         
         while (true) {
             try {
-                String name = PromptDialog.input(errorMessage + txtFilterNamePrompt, newFilter ? txtNewFilterTitle
-                        : txtRenameFilterTitle, oldName);
+                String name = PromptDialog.input(errorMessage + txtFilterNamePrompt,
+                    newFilter ? txtNewFilterTitle : txtRenameFilterTitle, oldName);
                 
                 if (!StringUtils.isEmpty(name)) {
                     if (newFilter) {
@@ -937,8 +939,8 @@ public class PatientSelectionController extends FrameworkController {
     public void onClick$btnManagedListFilterDelete() {
         AbstractPatientListFilter filter = managedList.getActiveFilter();
         
-        if (filter != null
-                && PromptDialog.confirm(txtDeleteFilterPrompt, MessageFormat.format(txtDeleteFilterTitle, filter.getName()))) {
+        if (filter != null && PromptDialog.confirm(txtDeleteFilterPrompt,
+            MessageFormat.format(txtDeleteFilterTitle, filter.getName()))) {
             filterManager.removeFilter(filter);
             lstManagedListFilter.getSelectedItem().detach();
             setManagedListFilter(null);

@@ -31,24 +31,25 @@ import org.carewebframework.api.context.ContextMarshaller;
 import org.carewebframework.api.context.UserContext;
 import org.carewebframework.api.security.mock.MockUser;
 import org.carewebframework.api.test.CommonTest;
+import org.carewebframework.common.DateUtil;
+
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
+import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.HumanNameParser;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.IdentifierTypeCodesEnum;
-import ca.uhn.fhir.model.primitive.DateDt;
-
 public class PatientContextTest extends CommonTest {
+    
     
     /**
      * Should accept context change on first survey and refuse on all subsequent surveys.
      */
     private class ContextChangeSubscriber implements IPatientContextEvent {
+        
         
         private String reason = "";
         
@@ -78,19 +79,19 @@ public class PatientContextTest extends CommonTest {
         Patient patient1 = new Patient();
         patient1.setId("321");
         patient1.getName().add(hnp.fromString(null, "Smith, Joe"));
-        IdentifierDt ssn = new IdentifierDt();
-        ssn.setType(IdentifierTypeCodesEnum.SOCIAL_BENEFICIARY_IDENTIFIER);
+        Identifier ssn = new Identifier();
+        ssn.setType(FhirTerminology.IDENT_SSN);
         ssn.setValue("999-99-9999");
         patient1.getIdentifier().add(ssn);
-        patient1.setBirthDate(new DateDt("1958-07-27"));
+        patient1.setBirthDate(DateUtil.parseDate("1958-07-27"));
         Patient patient2 = new Patient();
         patient2.setId("123");
         patient2.getName().add(hnp.fromString(null, "Doe, Jane"));
-        IdentifierDt ssn2 = new IdentifierDt();
-        ssn2.setType(IdentifierTypeCodesEnum.SOCIAL_BENEFICIARY_IDENTIFIER);
+        Identifier ssn2 = new Identifier();
+        ssn2.setType(FhirTerminology.IDENT_SSN);
         ssn2.setValue("123-45-6789");
         patient2.getIdentifier().add(ssn2);
-        patient2.setBirthDate(new DateDt("1963-05-01"));
+        patient2.setBirthDate(DateUtil.parseDate("1963-05-01"));
         Object subscriber = new ContextChangeSubscriber(); // Create a patient context change subscriber
         appFramework.registerObject(subscriber); // Register it with the context manager
         PatientContext.changePatient(patient1); // Request a context change

@@ -37,13 +37,12 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
 import org.hspconsortium.cwf.api.ucs.MessageWrapper;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.Action;
 import org.hspconsortium.cwf.ui.messagebox.ViewerController.ActionEvent;
-
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Controller for processing messages.

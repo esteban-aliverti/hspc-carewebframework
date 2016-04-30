@@ -23,15 +23,13 @@ import java.util.List;
 
 import org.carewebframework.common.StrUtil;
 
+import org.hl7.fhir.dstu3.exceptions.FHIRException;
+import org.hl7.fhir.dstu3.model.Medication;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
+import org.hl7.fhir.dstu3.model.Type;
 import org.hspconsortium.cwf.fhir.medication.MedicationService;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.api.IDatatype;
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Medication;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
-import ca.uhn.fhir.model.dstu2.resource.MedicationOrder.DosageInstruction;
 
 /**
  * Controller for patient conditions display.
@@ -57,18 +55,20 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
     @Override
     protected void render(MedicationOrder script, List<Object> columns) {
         Object med = null;
-        IDatatype medicationDt = script.getMedication();
+        Type medicationDt = script.getMedication();
         
-        if (medicationDt instanceof CodeableConceptDt) {
-            med = medicationDt;//Assuming there is only one code. If not, we need to get the preferred one.
-        } else if (medicationDt instanceof Medication) {
-            Medication medObject = (Medication) medicationDt;
-            med = medObject.getCode();
-        }
-        
-        if (med == null) {
-            Medication medication = service.getResource((ResourceReferenceDt) script.getMedication(), Medication.class);
-            med = medication.getCode();
+        if (script.hasMedicationCodeableConcept()) {
+            try {
+                med = script.getMedicationCodeableConcept();
+            } catch (FHIRException e) {
+                
+            }
+        } else if (script.hasMedicationReference()) {
+            Medication medObject;
+            try {
+                medObject = (Medication) script.getMedicationReference().getResource();
+                med = medObject.getCode();
+            } catch (FHIRException e) {}
         }
         
         columns.add(med);
@@ -77,10 +77,10 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
         columns.add(getSig(script.getDosageInstruction()));
     }
     
-    private String getSig(List<DosageInstruction> dosageInstruction) {
+    private String getSig(List<MedicationOrderDosageInstructionComponent> dosageInstruction) {
         StringBuilder sb = new StringBuilder();
         
-        for (DosageInstruction sig : dosageInstruction) {
+        for (MedicationOrderDosageInstructionComponent sig : dosageInstruction) {
             if (sb.length() > 0) {
                 sb.append(StrUtil.CRLF);
             }

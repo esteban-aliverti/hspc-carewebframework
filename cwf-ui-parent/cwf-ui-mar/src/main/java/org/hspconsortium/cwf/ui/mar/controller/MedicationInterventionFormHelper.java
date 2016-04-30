@@ -23,31 +23,30 @@ import java.math.BigDecimal;
 
 import org.zkoss.zul.Combobox;
 
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.SimpleQuantity;
+import org.hl7.fhir.dstu3.model.Timing.TimingRepeatComponent;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.SimpleQuantityDt;
-import ca.uhn.fhir.model.dstu2.composite.TimingDt.Repeat;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 public class MedicationInterventionFormHelper {
     
     
     private final SimpleMedicationAdministrationController controller;
     
-    private CodeableConceptDt selectedMedication;
+    private CodeableConcept selectedMedication;
     
-    private CodeableConceptDt selectedUnits;
+    private CodeableConcept selectedUnits;
     
-    private CodeableConceptDt selectedFrequency;
+    private CodeableConcept selectedFrequency;
     
-    private CodeableConceptDt selectedRoute;
+    private CodeableConcept selectedRoute;
     
-    private CodeableConceptDt selectedTimeUnit;
+    private CodeableConcept selectedTimeUnit;
     
-    private CodeableConceptDt selectedPrnReason;
+    private CodeableConcept selectedPrnReason;
     
     private BigDecimal doseAmount;
     
@@ -96,51 +95,51 @@ public class MedicationInterventionFormHelper {
         return (patient != null && selectedMedication != null && selectedUnits != null && doseAmount != null);
     }
     
-    public CodeableConceptDt getSelectedMedication() {
+    public CodeableConcept getSelectedMedication() {
         return selectedMedication;
     }
     
-    public void setSelectedMedication(CodeableConceptDt selectedMedication) {
+    public void setSelectedMedication(CodeableConcept selectedMedication) {
         this.selectedMedication = selectedMedication;
     }
     
-    public CodeableConceptDt getSelectedUnits() {
+    public CodeableConcept getSelectedUnits() {
         return selectedUnits;
     }
     
-    public void setSelectedUnits(CodeableConceptDt selectedUnits) {
+    public void setSelectedUnits(CodeableConcept selectedUnits) {
         this.selectedUnits = selectedUnits;
     }
     
-    public CodeableConceptDt getSelectedFrequency() {
+    public CodeableConcept getSelectedFrequency() {
         return selectedFrequency;
     }
     
-    public void setSelectedFrequency(CodeableConceptDt selectedFrequency) {
+    public void setSelectedFrequency(CodeableConcept selectedFrequency) {
         this.selectedFrequency = selectedFrequency;
     }
     
-    public CodeableConceptDt getSelectedRoute() {
+    public CodeableConcept getSelectedRoute() {
         return selectedRoute;
     }
     
-    public void setSelectedRoute(CodeableConceptDt selectedRoute) {
+    public void setSelectedRoute(CodeableConcept selectedRoute) {
         this.selectedRoute = selectedRoute;
     }
     
-    public CodeableConceptDt getSelectedTimeUnit() {
+    public CodeableConcept getSelectedTimeUnit() {
         return selectedTimeUnit;
     }
     
-    public void setSelectedTimeUnit(CodeableConceptDt selectedTimeUnit) {
+    public void setSelectedTimeUnit(CodeableConcept selectedTimeUnit) {
         this.selectedTimeUnit = selectedTimeUnit;
     }
     
-    public CodeableConceptDt getSelectedPrnReason() {
+    public CodeableConcept getSelectedPrnReason() {
         return selectedPrnReason;
     }
     
-    public void setSelectedPrnReason(CodeableConceptDt selectedPrnReason) {
+    public void setSelectedPrnReason(CodeableConcept selectedPrnReason) {
         this.selectedPrnReason = selectedPrnReason;
     }
     
@@ -192,41 +191,42 @@ public class MedicationInterventionFormHelper {
         return isPRN;
     }
     
-    public SimpleQuantityDt getDoseQuantity() {
-        SimpleQuantityDt simpleQuantity = null;
+    public SimpleQuantity getDoseQuantity() {
+        SimpleQuantity simpleQuantity = null;
         if (doseAmount != null && selectedUnits != null) {
-            simpleQuantity = new SimpleQuantityDt();// TODO Support specifying
-                                                    // in UI? Leave blank? Ask
-                                                    // Emory.
+            simpleQuantity = new SimpleQuantity();// TODO Support specifying
+                                                  // in UI? Leave blank? Ask
+                                                  // Emory.
             simpleQuantity.setValue(doseAmount);
-            simpleQuantity.setUnit(selectedUnits.getCodingFirstRep().getCode());
+            simpleQuantity.setUnit(FhirUtil.getFirst(selectedUnits.getCoding()).getCode());
         }
         return simpleQuantity;
     }
     
-    public Repeat getTimingRepeat() {
-        Repeat repeat = null;
-        if (selectedFrequency != null && selectedFrequency.getCodingFirstRep().getDisplay() != null) {
-            repeat = FhirUtil.getRepeatFromFrequencyCode(selectedFrequency.getCodingFirstRep().getDisplay());
+    public TimingRepeatComponent getTimingRepeat() {
+        TimingRepeatComponent repeat = null;
+        if (selectedFrequency != null && selectedFrequency.hasCoding()) {
+            repeat = FhirUtil.getRepeatFromFrequencyCode(FhirUtil.getFirst(selectedFrequency.getCoding()).getDisplay());
             if (durationTime != null) {
                 repeat.setDuration(durationTime);
-                repeat.setDurationUnits(FhirUtil.convertTimeUnitToEnum(selectedTimeUnit.getCodingFirstRep().getCode()));
+                repeat.setDurationUnit(
+                    FhirUtil.convertTimeUnitToEnum(FhirUtil.getFirst(selectedTimeUnit.getCoding()).getCode()));
             }
         }
         return repeat;
     }
     
-    public CodeableConceptDt getSelectedCode(Combobox dropdown) {
-        CodeableConceptDt selection = null;
+    public CodeableConcept getSelectedCode(Combobox dropdown) {
+        CodeableConcept selection = null;
         if (dropdown != null && dropdown.getSelectedItem() != null) {
             String label = dropdown.getSelectedItem().getLabel();
             String value = dropdown.getSelectedItem().getValue();
-            selection = FhirUtil.createCodeableConcept(FhirTerminology.RXNORM, value, label);
+            selection = FhirUtil.createCodeableConcept(FhirTerminology.SYS_RXNORM, value, label);
         }
         return selection;
     }
     
-    // public Repeat convertToTiming(CodeableConceptDt frequency) {
+    // public Repeat convertToTiming(CodeableConcept frequency) {
     // Repeat repeat = new Repeat();
     // if(frequency.getCodingFirstRep().getCode().equals("1")) {
     // repeat.setFrequency(1);

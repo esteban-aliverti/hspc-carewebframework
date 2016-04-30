@@ -39,19 +39,16 @@ import org.carewebframework.shell.plugins.PluginController;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Grid;
 
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.MedicationAdministration;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.eps.EPSService;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.medication.MedicationService;
 import org.hspconsortium.cwf.ui.mar.MedicationActionUtil;
 import org.hspconsortium.cwf.ui.mar.model.MarModel;
 import org.hspconsortium.cwf.ui.mar.render.MarRenderer;
-import org.socraticgrid.fhir.generated.IQICoreMedicationAdministration;
-import org.socraticgrid.fhir.generated.IQICoreMedicationOrder;
-import org.socraticgrid.fhir.generated.IQICorePatient;
-import org.socraticgrid.fhir.generated.QICorePatientAdapter;
-
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * The MAR plugin controller supports functionality for Medication Administration Records (a.k.a.,
@@ -60,7 +57,7 @@ import ca.uhn.fhir.model.dstu2.resource.Patient;
 public class MainController extends PluginController implements PatientContext.IPatientContextEvent {
     
     
-    private static final long serialVersionUID = 1214364879321478753L;
+    private static final long serialVersionUID = 1L;
     
     /**
      * Topic where new medication administrations will be published.
@@ -105,7 +102,7 @@ public class MainController extends PluginController implements PatientContext.I
      * Convenience identifier to group medication administrations created using the MAR. This
      * identifier can be useful for bulk updates and deletes.
      */
-    private final IdentifierDt generatedMedAdminsIdentifier = new IdentifierDt()
+    private final Identifier generatedMedAdminsIdentifier = new Identifier()
             .setSystem("urn:cogmedsys:hsp:model:medicationadministration").setValue("gen");
     
     public MainController(EPSService epsService, MedicationService medicationService) {
@@ -139,10 +136,8 @@ public class MainController extends PluginController implements PatientContext.I
     public void initializeMar() {
         Patient patient = PatientContext.getActivePatient();
         if (patient != null) {
-            IQICorePatient adaptedPatient = new QICorePatientAdapter(patient);
-            List<IQICoreMedicationAdministration> medAdmins = medicationService
-                    .searchMedicationAdministrationsForPatient(adaptedPatient);
-            List<IQICoreMedicationOrder> medOrders = medicationService.searchMedicationOrdersForPatient(adaptedPatient);
+            List<MedicationAdministration> medAdmins = medicationService.searchMedicationAdministrationsForPatient(patient);
+            List<MedicationOrder> medOrders = medicationService.searchMedicationOrdersForPatient(patient);
             MarModel model = new MarModel(medOrders, medAdmins);
             MarRenderer.populateGrid(marGrid, model, marRowRenderer);
         } else {
@@ -157,8 +152,8 @@ public class MainController extends PluginController implements PatientContext.I
      * @param medAdmin
      * @param epsTopic
      */
-    public void publishJsonPayloadToEpsTopic(IQICoreMedicationAdministration medAdmin, String epsTopic) {
-        epsService.publishResourceToTopic(epsTopic, medAdmin.getAdaptee(), "New Medication Administration",
+    public void publishJsonPayloadToEpsTopic(MedicationAdministration medAdmin, String epsTopic) {
+        epsService.publishResourceToTopic(epsTopic, medAdmin, "New Medication Administration",
             "New Medication Administration");
     }
     

@@ -21,17 +21,18 @@ package org.hspconsortium.cwf.ui.util;
 
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
-
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Executions;
 
+import org.hl7.fhir.dstu3.model.Attachment;
+
 /**
  * FHIR utilities for UI.
  */
 public class Util {
+    
     
     public static final String RESOURCE_PATH = ZKUtil.getResourcePath(Util.class);
     
@@ -45,7 +46,7 @@ public class Util {
      * @param attachments List of attachments.
      * @return An image component if a suitable attachment was found, or null.
      */
-    public static AImage getImage(List<AttachmentDt> attachments) {
+    public static AImage getImage(List<Attachment> attachments) {
         return getImage(attachments, null);
     }
     
@@ -57,8 +58,8 @@ public class Util {
      * @return An image component if a suitable attachment was found, or the default image if
      *         specified, or null.
      */
-    public static AImage getImage(List<AttachmentDt> attachments, String defaultImage) {
-        for (AttachmentDt attachment : attachments) {
+    public static AImage getImage(List<Attachment> attachments, String defaultImage) {
+        for (Attachment attachment : attachments) {
             String contentType = attachment.getContentType();
             
             if (contentType.startsWith("image/")) {

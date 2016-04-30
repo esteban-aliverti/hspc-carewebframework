@@ -19,12 +19,6 @@
  */
 package org.hspconsortium.cwf.ui.patientphoto;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-
-import org.hspconsortium.cwf.api.patient.PatientContext;
-import org.hspconsortium.cwf.ui.util.Util;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.carewebframework.ui.FrameworkController;
 
 import org.zkoss.image.AImage;
@@ -34,10 +28,17 @@ import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Popup;
 
+import org.hl7.fhir.dstu3.model.HumanName.NameUse;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+import org.hspconsortium.cwf.ui.util.Util;
+
 /**
  * Controller for patient photo plugin.
  */
 public class PatientPhoto extends FrameworkController implements PatientContext.IPatientContextEvent {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -77,8 +78,8 @@ public class PatientPhoto extends FrameworkController implements PatientContext.
             imgPhoto.setTooltiptext(null);
             imgPhoto.setTooltip(popup);
             imgFullPhoto.setContent(image);
-            lblCaption.setValue(patient == null ? "" : FhirUtil.formatName(patient.getName(), NameUseEnum.USUAL,
-                NameUseEnum.OFFICIAL, null));
+            lblCaption.setValue(
+                patient == null ? "" : FhirUtil.formatName(patient.getName(), NameUse.USUAL, NameUse.OFFICIAL, null));
         }
         
     }

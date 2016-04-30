@@ -22,18 +22,9 @@ package org.hspconsortium.cwf.ui.patientselection;
 import java.util.Date;
 import java.util.List;
 
-import ca.uhn.fhir.model.api.BasePrimitive;
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.primitive.StringDt;
-
 import org.apache.commons.lang.StringUtils;
 
-import org.hspconsortium.cwf.ui.util.Util;
 import org.carewebframework.common.DateUtil;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -41,11 +32,21 @@ import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Separator;
 
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.Address.AddressUse;
+import org.hl7.fhir.dstu3.model.ContactPoint;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.PrimitiveType;
+import org.hl7.fhir.dstu3.model.StringType;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+import org.hspconsortium.cwf.ui.util.Util;
+
 /**
  * Default class for rendering detail view of patient in patient selection dialog. This class may be
  * overridden to provide an alternate detail view.
  */
 public class PatientDetailRenderer implements IPatientDetailRenderer {
+    
     
     /**
      * Render detail view for the specified patient.
@@ -84,12 +85,12 @@ public class PatientDetailRenderer implements IPatientDetailRenderer {
         addContact(root, patient.getTelecom(), "work:email", null);
         addContact(root, patient.getTelecom(), "work:fax", "work fax");
         
-        AddressDt address = FhirUtil.getAddress(patient.getAddress(), AddressUseEnum.HOME);
+        Address address = FhirUtil.getAddress(patient.getAddress(), AddressUse.HOME);
         
         if (address != null) {
             root.appendChild(new Separator());
             
-            for (StringDt line : address.getLine()) {
+            for (StringType line : address.getLine()) {
                 addDemographic(root, null, line.getValue());
             }
             
@@ -137,11 +138,11 @@ public class PatientDetailRenderer implements IPatientDetailRenderer {
      * @param type Type of contact desired (e.g., "home:phone").
      * @param labelId The id of the label to use.
      */
-    protected void addContact(Component root, List<ContactPointDt> contacts, String type, String labelId) {
-        ContactPointDt contact = FhirUtil.getContact(contacts, type);
+    protected void addContact(Component root, List<ContactPoint> contacts, String type, String labelId) {
+        ContactPoint contact = FhirUtil.getContact(contacts, type);
         
         if (contact != null) {
-            addDemographic(root, labelId == null ? contact.getUse() : labelId, contact.getValue(), null);
+            addDemographic(root, labelId == null ? contact.getUse().getDisplay() : labelId, contact.getValue(), null);
         }
     }
     
@@ -165,9 +166,9 @@ public class PatientDetailRenderer implements IPatientDetailRenderer {
      * @param style CSS styling to apply to element (may be null).
      */
     protected void addDemographic(Component root, String labelId, Object object, String style) {
-        object = object instanceof BasePrimitive ? ((BasePrimitive<?>) object).getValue() : object;
-        String value = object == null ? null : object instanceof Date ? DateUtil.formatDate((Date) object) : object
-                .toString().trim();
+        object = object instanceof PrimitiveType ? ((PrimitiveType<?>) object).getValue() : object;
+        String value = object == null ? null
+                : object instanceof Date ? DateUtil.formatDate((Date) object) : object.toString().trim();
         
         if (!StringUtils.isEmpty(value)) {
             Label lbl = new Label((labelId == null ? "" : getDemographicLabel(labelId) + ": ") + value);

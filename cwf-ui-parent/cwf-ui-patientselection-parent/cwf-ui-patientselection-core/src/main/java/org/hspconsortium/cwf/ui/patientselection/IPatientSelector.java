@@ -19,12 +19,13 @@
  */
 package org.hspconsortium.cwf.ui.patientselection;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
 
 /**
  * This interface must be implemented by any patient selector.
  */
 public interface IPatientSelector {
+    
     
     /**
      * Displays the patient selection dialog.

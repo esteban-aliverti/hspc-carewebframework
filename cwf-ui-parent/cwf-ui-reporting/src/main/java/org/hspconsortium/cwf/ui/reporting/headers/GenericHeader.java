@@ -21,27 +21,28 @@ package org.hspconsortium.cwf.ui.reporting.headers;
 
 import java.util.Date;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.DateDt;
-
 import org.apache.commons.lang3.StringUtils;
 
 import org.carewebframework.api.context.UserContext;
 import org.carewebframework.api.domain.IUser;
 import org.carewebframework.api.event.IGenericEvent;
-import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.carewebframework.common.DateUtil;
-import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.carewebframework.ui.FrameworkController;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
+
 /**
  * This is the generic controller for the stock report headers.
  */
 public class GenericHeader extends FrameworkController {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -50,6 +51,7 @@ public class GenericHeader extends FrameworkController {
     private final String contextEvent;
     
     private final IGenericEvent<Object> eventListener = new IGenericEvent<Object>() {
+        
         
         @Override
         public void eventCallback(String eventName, Object eventData) {
@@ -96,20 +98,20 @@ public class GenericHeader extends FrameworkController {
         if (patient == null) {
             text = "No Patient Selected";
         } else {
-            IdentifierDt mrn = FhirUtil.getMRN(patient); // May be null!
+            Identifier mrn = FhirUtil.getMRN(patient); // May be null!
             text = FhirUtil.formatName(patient.getName());
             
             if (mrn != null) {
                 text += "  #" + mrn.getValue();
             }
             
-            String gender = patient.getGender();
+            String gender = patient.hasGender() ? patient.getGender().getDisplay() : "";
             
             if (!StringUtils.isEmpty(gender)) {
                 text += "   (" + gender + ")";
             }
             
-            Date deceased = patient.getDeceased() instanceof DateDt ? ((DateDt) patient.getDeceased()).getValue() : null;
+            Date deceased = patient.getDeceased() instanceof DateType ? ((DateType) patient.getDeceased()).getValue() : null;
             String age = DateUtil.formatAge(patient.getBirthDate(), true, deceased);
             text += "  Age: " + age;
             

@@ -19,9 +19,7 @@
  */
 package org.hspconsortium.cwf.api.location;
 
-import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
-import ca.uhn.fhir.model.dstu2.valueset.LocationTypeEnum;
-
+import org.hl7.fhir.dstu3.model.Location.LocationStatus;
 import org.hspconsortium.cwf.api.SearchCriteria;
 
 /**
@@ -29,9 +27,10 @@ import org.hspconsortium.cwf.api.SearchCriteria;
  */
 public class LocationSearchCriteria extends SearchCriteria {
     
-    private LocationTypeEnum type;
     
-    private LocationStatusEnum status;
+    private String type;
+    
+    private LocationStatus status;
     
     private String name;
     
@@ -39,19 +38,19 @@ public class LocationSearchCriteria extends SearchCriteria {
         super("Insufficent search parameters.");
     }
     
-    public LocationTypeEnum getType() {
+    public String getType() {
         return type;
     }
     
-    public void setType(LocationTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
     
-    public LocationStatusEnum getStatus() {
+    public LocationStatus getStatus() {
         return status;
     }
     
-    public void setStatus(LocationStatusEnum status) {
+    public void setStatus(LocationStatus status) {
         this.status = status;
     }
     

@@ -32,14 +32,13 @@ import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.zul.Messagebox;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.HumanName.NameUse;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.SearchException;
 import org.hspconsortium.cwf.api.patient.PatientSearchCriteria;
 import org.hspconsortium.cwf.api.patient.PatientUtil;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 
 /**
  * Patient search services.
@@ -73,8 +72,8 @@ public class PatientSearchUtil {
          */
         @Override
         public int compare(Patient patient1, Patient patient2) {
-            HumanNameDt name1 = FhirUtil.getName(patient1.getName(), NameUseEnum.USUAL, null);
-            HumanNameDt name2 = FhirUtil.getName(patient2.getName(), NameUseEnum.USUAL, null);
+            HumanName name1 = FhirUtil.getName(patient1.getName(), NameUse.USUAL, null);
+            HumanName name2 = FhirUtil.getName(patient2.getName(), NameUse.USUAL, null);
             String cmp1 = name1 == null ? "" : name1.toString();
             String cmp2 = name2 == null ? "" : name2.toString();
             return cmp1.compareToIgnoreCase(cmp2.toString());

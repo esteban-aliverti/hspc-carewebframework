@@ -19,14 +19,14 @@
  */
 package org.hspconsortium.cwf.api.encounter;
 
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.hspconsortium.cwf.api.DomainObject;
 
 /**
  * Abstract base class for encounter-associated domain objects.
  */
 public abstract class EncounterRelated extends DomainObject {
+    
     
     private Encounter encounter;
     

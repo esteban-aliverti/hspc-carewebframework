@@ -21,7 +21,7 @@ package org.hspconsortium.cwf.api.query;
 
 import java.util.List;
 
-import ca.uhn.fhir.model.api.IResource;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 
 /**
  * Resource query interface.
@@ -29,7 +29,8 @@ import ca.uhn.fhir.model.api.IResource;
  * @param <R> The resource class
  * @param <C> The criteria class.
  */
-public interface IResourceQuery<R extends IResource, C> {
+public interface IResourceQuery<R extends IBaseResource, C> {
+    
     
     /**
      * Search for matching resources.

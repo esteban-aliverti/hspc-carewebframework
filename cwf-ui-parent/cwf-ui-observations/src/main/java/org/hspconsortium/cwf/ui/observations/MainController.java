@@ -21,9 +21,9 @@ package org.hspconsortium.cwf.ui.observations;
 
 import java.util.List;
 
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.dstu2.resource.Observation;
 
 /**
  * Controller for patient observations display.
@@ -46,7 +46,10 @@ public class MainController extends ResourceListView<Observation, Observation> {
         columns.add(observation.getEffective());
         columns.add(observation.getStatus());
         columns.add(observation.getValue());
-        columns.add(observation.getReferenceRangeFirstRep().getText());
+        
+        if (observation.hasReferenceRange()) {
+            columns.add(FhirUtil.getFirst(observation.getReferenceRange()).getText());
+        }
     }
     
     @Override

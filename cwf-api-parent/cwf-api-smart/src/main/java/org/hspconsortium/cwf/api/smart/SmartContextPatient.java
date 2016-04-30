@@ -19,9 +19,8 @@
  */
 package org.hspconsortium.cwf.api.smart;
 
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
-
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Implements SMART context scope "record".
@@ -46,7 +45,7 @@ public class SmartContextPatient extends SmartContextBase {
         Patient patient = PatientContext.getActivePatient();
         
         if (patient != null) {
-            context.put("patientId", patient.getId().getIdPart());
+            context.put("patientId", patient.getIdElement().getIdPart());
         }
     }
     

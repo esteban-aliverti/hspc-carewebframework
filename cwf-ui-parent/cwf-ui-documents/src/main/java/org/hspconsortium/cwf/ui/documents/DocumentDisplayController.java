@@ -24,10 +24,6 @@ import java.util.List;
 
 import org.carewebframework.api.query.DateQueryFilter.DateType;
 import org.carewebframework.api.query.IQueryContext;
-import org.hspconsortium.cwf.api.documents.Document;
-import org.hspconsortium.cwf.api.documents.DocumentDisplayDataService;
-import org.hspconsortium.cwf.api.documents.DocumentService;
-import org.hspconsortium.cwf.ui.reporting.controller.AbstractListController;
 
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
@@ -37,12 +33,17 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listitem;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.documents.Document;
+import org.hspconsortium.cwf.api.documents.DocumentDisplayDataService;
+import org.hspconsortium.cwf.api.documents.DocumentService;
+import org.hspconsortium.cwf.ui.reporting.controller.AbstractListController;
 
 /**
  * Controller for displaying the contents of selected documents.
  */
 public class DocumentDisplayController extends AbstractListController<Document, Document> {
+    
     
     private static final long serialVersionUID = 1L;
     

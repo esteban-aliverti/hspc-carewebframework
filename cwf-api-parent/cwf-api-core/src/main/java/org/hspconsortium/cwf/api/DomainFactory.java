@@ -24,10 +24,11 @@ import java.util.List;
 
 import org.carewebframework.api.domain.IDomainFactory;
 import org.carewebframework.common.MiscUtil;
+
+import org.hl7.fhir.dstu3.model.BaseResource;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.BaseResource;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 
@@ -35,6 +36,7 @@ import ca.uhn.fhir.rest.gclient.StringClientParam;
  * Factory for instantiating serialized domain objects from server.
  */
 public class DomainFactory implements IDomainFactory<BaseResource> {
+    
     
     private static final IDomainFactory<BaseResource> instance = new DomainFactory();
     
@@ -74,7 +76,8 @@ public class DomainFactory implements IDomainFactory<BaseResource> {
         }
         
         StringClientParam param = new StringClientParam(BaseResource.SP_RES_ID);
-        Bundle results = fhirClient.search().forResource(clazz).where(param.matches().values(ids)).execute();
+        Bundle results = fhirClient.search().forResource(clazz).where(param.matches().values(ids)).returnBundle(Bundle.class)
+                .execute();
         return FhirUtil.getEntries(results, clazz);
     }
     

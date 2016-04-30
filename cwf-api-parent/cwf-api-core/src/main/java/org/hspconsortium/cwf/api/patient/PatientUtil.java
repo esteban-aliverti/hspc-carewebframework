@@ -22,14 +22,15 @@ package org.hspconsortium.cwf.api.patient;
 import java.util.List;
 
 import org.carewebframework.api.spring.SpringUtil;
-import org.hspconsortium.cwf.api.query.IResourceQueryEx;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.query.IResourceQueryEx;
 
 /**
  * Patient-related utility functions.
  */
 public class PatientUtil {
+    
     
     /**
      * Returns a reference to the patient search engine.

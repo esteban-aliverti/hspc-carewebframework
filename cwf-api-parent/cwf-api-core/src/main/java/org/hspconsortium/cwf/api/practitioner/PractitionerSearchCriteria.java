@@ -21,14 +21,11 @@ package org.hspconsortium.cwf.api.practitioner;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
 import org.hspconsortium.cwf.api.SearchCriteria;
+import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.valueset.IdentifierTypeCodesEnum;
 
 /**
  * Represents search criteria supported by FHIR.
@@ -37,11 +34,11 @@ public class PractitionerSearchCriteria extends SearchCriteria {
     
     //private static final String ERROR_MISSING_REQUIRED = "@practitionersearch.error.missing.required";
     
-    private HumanNameDt name;
+    private HumanName name;
     
-    private IdentifierDt dea;
+    private Identifier dea;
     
-    private IdentifierDt ssn;
+    private Identifier ssn;
     
     private String gender;
     
@@ -98,7 +95,7 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * 
      * @return Patient name criterion.
      */
-    public HumanNameDt getName() {
+    public HumanName getName() {
         return name;
     }
     
@@ -116,7 +113,7 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * 
      * @param name Patient name.
      */
-    public void setName(HumanNameDt name) {
+    public void setName(HumanName name) {
         this.name = name;
     }
     
@@ -125,7 +122,7 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * 
      * @return DEA criterion.
      */
-    public IdentifierDt getDEA() {
+    public Identifier getDEA() {
         return dea;
     }
     
@@ -134,11 +131,9 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * 
      * @param dea DEA.
      */
-    @SuppressWarnings("unchecked")
     public void setDEA(String dea) {
-        this.dea = new IdentifierDt();
-        CodeableConceptDt type = new CodeableConceptDt(null, "DEA");
-        this.dea.setType((BoundCodeableConceptDt<IdentifierTypeCodesEnum>) type);
+        this.dea = new Identifier();
+        this.dea.setType(FhirTerminology.IDENT_DEA);
         this.dea.setValue(dea);
     }
     
@@ -147,7 +142,7 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * 
      * @return SSN criterion.
      */
-    public IdentifierDt getSSN() {
+    public Identifier getSSN() {
         return ssn;
     }
     
@@ -157,8 +152,9 @@ public class PractitionerSearchCriteria extends SearchCriteria {
      * @param ssn SSN.
      */
     public void setSSN(String ssn) {
-        this.ssn = new IdentifierDt("http://hl7.org/fhir/sid/us-ssn", ssn);
-        this.ssn.setType(IdentifierTypeCodesEnum.SOCIAL_BENEFICIARY_IDENTIFIER);
+        this.ssn = new Identifier();
+        this.ssn.setType(FhirTerminology.IDENT_SSN);
+        this.ssn.setValue(ssn);
     }
     
     /**

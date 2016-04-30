@@ -21,9 +21,8 @@ package org.hspconsortium.cwf.ui.procedures;
 
 import java.util.List;
 
+import org.hl7.fhir.dstu3.model.Procedure;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.dstu2.resource.Procedure;
 
 /**
  * Controller for patient procedures display.

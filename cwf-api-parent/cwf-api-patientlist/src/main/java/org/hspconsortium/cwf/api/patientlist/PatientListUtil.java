@@ -29,9 +29,8 @@ import org.apache.commons.lang.WordUtils;
 
 import org.carewebframework.common.StrUtil;
 
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 /**
  * Utility methods for patient lists.

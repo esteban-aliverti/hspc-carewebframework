@@ -34,9 +34,6 @@ import org.carewebframework.api.query.IQueryService;
 import org.carewebframework.api.query.QueryContext;
 import org.carewebframework.api.query.QueryFilterSet;
 import org.carewebframework.api.thread.IAbortable;
-import org.hspconsortium.cwf.api.patient.PatientContext;
-import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
-import org.hspconsortium.cwf.ui.reporting.Constants;
 import org.carewebframework.common.StrUtil;
 import org.carewebframework.shell.plugins.PluginContainer;
 import org.carewebframework.shell.plugins.PluginController;
@@ -48,7 +45,10 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Label;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
+import org.hspconsortium.cwf.ui.reporting.Constants;
 
 /**
  * This is a stateful controller that supports plugins that perform background data retrieval using
@@ -59,11 +59,13 @@ import ca.uhn.fhir.model.dstu2.resource.Patient;
  */
 public abstract class AbstractServiceController<T, M> extends PluginController {
     
+    
     private static final long serialVersionUID = 1L;
     
     private static final Log log = LogFactory.getLog(AbstractServiceController.class);
     
     protected class QueryFinishedEvent extends Event {
+        
         
         private static final long serialVersionUID = 1L;
         
@@ -90,6 +92,7 @@ public abstract class AbstractServiceController<T, M> extends PluginController {
      */
     private final IQueryCallback<T> queryListener = new IQueryCallback<T>() {
         
+        
         @Override
         public void onQueryFinish(IAbortable thread, IQueryResult<T> result) {
             ZKUtil.fireEvent(new QueryFinishedEvent(thread, result, root));
@@ -105,6 +108,7 @@ public abstract class AbstractServiceController<T, M> extends PluginController {
      * Patient context change listener. Used only if the controller is marked as patient aware.
      */
     private final IPatientContextEvent patientContextListener = new IPatientContextEvent() {
+        
         
         @Override
         public String pending(boolean silent) {
@@ -126,6 +130,7 @@ public abstract class AbstractServiceController<T, M> extends PluginController {
      * Listener for query filter changes.
      */
     private final IQueryFilterChanged<M> queryFilterChangedListener = new IQueryFilterChanged<M>() {
+        
         
         @Override
         public void onFilterChanged(IQueryFilter<M> filter) {
@@ -416,11 +421,11 @@ public abstract class AbstractServiceController<T, M> extends PluginController {
                 model = toModel(result.getResults());
                 applyFilters();
                 break;
-                
+            
             case ABORTED:
                 showMessage("@reporting.plugin.status.aborted");
                 break;
-                
+            
             case ERROR:
                 Throwable t = (Throwable) result.getMetadata("exception");
                 log.error("Background thread threw an exception.", t);

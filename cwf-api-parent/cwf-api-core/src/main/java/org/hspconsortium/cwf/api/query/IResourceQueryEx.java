@@ -21,8 +21,8 @@ package org.hspconsortium.cwf.api.query;
 
 import java.util.List;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.IResource;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+
 import ca.uhn.fhir.rest.gclient.IQuery;
 
 /**
@@ -31,7 +31,8 @@ import ca.uhn.fhir.rest.gclient.IQuery;
  * @param <R> The resource class
  * @param <C> The criteria class.
  */
-public interface IResourceQueryEx<R extends IResource, C> extends IResourceQuery<R, C> {
+public interface IResourceQueryEx<R extends IBaseResource, C> extends IResourceQuery<R, C> {
+    
     
     /**
      * Alternative method for performing a search that allows for external configuration of the
@@ -40,12 +41,12 @@ public interface IResourceQueryEx<R extends IResource, C> extends IResourceQuery
      * @param query The query object.
      * @return List of matching resources. May return null to indicate no matches.
      */
-    List<R> search(IQuery<Bundle> query);
+    List<R> search(IQuery<?> query);
     
     /**
      * Creates an empty query object for this resource class.
      * 
      * @return The newly created query object.
      */
-    IQuery<Bundle> createQuery();
+    IQuery<?> createQuery();
 }

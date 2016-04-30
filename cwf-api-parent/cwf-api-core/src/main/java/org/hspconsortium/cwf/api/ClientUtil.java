@@ -23,11 +23,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import org.carewebframework.api.spring.SpringUtil;
 
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.fhir.client.FhirContext;
 
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.rest.client.GenericClient;
 import ca.uhn.fhir.rest.client.IGenericClient;
@@ -102,7 +102,7 @@ public class ClientUtil {
      * @return The corresponding resource.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends IBaseResource> T getResource(ResourceReferenceDt reference, Class<T> clazz) {
+    public static <T extends IBaseResource> T getResource(Reference reference, Class<T> clazz) {
         IBaseResource resource = getResource(reference);
         return clazz.isInstance(resource) ? (T) resource : null;
     }
@@ -114,7 +114,7 @@ public class ClientUtil {
      * @param reference A resource reference.
      * @return The corresponding resource.
      */
-    public static IBaseResource getResource(ResourceReferenceDt reference) {
+    public static IBaseResource getResource(Reference reference) {
         if (reference.isEmpty()) {
             return null;
         }
@@ -123,7 +123,7 @@ public class ClientUtil {
             return reference.getResource();
         }
         
-        IdDt resourceId = reference.getReference();
+        IdType resourceId = reference.getIdElement();
         
         if (resourceId == null) {
             throw new IllegalStateException("Reference has no resource ID defined");

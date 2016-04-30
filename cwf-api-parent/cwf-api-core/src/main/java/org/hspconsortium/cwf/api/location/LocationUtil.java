@@ -22,14 +22,15 @@ package org.hspconsortium.cwf.api.location;
 import java.util.List;
 
 import org.carewebframework.api.spring.SpringUtil;
-import org.hspconsortium.cwf.api.query.IResourceQueryEx;
 
-import ca.uhn.fhir.model.dstu2.resource.Location;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hspconsortium.cwf.api.query.IResourceQueryEx;
 
 /**
  * Location-related utility functions.
  */
 public class LocationUtil {
+    
     
     /**
      * Returns a reference to the location search engine.

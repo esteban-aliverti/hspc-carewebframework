@@ -45,9 +45,11 @@ import org.apache.commons.logging.LogFactory;
 
 import org.zkoss.zul.ListModelList;
 
+import org.hl7.fhir.dstu3.exceptions.FHIRException;
+import org.hl7.fhir.dstu3.model.MedicationAdministration;
+import org.hl7.fhir.dstu3.model.MedicationOrder;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.mar.render.MarRenderer;
-import org.socraticgrid.fhir.generated.IQICoreMedicationAdministration;
-import org.socraticgrid.fhir.generated.IQICoreMedicationOrder;
 
 /**
  * Simple model for a dynamic grid that can expand its columns and rows in order to represent a
@@ -90,7 +92,7 @@ public class MarModel {
     /**
      * Map of Orders by ID
      */
-    private Map<String, IQICoreMedicationOrder> orderIndex;
+    private Map<String, MedicationOrder> orderIndex;
     
     public static final String checkboxPlaceholder = "x";
     
@@ -106,7 +108,7 @@ public class MarModel {
      * 
      * @param medAdmins
      */
-    public MarModel(List<IQICoreMedicationOrder> medOrders, List<IQICoreMedicationAdministration> medAdmins) {
+    public MarModel(List<MedicationOrder> medOrders, List<MedicationAdministration> medAdmins) {
         this();
         init(medOrders, medAdmins);
         System.out.println(medAdmins);
@@ -154,17 +156,22 @@ public class MarModel {
      * 
      * @param medAdmins
      */
-    private void init(List<IQICoreMedicationOrder> medOrders, List<IQICoreMedicationAdministration> medAdmins) {
+    private void init(List<MedicationOrder> medOrders, List<MedicationAdministration> medAdmins) {
         Map<String, Integer> headerIndex = new HashMap<String, Integer>();
         headers = new ListModelList<String>();
         rows = new ListModelList<List<Object>>();
         medicationRowIndex = new HashMap<String, List<Object>>();
-        orderIndex = new HashMap<String, IQICoreMedicationOrder>();
+        orderIndex = new HashMap<String, MedicationOrder>();
         
         headers.add("Medication");
         int index = 0;
-        for (IQICoreMedicationAdministration medAdmin : medAdmins) {
-            String timeHeader = dateFormat.format(medAdmin.getEffectiveTimeDateTime());
+        for (MedicationAdministration medAdmin : medAdmins) {
+            String timeHeader;
+            try {
+                timeHeader = dateFormat.format(medAdmin.getEffectiveTimeDateTimeType());
+            } catch (FHIRException e) {
+                timeHeader = "";
+            }
             if (!headerIndex.containsKey(timeHeader)) {
                 headerIndex.put(timeHeader, index++);
                 headers.add(timeHeader);
@@ -173,9 +180,9 @@ public class MarModel {
         
         // Index the orders by ID for easy retrieval
         // TODO May wish to filter somehow in future
-        for (IQICoreMedicationOrder order : medOrders) {
-            if (order.getId() != null || order.getId().getValue() == null) {
-                orderIndex.put(order.getId().getIdPart(), order);
+        for (MedicationOrder order : medOrders) {
+            if (order.getId() != null || order.getIdElement().getValue() == null) {
+                orderIndex.put(order.getIdElement().getIdPart(), order);
                 String sentence = MarRenderer.generateMedicationOrderSentence(order);
                 List<Object> row = medicationRowIndex.get(sentence);
                 if (row == null) {
@@ -190,13 +197,22 @@ public class MarModel {
             }
         }
         
-        for (IQICoreMedicationAdministration medAdmin : medAdmins) {
-            String medicationName = medAdmin.getMedicationCodeableConcept().getCodingFirstRep().getDisplay();
-            IQICoreMedicationOrder associatedPrescription = orderIndex
-                    .get(medAdmin.getAdaptee().getPrescription().getReference().getIdPart());// TODO Surface reference in generated code
+        for (MedicationAdministration medAdmin : medAdmins) {
+            try {
+                String medicationName = FhirUtil.getDisplayValueForType(medAdmin.getMedicationCodeableConcept());
+            } catch (FHIRException e) {
+                
+            }
+            MedicationOrder associatedPrescription = orderIndex
+                    .get(medAdmin.getPrescription().getReferenceElement().getIdPart());// TODO Surface reference in generated code
             String sentence = MarRenderer.generateMedicationOrderSentence(associatedPrescription);
             List<Object> row = medicationRowIndex.get(sentence);
-            String timeHeader = dateFormat.format(medAdmin.getEffectiveTimeDateTime());
+            String timeHeader;
+            try {
+                timeHeader = dateFormat.format(medAdmin.getEffectiveTimeDateTimeType());
+            } catch (FHIRException e) {
+                timeHeader = "";
+            }
             int ind = headerIndex.get(timeHeader);
             // row.set(ind + 1, checkboxPlaceholder);
             //			row.set(ind + 1, "eafry: " + medAdmin.getDosage().getQuantity().getValue() + " "

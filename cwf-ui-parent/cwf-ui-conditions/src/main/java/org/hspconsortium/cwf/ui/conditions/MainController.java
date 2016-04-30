@@ -21,9 +21,8 @@ package org.hspconsortium.cwf.ui.conditions;
 
 import java.util.List;
 
+import org.hl7.fhir.dstu3.model.Condition;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
-
-import ca.uhn.fhir.model.dstu2.resource.Condition;
 
 /**
  * Controller for patient conditions display.

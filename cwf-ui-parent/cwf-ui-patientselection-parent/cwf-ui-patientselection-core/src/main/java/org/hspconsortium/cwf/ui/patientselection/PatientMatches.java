@@ -23,8 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,10 +32,13 @@ import org.carewebframework.common.DateUtil;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Patient;
+
 /**
  * Controller for patient matches dialog.
  */
 public class PatientMatches extends Window {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -53,6 +54,7 @@ public class PatientMatches extends Window {
      * Comparator for sorting by date of birth.
      */
     private class DOBComparator implements Comparator<Listitem> {
+        
         
         private final boolean ascending;
         

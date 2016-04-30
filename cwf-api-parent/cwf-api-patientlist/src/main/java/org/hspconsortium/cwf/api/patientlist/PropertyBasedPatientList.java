@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.api.property.PropertyUtil;
 
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import org.hl7.fhir.dstu3.model.Patient;
 
 /**
  * Abstract base class for patient lists that are stored in properties. The filter associated with
@@ -240,7 +240,7 @@ public abstract class PropertyBasedPatientList extends AbstractPatientList {
                 Patient pat = item.getPatient();
                 
                 if (pat != null) {
-                    patids.add(pat.getId().getIdPart());
+                    patids.add(pat.getIdElement().getIdPart());
                 }
             }
             

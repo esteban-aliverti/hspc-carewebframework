@@ -19,8 +19,6 @@
  */
 package org.hspconsortium.cwf.api.encounter;
 
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,12 +27,15 @@ import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
 import org.carewebframework.api.context.ISharedContext;
 import org.carewebframework.api.context.ManagedContext;
+
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
 
 /**
  * Wrapper for shared encounter context.
  */
 public class EncounterContext extends ManagedContext<Encounter> implements IPatientContextEvent {
+    
     
     private static final Log log = LogFactory.getLog(EncounterContext.class);
     

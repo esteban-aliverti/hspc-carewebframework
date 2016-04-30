@@ -19,10 +19,6 @@
  */
 package org.hspconsortium.cwf.api.patient;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.valueset.IdentifierTypeCodesEnum;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,12 +27,16 @@ import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
 import org.carewebframework.api.context.ISharedContext;
 import org.carewebframework.api.context.ManagedContext;
+
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 /**
  * Wrapper for shared patient context.
  */
 public class PatientContext extends ManagedContext<Patient> {
+    
     
     private static final Log log = LogFactory.getLog(PatientContext.class);
     
@@ -111,7 +111,7 @@ public class PatientContext extends ManagedContext<Patient> {
      */
     @Override
     public ContextItems toCCOWContext(Patient patient) {
-        IdentifierDt mrn = FhirUtil.getIdentifier(patient.getIdentifier(), IdentifierTypeCodesEnum.MR);
+        Identifier mrn = FhirUtil.getMRN(patient);
         contextItems.setItem(CCOW_MRN, mrn == null ? null : mrn.getValue(), "MRN");
         contextItems.setItem(CCOW_NAM, patient.getName());
         contextItems.setItem(CCOW_SEX, patient.getGender());

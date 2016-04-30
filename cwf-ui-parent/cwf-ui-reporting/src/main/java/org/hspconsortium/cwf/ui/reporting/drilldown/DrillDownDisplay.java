@@ -23,13 +23,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.carewebframework.api.security.SecurityUtil;
-import org.hspconsortium.cwf.ui.reporting.Constants;
 import org.carewebframework.common.DateUtil;
 import org.carewebframework.common.StrUtil;
 import org.carewebframework.ui.zk.PopupDialog;
@@ -48,6 +45,9 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hspconsortium.cwf.ui.reporting.Constants;
+
 /**
  * Class which extends Popup. Subclasses should provide implementation of method addRows(). This is
  * the popup dialog that displays the detail information for a data object in a grid view. If
@@ -56,7 +56,9 @@ import org.zkoss.zul.Row;
  */
 public class DrillDownDisplay extends PopupDialog {
     
+    
     private class DebugLink extends DrillDownIconBase<Object> implements EventListener<Event> {
+        
         
         private static final long serialVersionUID = 1L;
         
@@ -109,6 +111,7 @@ public class DrillDownDisplay extends PopupDialog {
      * @author dmartin
      */
     private class MultiListbox extends org.zkoss.zul.Listbox implements EventListener<Event> {
+        
         
         private static final long serialVersionUID = 1L;
         
@@ -289,8 +292,8 @@ public class DrillDownDisplay extends PopupDialog {
             addRow(header, (String) value);
         } else if (value instanceof Date) {
             addRow(header, (Date) value);
-        } else if (value instanceof IdentifierDt) {
-            addRow(header, ((IdentifierDt) value).getValue());
+        } else if (value instanceof Identifier) {
+            addRow(header, ((Identifier) value).getValue());
         } else {
             addRow(header, value == null ? "" : String.valueOf(value));
         }
@@ -355,7 +358,7 @@ public class DrillDownDisplay extends PopupDialog {
      * @param header Text for header column
      * @param value Concept object
      */
-    protected void addRow(String header, IdentifierDt value) {
+    protected void addRow(String header, Identifier value) {
         addRow(header, value == null ? "" : value.getValue().toString());
     }
     

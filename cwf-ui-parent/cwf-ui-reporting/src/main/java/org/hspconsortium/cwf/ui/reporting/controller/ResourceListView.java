@@ -35,16 +35,16 @@ import org.zkoss.zul.Html;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.BaseService;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.Constants;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.api.IDatatype;
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.model.primitive.XhtmlDt;
 
 /**
@@ -53,7 +53,7 @@ import ca.uhn.fhir.model.primitive.XhtmlDt;
  * @param <R> Type of resource object.
  * @param <M> Type of model object.
  */
-public abstract class ResourceListView<R extends IResource, M> extends ListViewForm<M> implements PatientContext.IPatientContextEvent {
+public abstract class ResourceListView<R extends IBaseResource, M> extends ListViewForm<M> implements PatientContext.IPatientContextEvent {
     
     
     private static final long serialVersionUID = 1L;
@@ -131,14 +131,14 @@ public abstract class ResourceListView<R extends IResource, M> extends ListViewF
     
     @Override
     protected void requestData() {
-        final UriDt uri = new UriDt(resourcePath.replace("#", patient.getId().getIdPart()));
+        final String url = resourcePath.replace("#", patient.getIdElement().getIdPart());
         
         startBackgroundThread(new ZKRunnable() {
             
             
             @Override
             public void run(ZKThread thread) throws Exception {
-                Bundle bundle = fhirService.getClient().search(uri);
+                Bundle bundle = fhirService.getClient().search().byUrl(url).returnBundle(Bundle.class).execute();
                 thread.setAttribute("bundle", bundle);
             }
             
