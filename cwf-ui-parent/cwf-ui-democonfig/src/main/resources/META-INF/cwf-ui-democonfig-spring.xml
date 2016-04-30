@@ -28,9 +28,12 @@
 
 	<beans profile="desktop">
 	
-		<bean id="cwfDemoConfigController" 
-			class="org.hspconsortium.cwf.ui.democonfig.controller.DemoConfigController" 
-			scope="prototype"/>	
+		<bean id="cwfDemoConfigController" scope="prototype"
+			class="org.hspconsortium.cwf.ui.democonfig.controller.DemoConfigController">
+			<constructor-arg>
+				<bean class="org.hspconsortium.cwf.ui.democonfig.Bootstrapper" />
+			</constructor-arg>
+		</bean>	
 			
 	</beans>
 </beans>

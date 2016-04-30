@@ -36,16 +36,15 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseDatatype;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.BaseService;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.ui.reporting.Constants;
-
-import ca.uhn.fhir.model.api.IDatatype;
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.primitive.XhtmlDt;
 
 /**
  * Controller for cover sheet components.
@@ -98,15 +97,15 @@ public abstract class ResourceListView<R extends IBaseResource, M> extends ListV
     @SuppressWarnings("unchecked")
     @Override
     protected Object transformData(Object data) {
-        if (data instanceof IDatatype) {
-            return FhirUtil.getDisplayValueForType((IDatatype) data);
+        if (data instanceof IBaseDatatype) {
+            return FhirUtil.getDisplayValueForType((IBaseDatatype) data);
         }
         
         if (data instanceof List) {
             List<?> c = (List<?>) data;
             
-            if (!c.isEmpty() && c.get(0) instanceof IDatatype) {
-                return FhirUtil.getDisplayValueForTypes((List<IDatatype>) c, ", ");
+            if (!c.isEmpty() && c.get(0) instanceof IBaseDatatype) {
+                return FhirUtil.getDisplayValueForTypes((List<IBaseDatatype>) c, ", ");
             }
         }
         
@@ -198,8 +197,8 @@ public abstract class ResourceListView<R extends IBaseResource, M> extends ListV
     }
     
     protected String getDetail(M modelObject) {
-        if (modelObject instanceof IResource) {
-            XhtmlDt detail = ((IResource) modelObject).getText().getDiv();
+        if (modelObject instanceof DomainResource) {
+            XhtmlNode detail = ((DomainResource) modelObject).getText().getDiv();
             return detail == null ? null : detail.getValueAsString();
         }
         

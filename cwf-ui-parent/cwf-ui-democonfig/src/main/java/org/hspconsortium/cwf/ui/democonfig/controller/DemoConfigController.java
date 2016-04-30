@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * Demo Configuration Plugin
+ * %%
+ * Copyright (C) 2014 - 2016 Healthcare Services Platform Consortium
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
  * If a copy of the MPL was not distributed with this file, You can obtain one at
@@ -34,18 +53,11 @@ public class DemoConfigController extends PluginController {
     
     private static final Log log = LogFactory.getLog(DemoConfigController.class);
     
-    private Bootstrapper bootstrapper;
+    private final Bootstrapper bootstrapper;
     
-    /**
-     * Returns the bootstrapper for this demonstration
-     * 
-     * @return
-     */
-    public Bootstrapper getBootstrapper() {
-        if (bootstrapper == null) {
-            bootstrapper = (Bootstrapper) getAppContext().getBean("bootstrapper");
-        }
-        return bootstrapper;
+    public DemoConfigController(Bootstrapper bootstrapper) {
+        super();
+        this.bootstrapper = bootstrapper;
     }
     
     /**
@@ -98,14 +110,14 @@ public class DemoConfigController extends PluginController {
      * does not already exist.
      */
     public void onClick$btnAddPatient() {
-        getBootstrapper().addDemoPatients();
+        bootstrapper.addDemoPatients();
     }
     
     /**
      * Event handler for btnDelPatient on-click events. Deletes the patient from the FHIR server.
      */
     public void onClick$btnDelPatient() {
-        getBootstrapper().deleteDemoPatient();
+        bootstrapper.deleteDemoPatient();
     }
     
     /**
@@ -116,7 +128,7 @@ public class DemoConfigController extends PluginController {
     public void onClick$btnAddMedAdmins() {
         Patient patient = PatientContext.getActivePatient();
         if (patient != null) {
-            getBootstrapper().addSampleMedicationAdmins(patient);
+            bootstrapper.addSampleMedicationAdmins(patient);
         } else {
             log.error("No patient selected in patient context. Request ignored.");
             PromptDialog.showWarning("You must first select a patient before administering a medication",
@@ -128,7 +140,7 @@ public class DemoConfigController extends PluginController {
      * Event handler for the btnDelMedAdmins on-click events. Delete all medication in the demo set.
      */
     public void onClick$btnDelMedAdmins() {
-        getBootstrapper().clearMedicationAdministrations();
+        bootstrapper.clearMedicationAdministrations();
     }
     
     /**
@@ -149,7 +161,7 @@ public class DemoConfigController extends PluginController {
      * Event handler for the btnDelMedAdmins on-click events. Delete all medication in the demo set.
      */
     public void onClick$btnDelMedOrders() {
-        getBootstrapper().clearMedicationOrders();
+        bootstrapper.clearMedicationOrders();
     }
     
     /**
@@ -171,7 +183,7 @@ public class DemoConfigController extends PluginController {
      * set.
      */
     public void onClick$btnDelConditions() {
-        getBootstrapper().clearConditions();
+        bootstrapper.clearConditions();
     }
     
 }

@@ -23,11 +23,10 @@ import java.util.List;
 
 import org.carewebframework.common.StrUtil;
 
-import org.hl7.fhir.dstu3.exceptions.FHIRException;
 import org.hl7.fhir.dstu3.model.Medication;
 import org.hl7.fhir.dstu3.model.MedicationOrder;
 import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
-import org.hl7.fhir.dstu3.model.Type;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hspconsortium.cwf.fhir.medication.MedicationService;
 import org.hspconsortium.cwf.ui.reporting.controller.ResourceListView;
 
@@ -55,20 +54,13 @@ public class MainController extends ResourceListView<MedicationOrder, Medication
     @Override
     protected void render(MedicationOrder script, List<Object> columns) {
         Object med = null;
-        Type medicationDt = script.getMedication();
         
         if (script.hasMedicationCodeableConcept()) {
-            try {
-                med = script.getMedicationCodeableConcept();
-            } catch (FHIRException e) {
-                
-            }
+            med = script.getMedication();
         } else if (script.hasMedicationReference()) {
             Medication medObject;
-            try {
-                medObject = (Medication) script.getMedicationReference().getResource();
-                med = medObject.getCode();
-            } catch (FHIRException e) {}
+            medObject = getFhirService().getResource((Reference) script.getMedication(), Medication.class);
+            med = medObject.getCode();
         }
         
         columns.add(med);

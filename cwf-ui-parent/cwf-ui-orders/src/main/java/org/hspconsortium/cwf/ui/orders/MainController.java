@@ -27,11 +27,13 @@ import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.DeviceUseRequest;
 import org.hl7.fhir.dstu3.model.DiagnosticOrder;
 import org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent;
+import org.hl7.fhir.dstu3.model.Medication;
 import org.hl7.fhir.dstu3.model.MedicationOrder;
 import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
 import org.hl7.fhir.dstu3.model.NutritionOrder;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.Type;
 import org.hl7.fhir.instance.model.api.IBaseDatatype;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -93,7 +95,13 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     private void render(MedicationOrder order, List<Object> columns) {
         columns.add("Medication");
         columns.add(order.getDateWritten());
-        columns.add(order.getMedication());
+        
+        if (order.hasMedicationReference()) {
+            Medication medication = getFhirService().getResource((Reference) order.getMedication(), Medication.class);
+            columns.add(medication.getCode());
+        } else {
+            columns.add(order.getMedication());
+        }
         
         StringBuilder sb = new StringBuilder();
         

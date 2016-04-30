@@ -89,7 +89,8 @@ public class DomainFactory implements IDomainFactory<BaseResource> {
      */
     @Override
     public String getAlias(Class<?> clazz) {
-        return clazz.getPackage().getName().startsWith("ca.uhn.fhir") ? clazz.getSimpleName() : null;
+        String pkg = clazz.getPackage().getName();
+        return pkg.startsWith("ca.uhn.fhir") || pkg.startsWith("org.hl7.fhir") ? clazz.getSimpleName() : null;
     }
     
     /**

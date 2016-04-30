@@ -260,11 +260,16 @@ public class MainController extends CaptionedForm implements IPatientContextEven
     private void loadMessages(boolean currentPatientOnly) {
         String userId = UserContext.getActiveUser().getLogicalId();
         String patientId = currentPatientOnly && patient != null ? FhirUtil.getIdAsString(patient, true) : null;
-        List<Message> messages = service.getMessagesByRecipient(userId, patientId);
         model.clear();
         
-        for (Message message : messages) {
-            model.add(new MessageWrapper(message));
+        try {
+            List<Message> messages = service.getMessagesByRecipient(userId, patientId);
+            
+            for (Message message : messages) {
+                model.add(new MessageWrapper(message));
+            }
+        } catch (Exception e) {
+            lstMessages.appendChild(new Listitem(ZKUtil.formatExceptionForDisplay(e)));
         }
     }
     
