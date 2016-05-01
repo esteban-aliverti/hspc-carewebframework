@@ -23,12 +23,13 @@ import org.carewebframework.ui.FrameworkController;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.util.media.AMedia;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 
 import org.hspconsortium.cwf.fhir.document.Document;
+import org.hspconsortium.cwf.fhir.document.DocumentContent;
 
 /**
  * Controller for displaying the contents of selected documents.
@@ -55,23 +56,24 @@ public class DocumentDisplayController extends FrameworkController {
     @Override
     public void refresh() {
         super.refresh();
-        Component body = null;
         ZKUtil.detachChildren(printRoot);
         
-        if (document.getContentType().equals("text/plain")) {
-            Label lbl = new Label(new String(document.getContent()));
-            lbl.setMultiline(true);
-            lbl.setPre(true);
-            body = lbl;
-        } else {
-            AMedia media = new AMedia(null, null, document.getContentType(), document.getContent());
-            Iframe frame = new Iframe();
-            frame.setContent(media);
-            body = frame;
-        }
-        
-        if (body != null) {
-            printRoot.appendChild(body);
+        for (DocumentContent content : document.getContent()) {
+            if (content.getType().equals("text/html")) {
+                Html html = new Html();
+                html.setContent(content.toString());
+                printRoot.appendChild(html);
+            } else if (content.getType().equals("text/plain")) {
+                Label lbl = new Label(content.toString());
+                lbl.setMultiline(true);
+                lbl.setPre(true);
+                printRoot.appendChild(lbl);
+            } else {
+                AMedia media = new AMedia(null, null, content.getType(), content.getData());
+                Iframe frame = new Iframe();
+                frame.setContent(media);
+                printRoot.appendChild(frame);
+            }
         }
     }
 }

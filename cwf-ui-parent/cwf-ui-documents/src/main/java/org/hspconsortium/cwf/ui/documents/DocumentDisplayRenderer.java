@@ -22,15 +22,16 @@ package org.hspconsortium.cwf.ui.documents;
 import org.carewebframework.ui.zk.AbstractListitemRenderer;
 
 import org.zkoss.util.media.AMedia;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 
 import org.hspconsortium.cwf.fhir.document.Document;
+import org.hspconsortium.cwf.fhir.document.DocumentContent;
 import org.hspconsortium.cwf.ui.reporting.Constants;
 
 /**
@@ -64,21 +65,24 @@ public class DocumentDisplayRenderer extends AbstractListitemRenderer<Document, 
         header.setZclass(Constants.SCLASS_TEXT_REPORT_TITLE);
         boxHeader.appendChild(header);
         div.appendChild(boxHeader);
-        byte[] content = doc.getContent();
-        Component body;
         
-        if (doc.getContentType().equals("text/plain")) {
-            Label lbl = new Label(new String(content));
-            lbl.setMultiline(true);
-            lbl.setPre(true);
-            body = lbl;
-        } else {
-            AMedia media = new AMedia(null, null, doc.getContentType(), content);
-            Iframe frame = new Iframe();
-            frame.setContent(media);
-            body = frame;
+        for (DocumentContent content : doc.getContent()) {
+            if (content.getType().equals("text/html")) {
+                Html html = new Html();
+                html.setContent(content.toString());
+                cell.appendChild(html);
+            } else if (content.getType().equals("text/plain")) {
+                Label lbl = new Label(content.toString());
+                lbl.setMultiline(true);
+                lbl.setPre(true);
+                cell.appendChild(lbl);
+            } else {
+                AMedia media = new AMedia(null, null, content.getType(), content.getData());
+                Iframe frame = new Iframe();
+                frame.setContent(media);
+                cell.appendChild(frame);
+            }
         }
-        cell.appendChild(body);
     }
     
 }
