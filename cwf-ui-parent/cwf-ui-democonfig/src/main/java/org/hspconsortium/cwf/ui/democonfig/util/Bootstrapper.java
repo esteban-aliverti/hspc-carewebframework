@@ -19,6 +19,11 @@
  */
 package org.hspconsortium.cwf.ui.democonfig.util;
 
+import static org.hspconsortium.cwf.fhir.common.FhirTerminology.IDENT_MRN;
+import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_COGMED;
+import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_RXNORM;
+import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_SNOMED;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +54,6 @@ import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Procedure;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
-import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.fhir.condition.ConditionService;
 import org.hspconsortium.cwf.fhir.medication.MedicationService;
@@ -101,13 +105,13 @@ public class Bootstrapper {
             .setValue("gen");
     
     public static final Identifier PATIENT_IDENTIFIER_1 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("1");
+            .setValue("1").setType(IDENT_MRN);
     
     public static final Identifier PATIENT_IDENTIFIER_2 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("2");
+            .setValue("2").setType(IDENT_MRN);
     
     public static final Identifier PATIENT_IDENTIFIER_3 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("3");
+            .setValue("3").setType(IDENT_MRN);
     
     private static final Log log = LogFactory.getLog(Bootstrapper.class);
     
@@ -152,26 +156,21 @@ public class Bootstrapper {
      */
     protected void populateMedicationCodes() {
         medicationList.clear();
-        medicationList.put("metoprolol", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "372891",
-            "Metoprolol Tartrate 25 MG Oral tablet"));
-        medicationList.put("atenolol",
-            buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "197379", "Atenolol 100 MG Oral Tablet"));
-        medicationList.put("bisoprolol", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "854901",
-            "Bisoprolol Fumarate 10 MG Oral Tablet"));
-        medicationList.put("clopidogrel",
-            buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "309362", "Clopidogrel 75 MG Oral Tablet"));
-        medicationList.put("atorvastatin", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "597967",
-            "Amlodipine 10 MG / Atorvastatin 20 MG Oral Tablet"));
-        medicationList.put("acetaminophen", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "665056",
-            "Acetaminophen 500 MG Chewable Tablet"));
-        medicationList.put("aspirin",
-            buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "198466", "Aspirin 325 MG Oral Capsule"));
-        medicationList.put("hydrochlorothiazide", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm",
-            "310798", "Hydrochlorothiazide 25 MG Oral Tablet"));
-        medicationList.put("bisacodyl",
-            buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "1550933", "Bisacodyl 5 MG Oral Tablet"));
-        medicationList.put("acetazolamide", buildCodeableConcept("http://www.nlm.nih.gov/research/umls/rxnorm", "197304",
-            "Acetazolamide 250 MG Oral Tablet"));
+        medicationList.put("metoprolol",
+            buildCodeableConcept(SYS_RXNORM, "372891", "Metoprolol Tartrate 25 MG Oral tablet"));
+        medicationList.put("atenolol", buildCodeableConcept(SYS_RXNORM, "197379", "Atenolol 100 MG Oral Tablet"));
+        medicationList.put("bisoprolol",
+            buildCodeableConcept(SYS_RXNORM, "854901", "Bisoprolol Fumarate 10 MG Oral Tablet"));
+        medicationList.put("clopidogrel", buildCodeableConcept(SYS_RXNORM, "309362", "Clopidogrel 75 MG Oral Tablet"));
+        medicationList.put("atorvastatin",
+            buildCodeableConcept(SYS_RXNORM, "597967", "Amlodipine 10 MG / Atorvastatin 20 MG Oral Tablet"));
+        medicationList.put("acetaminophen",
+            buildCodeableConcept(SYS_RXNORM, "665056", "Acetaminophen 500 MG Chewable Tablet"));
+        medicationList.put("aspirin", buildCodeableConcept(SYS_RXNORM, "198466", "Aspirin 325 MG Oral Capsule"));
+        medicationList.put("hydrochlorothiazide",
+            buildCodeableConcept(SYS_RXNORM, "310798", "Hydrochlorothiazide 25 MG Oral Tablet"));
+        medicationList.put("bisacodyl", buildCodeableConcept(SYS_RXNORM, "1550933", "Bisacodyl 5 MG Oral Tablet"));
+        medicationList.put("acetazolamide", buildCodeableConcept(SYS_RXNORM, "197304", "Acetazolamide 250 MG Oral Tablet"));
     }
     
     /**
@@ -179,10 +178,9 @@ public class Bootstrapper {
      */
     protected void populateConditionCodes() {
         conditionList.clear();
-        conditionList.put("HTN", buildCodeableConcept(FhirTerminology.SYS_SNOMED, "5962100", "Essential Hypertension"));
-        conditionList.put("OSTEO", buildCodeableConcept(FhirTerminology.SYS_SNOMED, "396275006", "Osteoarthritis"));
-        conditionList.put("CONCUSSION",
-            buildCodeableConcept(FhirTerminology.SYS_SNOMED, "110030002", "Concussive Brain Injury"));
+        conditionList.put("HTN", buildCodeableConcept(SYS_SNOMED, "5962100", "Essential Hypertension"));
+        conditionList.put("OSTEO", buildCodeableConcept(SYS_SNOMED, "396275006", "Osteoarthritis"));
+        conditionList.put("CONCUSSION", buildCodeableConcept(SYS_SNOMED, "110030002", "Concussive Brain Injury"));
     }
     
     /**
@@ -216,7 +214,7 @@ public class Bootstrapper {
                 .setDose(simpleQuantity);
         if (routeCode != null && routeCode.equalsIgnoreCase("PO")) {
             CodeableConcept route = new CodeableConcept();
-            route.addCoding().setSystem(FhirTerminology.SYS_SNOMED).setCode("26643006").setDisplay("Oral route");//TODO Move to mock terminology server when created
+            route.addCoding().setSystem(SYS_SNOMED).setCode("26643006").setDisplay("Oral route");//TODO Move to mock terminology server when created
             dose.setRoute(route);
         }
         if (freqCode != null && freqCode.equalsIgnoreCase("QD")) {
@@ -227,11 +225,10 @@ public class Bootstrapper {
             log.error("Unknown frequency code " + freqCode);
         }
         if (prnCode != null && prnCode.equalsIgnoreCase("1")) {
-            CodeableConcept prnCodeableConcept = buildCodeableConcept(FhirTerminology.SYS_COGMED, "1", "As needed for pain");
+            CodeableConcept prnCodeableConcept = buildCodeableConcept(SYS_COGMED, "1", "As needed for pain");
             dose.setAsNeeded(prnCodeableConcept);
         } else if (prnCode != null && prnCode.equalsIgnoreCase("2")) {
-            CodeableConcept prnCodeableConcept = buildCodeableConcept(FhirTerminology.SYS_COGMED, "1",
-                "As needed to control hypertension");
+            CodeableConcept prnCodeableConcept = buildCodeableConcept(SYS_COGMED, "1", "As needed to control hypertension");
             dose.setAsNeeded(prnCodeableConcept);
         }
         return dose;
@@ -285,7 +282,10 @@ public class Bootstrapper {
     /**
      * Method populates the patient record with some sample medication administrations.
      * 
+     * @param medAdminSetIdentifier
+     * @param medOrdersSetIdentifier
      * @param patient
+     * @return
      */
     public List<MedicationAdministration> addSampleMedicationAdmins(Identifier medAdminSetIdentifier,
                                                                     Identifier medOrdersSetIdentifier, Patient patient) {
@@ -301,7 +301,9 @@ public class Bootstrapper {
     /**
      * Method populates the patient record with some sample medication orders.
      * 
+     * @param medOrderSetIdentifier
      * @param patient
+     * @return
      */
     public List<MedicationOrder> addSampleMedicationOrders(Identifier medOrderSetIdentifier, Patient patient) {
         List<MedicationOrder> medOrders = new ArrayList<>();
@@ -319,7 +321,9 @@ public class Bootstrapper {
     /**
      * Method populates the patient record with some sample medication orders.
      * 
+     * @param conditionGroupIdentifier
      * @param patient
+     * @return
      */
     public List<Condition> addSampleConditions(Identifier conditionGroupIdentifier, Patient patient) {
         List<Condition> conditions = new ArrayList<>();
@@ -336,6 +340,7 @@ public class Bootstrapper {
      * Method populates the patient record with some sample medication administrations.
      * 
      * @param patient
+     * @return
      */
     public List<MedicationAdministration> addSampleMedicationAdmins(Patient patient) {
         return addSampleMedicationAdmins(MED_ADMIN_GROUP_IDENTIFIER, MED_ORDER_GROUP_IDENTIFIER, patient);
@@ -345,6 +350,7 @@ public class Bootstrapper {
      * Method populates the patient record with some sample medication orders.
      * 
      * @param patient
+     * @return
      */
     public List<MedicationOrder> addSampleMedicationOrders(Patient patient) {
         return addSampleMedicationOrders(MED_ORDER_GROUP_IDENTIFIER, patient);
@@ -354,6 +360,7 @@ public class Bootstrapper {
      * Method populates the patient record with some sample conditions.
      * 
      * @param patient
+     * @return
      */
     public List<Condition> addSampleConditions(Patient patient) {
         return addSampleConditions(CONDITION_GROUP_IDENTIFIER, patient);
@@ -367,6 +374,7 @@ public class Bootstrapper {
      * @param medCode
      * @param dosage
      * @param effectiveDate
+     * @param prescription
      * @return
      */
     public MedicationAdministration createMedicationAdministration(Patient patient, Identifier identifier,
@@ -414,6 +422,7 @@ public class Bootstrapper {
      * @param medCode
      * @param dose
      * @param effectiveDate
+     * @param prescription
      * @return
      */
     public MedicationAdministration buildMedicationAdministration(Identifier identifier, CodeableConcept medCode,
@@ -438,7 +447,7 @@ public class Bootstrapper {
      * @param identifier
      * @param medCode
      * @param dose
-     * @param effectiveDate
+     * @param dateWritten
      * @return
      */
     public MedicationOrder buildMedicationOrder(Identifier identifier, CodeableConcept medCode,
@@ -451,6 +460,16 @@ public class Bootstrapper {
         return medOrder;
     }
     
+    /**
+     * Build a condition.
+     * 
+     * @param identifier
+     * @param conditionCode
+     * @param status
+     * @param notes
+     * @param dateRecorded
+     * @return
+     */
     public Condition buildCondition(Identifier identifier, CodeableConcept conditionCode, String status, String notes,
                                     Date dateRecorded) {
         Condition condition = new Condition();
@@ -464,6 +483,8 @@ public class Bootstrapper {
     
     /**
      * Clears all medication administrations that share the given identifier.
+     * 
+     * @param identifier
      */
     public void clearMedicationAdministrations(Identifier identifier) {
         medicationService.deleteMedicationAdministrationsByIdentifier(identifier);
@@ -471,6 +492,8 @@ public class Bootstrapper {
     
     /**
      * Clears all medication orders that share the given identifier.
+     * 
+     * @param identifier
      */
     public void clearMedicationOrders(Identifier identifier) {
         medicationService.deleteMedicationOrdersByIdentifier(identifier);
@@ -478,6 +501,8 @@ public class Bootstrapper {
     
     /**
      * Clears all conditions that share the given identifier.
+     * 
+     * @param identifier
      */
     public void clearConditions(Identifier identifier) {
         medicationService.deleteConditionsByIdentifier(identifier);
@@ -507,12 +532,13 @@ public class Bootstrapper {
     /**
      * Adds a demo patient.
      * 
-     * @param patientSetIdentifier
+     * @param patientIdentifier
      * @param givenName
      * @param surname
      * @param date
+     * @param address
      * @param gender
-     * @param title
+     * @param prefix
      * @return
      */
     public Patient addDemoPatient(Identifier patientIdentifier, String givenName, String surname, String date,
@@ -571,20 +597,19 @@ public class Bootstrapper {
      * @param givenName
      * @param surname
      * @param birthdate
+     * @param address
      * @param gender
-     * @param title
+     * @param prefix
      * @return
      */
     public Patient buildPatient(Identifier identifier, String givenName, String surname, String birthdate, Address address,
                                 AdministrativeGender gender, String prefix) {
         Patient patient = new Patient();
-        identifier.setType(FhirTerminology.IDENT_MRN);
         patient.addIdentifier(identifier);
         if (address != null) {
             patient.addAddress(address);//Fix
         }
-        Attachment photo = patient.addPhoto().setData(FhirUtil.getResourceAsByteArray(IMAGE_PATH + "patient1.jpeg"));
-        photo.setContentType("image/jpeg");
+        setPatientPhoto(patient);
         addPatientName(patient, givenName, surname, prefix);
         patient.setGender(gender);
         setPatientBirthdate(patient, birthdate);
@@ -600,6 +625,22 @@ public class Bootstrapper {
      */
     private void addPatientName(Patient patient, String givenName, String familyName, String prefix) {
         patient.addName().addGiven(givenName).addFamily(familyName).addPrefix(prefix);
+    }
+    
+    /**
+     * Convenience method for creating and setting patient photo.
+     * 
+     * @param patient
+     */
+    private void setPatientPhoto(Patient patient) {
+        try {
+            String jpeg = "patient" + patient.getIdentifier().get(0).getValue() + ".jpeg";
+            byte[] data = FhirUtil.getResourceAsByteArray(IMAGE_PATH + jpeg);
+            Attachment photo = patient.addPhoto().setData(data);
+            photo.setContentType("image/jpeg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -619,32 +660,34 @@ public class Bootstrapper {
     
     /**
      * Create Sepsis condition for demo
+     * 
+     * @param patient
+     * @return
      */
     public Condition buildSepsisCondition(Patient patient) {
         Condition condition = new Condition();
-        condition.setCode(buildCodeableConcept(FhirTerminology.SYS_SNOMED, "10001005", "Bacterial sepsis (disorder)"));
+        condition.setCode(buildCodeableConcept(SYS_SNOMED, "10001005", "Bacterial sepsis (disorder)"));
         condition.setVerificationStatus(ConditionVerificationStatus.DIFFERENTIAL);
         condition.setDateRecorded(new Date());
         condition.setPatientTarget(patient);
         return condition;
     }
     
+    /**
+     * Build a genetic test procedure.
+     * 
+     * @param patient
+     * @return
+     */
     public Procedure buildGeneticTestProcedure(Patient patient) {
         Procedure procedure = new Procedure();
-        procedure.setCode(
-            buildCodeableConcept(FhirTerminology.SYS_SNOMED, "405825005", "Molecular genetic test (procedure)"));
+        procedure.setCode(buildCodeableConcept(SYS_SNOMED, "405825005", "Molecular genetic test (procedure)"));
         procedure.setPerformed(new DateType(new Date()));
         Reference reference = new Reference(patient);
         procedure.setSubject(reference);
         procedure.setOutcome(
             buildCodeableConcept("http://demo/terminology", "123", "Substance metabolic disorder - Metoprolol"));
         return procedure;
-    }
-    
-    /**
-     * Method to invoke to patch demo data
-     */
-    public void patchDemoData() {
     }
     
     /**
@@ -659,6 +702,11 @@ public class Bootstrapper {
     
     /**
      * Method clears all demo data.
+     * 
+     * @param patientSetId
+     * @param medAdminId
+     * @param medOrdersId
+     * @param conditionId
      */
     public void clearData(Identifier patientSetId, Identifier medAdminId, Identifier medOrdersId, Identifier conditionId) {
         deleteDemoPatient(patientSetId);
