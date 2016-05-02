@@ -28,12 +28,17 @@
  */
 package org.hspconsortium.cwf.ui.democonfig.controller;
 
+import org.carewebframework.common.StrUtil;
 import org.carewebframework.shell.plugins.PluginController;
-import org.carewebframework.ui.zk.PromptDialog;
+
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
 
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.ui.democonfig.util.Bootstrapper;
+import org.hspconsortium.cwf.ui.patientselection.PatientSelection;
 
 /**
  * This controller is only intended to be used for demo purposes in order to stage and unstage data.
@@ -45,101 +50,173 @@ public class DemoConfigController extends PluginController {
     
     private static final long serialVersionUID = 1L;
     
+    private static final String ADDED = "%s added: %d";
+    
+    private static final String DELETED = "%s deleted: %d";
+    
+    private static final String NOPATIENT = "A patient must be selected to add %s.";
+    
     private final Bootstrapper bootstrapper;
+    
+    private Tabbox tabbox;
     
     public DemoConfigController(Bootstrapper bootstrapper) {
         super();
         this.bootstrapper = bootstrapper;
     }
     
+    private void showAdded(int count) {
+        showMessage(ADDED, count);
+    }
+    
+    private void showDeleted(int count) {
+        showMessage(DELETED, count);
+    }
+    
+    private void showNoPatient() {
+        showMessage(NOPATIENT, null);
+    }
+    
+    private void showMessage(String msg, Object arg) {
+        Tab tab = tabbox.getSelectedTab();
+        Label lbl = (Label) tab.getFellow("lbl" + tab.getId().substring(3));
+        msg = StrUtil.formatMessage(msg, tab == null ? "" : tab.getLabel(), arg);
+        lbl.setValue(msg);
+    }
+    
+    private Patient getPatient() {
+        return PatientContext.getActivePatient();
+    }
+    
     /*************************************************************************
      * Event Listeners
      *************************************************************************/
     
-    /**
-     * Event handler for btnAddPatient on-click events. Adds a new patient to the FHIR server if one
-     * does not already exist.
-     */
-    public void onClick$btnAddPatient() {
-        bootstrapper.addDemoPatients();
+    public void onSelect$tabbox() {
+        showMessage("", null);
     }
     
     /**
-     * Event handler for btnDelPatient on-click events. Deletes the patient from the FHIR server.
+     * Select a patient.
      */
-    public void onClick$btnDelPatient() {
-        bootstrapper.deleteDemoPatients();
+    public void onClick$btnSelectPatient() {
+        PatientSelection.show();
     }
     
     /**
-     * Event handler for the btnAddMedAdmins on-click events. Adds new medication administrations to
-     * the FHIR server if they do not already exist. Note that this method will not replace an
-     * existing instance.
+     * Adds demo patients to the FHIR server.
+     */
+    public void onClick$btnAddPatients() {
+        showAdded(bootstrapper.addPatients().size());
+    }
+    
+    /**
+     * Deletes demo patients from the FHIR server.
+     */
+    public void onClick$btnDelPatients() {
+        showDeleted(bootstrapper.deletePatients());
+    }
+    
+    /**
+     * Adds demo practitioners to the FHIR server.
+     */
+    public void onClick$btnAddPractitioners() {
+        showAdded(bootstrapper.addPractitioners().size());
+    }
+    
+    /**
+     * Deletes demo practitioners from the FHIR server.
+     */
+    public void onClick$btnDelPractitioners() {
+        showDeleted(bootstrapper.deletePractitioners());
+    }
+    
+    /**
+     * Adds demo medication administrations to the FHIR server.
      */
     public void onClick$btnAddMedAdmins() {
         Patient patient = getPatient();
         
         if (patient != null) {
-            bootstrapper.addSampleMedicationAdmins(patient);
+            showAdded(bootstrapper.addMedicationAdministrations(patient).size());
+        } else {
+            showNoPatient();
         }
     }
     
     /**
-     * Event handler for the btnDelMedAdmins on-click events. Delete all medication in the demo set.
+     * Deletes demo medication administrations from the FHIR server.
      */
     public void onClick$btnDelMedAdmins() {
-        bootstrapper.clearMedicationAdministrations();
+        showDeleted(bootstrapper.deleteMedicationAdministrations());
     }
     
     /**
-     * Event handler for the btnAddMedAdmins on-click events. Adds new medication administrations to
-     * the FHIR server if they do not already exist. Note that this method will not replace an
-     * existing instance.
+     * Adds demo medication orders to the FHIR server.
      */
     public void onClick$btnAddMedOrders() {
         Patient patient = getPatient();
         
         if (patient != null) {
-            bootstrapper.addSampleMedicationOrders(patient);
+            showAdded(bootstrapper.addMedicationOrders(patient).size());
+        } else {
+            showNoPatient();
         }
     }
     
     /**
-     * Event handler for the btnDelMedAdmins on-click events. Delete all medication in the demo set.
+     * Deletes demo medication orders from the FHIR server.
      */
     public void onClick$btnDelMedOrders() {
-        bootstrapper.clearMedicationOrders();
+        showDeleted(bootstrapper.deleteMedicationOrders());
     }
     
     /**
-     * Event handler for the btnAddMedAdmins on-click events. Adds new medication administrations to
-     * the FHIR server if they do not already exist. Note that this method will not replace an
-     * existing instance.
+     * Adds demo conditions to the FHIR server.
      */
     public void onClick$btnAddConditions() {
         Patient patient = getPatient();
         
         if (patient != null) {
-            bootstrapper.addSampleConditions(patient);
+            showAdded(bootstrapper.addConditions(patient).size());
+        } else {
+            showNoPatient();
         }
     }
     
     /**
-     * Event handler for the btnDelConditions on-click events. Delete all conditions in the demo
-     * set.
+     * Deletes demo conditions from the FHIR server.
      */
     public void onClick$btnDelConditions() {
-        bootstrapper.clearConditions();
+        showDeleted(bootstrapper.deleteConditions());
     }
     
-    private Patient getPatient() {
-        Patient patient = PatientContext.getActivePatient();
+    /**
+     * Adds demo documents to the FHIR server.
+     */
+    public void onClick$btnAddDocuments() {
+        Patient patient = getPatient();
         
-        if (patient == null) {
-            PromptDialog.showWarning("You must first select a patient before performing this operation.",
-                "Please select a patient");
+        if (patient != null) {
+            showAdded(bootstrapper.addDocuments(patient).size());
+        } else {
+            showNoPatient();
         }
-        
-        return patient;
     }
+    
+    /**
+     * Deletes demo documents from the FHIR server.
+     */
+    public void onClick$btnDelDocuments() {
+        showDeleted(bootstrapper.deleteDocuments());
+    }
+    
+    /**
+     * Deletes all demo resources from the FHIR server.
+     */
+    public void onClick$btnDeleteAll() {
+        bootstrapper.deleteAll();
+        showMessage("All demo data deleted.", null);
+    }
+    
 }

@@ -217,7 +217,7 @@ public class MainController extends PluginController implements PatientContext.I
      * remain if this demo plugin is adapted for production use cases.
      */
     public void onClick$btnMarClear() {
-        medicationService.deleteMedicationAdministrationsByIdentifier(generatedMedAdminsIdentifier);
+        medicationService.deleteResourcesByIdentifier(generatedMedAdminsIdentifier, MedicationAdministration.class);
         initializeMar();
     }
     

@@ -24,9 +24,6 @@ import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_COGMED;
 import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_RXNORM;
 import static org.hspconsortium.cwf.fhir.common.FhirTerminology.SYS_SNOMED;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,15 +32,14 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Attachment;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Condition;
-import org.hl7.fhir.dstu3.model.Condition.ConditionVerificationStatus;
 import org.hl7.fhir.dstu3.model.DateTimeType;
-import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DocumentReference;
+import org.hl7.fhir.dstu3.model.DocumentReference.DocumentReferenceContentComponent;
+import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.MedicationAdministration;
@@ -51,13 +47,11 @@ import org.hl7.fhir.dstu3.model.MedicationAdministration.MedicationAdministratio
 import org.hl7.fhir.dstu3.model.MedicationOrder;
 import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.Procedure;
+import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
+import org.hspconsortium.cwf.fhir.common.BaseService;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
-import org.hspconsortium.cwf.fhir.condition.ConditionService;
-import org.hspconsortium.cwf.fhir.medication.MedicationService;
-import org.hspconsortium.cwf.fhir.patient.PatientService;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 
@@ -70,71 +64,43 @@ public class Bootstrapper {
     
     private static final String IMAGE_PATH = "web/org/hspconsortium/cwf/ui/democonfig/images/";
     
-    /**
-     * Identifier used to define 'set of medication administration resources' to support bulk
-     * deletes.
-     */
-    public static final Identifier MED_ADMIN_GROUP_IDENTIFIER = new Identifier()
-            .setSystem("urn:cogmedsys:hsp:model:medicationadministration").setValue("gen");
+    private static final String NOTE_PATH = "web/org/hspconsortium/cwf/ui/democonfig/notes/";
     
     /**
-     * Identifier used to define 'set of medication order resources' to support bulk deletes.
+     * Identifier used to locate demo resources for bulk deletes.
      */
-    public static final Identifier MED_ORDER_GROUP_IDENTIFIER = new Identifier()
-            .setSystem("urn:cogmedsys:hsp:model:medicationorder").setValue("gen");
+    public static final Identifier DEMO_IDENTIFIER = createIdentifier("demo", "gen");
     
-    /**
-     * Identifier used to define 'set of condition resources' to support bulk deletes.
-     */
-    public static final Identifier CONDITION_GROUP_IDENTIFIER = new Identifier()
-            .setSystem("urn:cogmedsys:hsp:model:condition").setValue("gen");
+    public static final Identifier CONDITION_IDENTIFIER_1 = createIdentifier("condition", "1");
     
-    public static final Identifier CONDITION_IDENTIFIER_1 = new Identifier().setSystem("urn:cogmedsys:hsp:model:condition")
-            .setValue("1");
+    public static final Identifier CONDITION_IDENTIFIER_2 = createIdentifier("condition", "2");
     
-    public static final Identifier CONDITION_IDENTIFIER_2 = new Identifier().setSystem("urn:cogmedsys:hsp:model:condition")
-            .setValue("2");
+    public static final Identifier CONDITION_IDENTIFIER_3 = createIdentifier("condition", "3");
     
-    public static final Identifier CONDITION_IDENTIFIER_3 = new Identifier().setSystem("urn:cogmedsys:hsp:model:condition")
-            .setValue("3");
+    public static final Identifier DOCUMENT_IDENTIFIER_1 = createIdentifier("document", "1");
     
-    /**
-     * Identifier for clinical subject of demonstration.
-     */
-    public static final Identifier PATIENT_GROUP_IDENTIFIER = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("gen");
+    public static final Identifier DOCUMENT_IDENTIFIER_2 = createIdentifier("document", "2");
     
-    public static final Identifier PATIENT_IDENTIFIER_1 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("1").setType(IDENT_MRN);
+    public static final Identifier DOCUMENT_IDENTIFIER_3 = createIdentifier("document", "3");
     
-    public static final Identifier PATIENT_IDENTIFIER_2 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("2").setType(IDENT_MRN);
+    public static final Identifier PRACTITIONER_IDENTIFIER_1 = createIdentifier("practitioner", "1");
     
-    public static final Identifier PATIENT_IDENTIFIER_3 = new Identifier().setSystem("urn:cogmedsys:hsp:model:patient")
-            .setValue("3").setType(IDENT_MRN);
+    public static final Identifier PRACTITIONER_IDENTIFIER_2 = createIdentifier("practitioner", "2");
+    
+    public static final Identifier PRACTITIONER_IDENTIFIER_3 = createIdentifier("practitioner", "3");
+    
+    public static final Identifier PATIENT_IDENTIFIER_1 = createIdentifier("patient", "1").setType(IDENT_MRN);
+    
+    public static final Identifier PATIENT_IDENTIFIER_2 = createIdentifier("patient", "2").setType(IDENT_MRN);
+    
+    public static final Identifier PATIENT_IDENTIFIER_3 = createIdentifier("patient", "3").setType(IDENT_MRN);
     
     private static final Log log = LogFactory.getLog(Bootstrapper.class);
     
     /**
-     * FHIR service for medication administration CRUD
+     * FHIR service for managing resources.
      */
-    @Autowired
-    MedicationService medicationService;
-    
-    /**
-     * FHIR service for patient administration CRUD TODO May need to remove in favor of Doug
-     * Martin's code.
-     */
-    @Autowired
-    PatientService patientService;
-    
-    @Autowired
-    ConditionService conditionService;
-    
-    /**
-     * Formatter for effective date
-     */
-    private final DateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+    BaseService fhirService;
     
     /**
      * Medication index
@@ -142,127 +108,6 @@ public class Bootstrapper {
     private final Map<String, CodeableConcept> medicationList = new HashMap<>();
     
     private final Map<String, CodeableConcept> conditionList = new HashMap<>();
-    
-    /**
-     * No-arg constructor which initializes medication index
-     */
-    public Bootstrapper() {
-        populateMedicationCodes();
-        populateConditionCodes();
-    }
-    
-    /**
-     * Populates a medication index. TODO Build off a configuration file
-     */
-    protected void populateMedicationCodes() {
-        medicationList.clear();
-        medicationList.put("metoprolol",
-            buildCodeableConcept(SYS_RXNORM, "372891", "Metoprolol Tartrate 25 MG Oral tablet"));
-        medicationList.put("atenolol", buildCodeableConcept(SYS_RXNORM, "197379", "Atenolol 100 MG Oral Tablet"));
-        medicationList.put("bisoprolol",
-            buildCodeableConcept(SYS_RXNORM, "854901", "Bisoprolol Fumarate 10 MG Oral Tablet"));
-        medicationList.put("clopidogrel", buildCodeableConcept(SYS_RXNORM, "309362", "Clopidogrel 75 MG Oral Tablet"));
-        medicationList.put("atorvastatin",
-            buildCodeableConcept(SYS_RXNORM, "597967", "Amlodipine 10 MG / Atorvastatin 20 MG Oral Tablet"));
-        medicationList.put("acetaminophen",
-            buildCodeableConcept(SYS_RXNORM, "665056", "Acetaminophen 500 MG Chewable Tablet"));
-        medicationList.put("aspirin", buildCodeableConcept(SYS_RXNORM, "198466", "Aspirin 325 MG Oral Capsule"));
-        medicationList.put("hydrochlorothiazide",
-            buildCodeableConcept(SYS_RXNORM, "310798", "Hydrochlorothiazide 25 MG Oral Tablet"));
-        medicationList.put("bisacodyl", buildCodeableConcept(SYS_RXNORM, "1550933", "Bisacodyl 5 MG Oral Tablet"));
-        medicationList.put("acetazolamide", buildCodeableConcept(SYS_RXNORM, "197304", "Acetazolamide 250 MG Oral Tablet"));
-    }
-    
-    /**
-     * Populates a medication index. TODO Build off a configuration file
-     */
-    protected void populateConditionCodes() {
-        conditionList.clear();
-        conditionList.put("HTN", buildCodeableConcept(SYS_SNOMED, "5962100", "Essential Hypertension"));
-        conditionList.put("OSTEO", buildCodeableConcept(SYS_SNOMED, "396275006", "Osteoarthritis"));
-        conditionList.put("CONCUSSION", buildCodeableConcept(SYS_SNOMED, "110030002", "Concussive Brain Injury"));
-    }
-    
-    /**
-     * Convenience method for representing n tablets of medication X
-     * 
-     * @param numberOfTablets
-     * @return
-     */
-    protected MedicationAdministrationDosageComponent createDosageOneTablet(int numberOfTablets) {
-        SimpleQuantity simpleQuantity = new SimpleQuantity();
-        simpleQuantity.setValue(numberOfTablets);
-        simpleQuantity.setUnit("{tbl}");
-        MedicationAdministrationDosageComponent dose = new MedicationAdministrationDosageComponent()
-                .setQuantity(simpleQuantity);
-        return dose;
-    }
-    
-    /**
-     * Convenience method for representing n tablets of medication X
-     * 
-     * @param numberOfTablets
-     * @return
-     */
-    protected MedicationOrderDosageInstructionComponent createDosageInstructionsOneTablet(int numberOfTablets,
-                                                                                          String routeCode, String freqCode,
-                                                                                          String prnCode) {
-        SimpleQuantity simpleQuantity = new SimpleQuantity();
-        simpleQuantity.setValue(numberOfTablets);
-        simpleQuantity.setUnit("{tbl}");
-        MedicationOrderDosageInstructionComponent dose = new MedicationOrderDosageInstructionComponent()
-                .setDose(simpleQuantity);
-        if (routeCode != null && routeCode.equalsIgnoreCase("PO")) {
-            CodeableConcept route = new CodeableConcept();
-            route.addCoding().setSystem(SYS_SNOMED).setCode("26643006").setDisplay("Oral route");//TODO Move to mock terminology server when created
-            dose.setRoute(route);
-        }
-        if (freqCode != null && freqCode.equalsIgnoreCase("QD")) {
-            dose.getTiming().setRepeat(FhirUtil.getRepeatFromFrequencyCode(freqCode));
-        } else if (freqCode != null && freqCode.equalsIgnoreCase("Q8H")) {
-            dose.getTiming().setRepeat(FhirUtil.getRepeatFromFrequencyCode(freqCode));
-        } else {
-            log.error("Unknown frequency code " + freqCode);
-        }
-        if (prnCode != null && prnCode.equalsIgnoreCase("1")) {
-            CodeableConcept prnCodeableConcept = buildCodeableConcept(SYS_COGMED, "1", "As needed for pain");
-            dose.setAsNeeded(prnCodeableConcept);
-        } else if (prnCode != null && prnCode.equalsIgnoreCase("2")) {
-            CodeableConcept prnCodeableConcept = buildCodeableConcept(SYS_COGMED, "1", "As needed to control hypertension");
-            dose.setAsNeeded(prnCodeableConcept);
-        }
-        return dose;
-    }
-    
-    /**
-     * Convenience method to create a time offset for MAR display
-     * 
-     * @param minuteOffset
-     * @return
-     */
-    protected Date createDateWithMinuteOffset(int minuteOffset) {
-        return new Date(System.currentTimeMillis() - minuteOffset * 60 * 1000);
-    }
-    
-    /**
-     * Convenience method to create a time offset for MAR display
-     * 
-     * @param minuteOffset
-     * @return
-     */
-    protected Date createDateWithDayOffset(int dayOffset) {
-        return createDateWithMinuteOffset(dayOffset * 24 * 60 * 1000);
-    }
-    
-    /**
-     * Convenience method to create a time offset for MAR display
-     * 
-     * @param minuteOffset
-     * @return
-     */
-    protected Date createDateWithYearOffset(int yearOffset) {
-        return createDateWithDayOffset(yearOffset * 365);
-    }
     
     /**
      * Convenience method to create a codeable concept with a single coding. TODO May need to move
@@ -273,146 +118,134 @@ public class Bootstrapper {
      * @param displayName
      * @return
      */
-    protected CodeableConcept buildCodeableConcept(String system, String code, String displayName) {
+    public static CodeableConcept createCodeableConcept(String system, String code, String displayName) {
         CodeableConcept codeableConcept = new CodeableConcept();
         codeableConcept.addCoding().setSystem(system).setCode(code).setDisplay(displayName);
         return codeableConcept;
     }
     
     /**
+     * Convenience method for creating identifiers in local system.
+     * 
+     * @param system
+     * @param value
+     * @return
+     */
+    public static Identifier createIdentifier(String system, String value) {
+        Identifier identifier = new Identifier();
+        identifier.setSystem("urn:cogmedsys:hsp:model:" + system);
+        identifier.setValue(value);
+        return identifier;
+    }
+    
+    /**
+     * Convenience method to create a time offset for MAR display
+     * 
+     * @param minuteOffset
+     * @return
+     */
+    public static Date createDateWithMinuteOffset(long minuteOffset) {
+        return new Date(System.currentTimeMillis() - minuteOffset * 60 * 1000);
+    }
+    
+    /**
+     * Convenience method to create a time offset for MAR display
+     * 
+     * @param dayOffset
+     * @return
+     */
+    public static Date createDateWithDayOffset(long dayOffset) {
+        return createDateWithMinuteOffset(dayOffset * 24 * 60);
+    }
+    
+    /**
+     * Convenience method to create a time offset for MAR display
+     * 
+     * @param yearOffset
+     * @return
+     */
+    public static Date createDateWithYearOffset(long yearOffset) {
+        return createDateWithDayOffset(yearOffset * 365);
+    }
+    
+    /**
+     * No-arg constructor which initializes medication index
+     * 
+     * @param fhirService
+     */
+    public Bootstrapper(BaseService fhirService) {
+        this.fhirService = fhirService;
+        populateMedicationCodes();
+        populateConditionCodes();
+    }
+    
+    // ------------- General operations -------------
+    
+    /**
+     * Method clears all demo data.
+     */
+    public void deleteAll() {
+        deleteMedicationAdministrations();
+        deleteMedicationOrders();
+        deleteConditions();
+        deleteDocuments();
+        deletePractitioners();
+        deletePatients();
+    }
+    
+    /**
+     * Creates a resource on the server.
+     * 
+     * @param resource Resource to create.
+     * @return True if created.
+     */
+    private boolean createResource(DomainResource resource) {
+        MethodOutcome outcome = fhirService.createResource(resource);
+        return outcome.getResource() != null;
+    }
+    
+    /**
+     * Get demo resources of given type.
+     * 
+     * @param clazz Type of demo resource.
+     * @return List of demo resources.
+     */
+    private <T extends DomainResource> List<T> getResources(Class<T> clazz) {
+        return fhirService.searchResourcesByIdentifier(DEMO_IDENTIFIER, clazz);
+    }
+    
+    /**
+     * Delete demo resources of given type.
+     * 
+     * @param clazz Type of demo resource.
+     * @return Count of deleted resources
+     */
+    private <T extends DomainResource> int deleteResources(Class<T> clazz) {
+        return fhirService.deleteResourcesByIdentifier(DEMO_IDENTIFIER, clazz);
+    }
+    
+    // ------------- Medication Administration operations -------------
+    
+    /**
      * Method populates the patient record with some sample medication administrations.
      * 
-     * @param medAdminSetIdentifier
-     * @param medOrdersSetIdentifier
      * @param patient
      * @return
      */
-    public List<MedicationAdministration> addSampleMedicationAdmins(Identifier medAdminSetIdentifier,
-                                                                    Identifier medOrdersSetIdentifier, Patient patient) {
-        List<MedicationOrder> medOrders = addSampleMedicationOrders(medOrdersSetIdentifier, patient);
-        List<MedicationAdministration> medAdmins = new ArrayList<>();
-        medAdmins.add(createMedicationAdministration(patient, medAdminSetIdentifier, medicationList.get("metoprolol"),
-            createDosageOneTablet(1), createDateWithMinuteOffset(45), medOrders.get(0)));
-        medAdmins.add(createMedicationAdministration(patient, medAdminSetIdentifier, medicationList.get("clopidogrel"),
-            createDosageOneTablet(1), createDateWithMinuteOffset(35), medOrders.get(1)));
-        return medAdmins;
+    public List<MedicationAdministration> addMedicationAdministrations(Patient patient) {
+        List<MedicationOrder> medOrders = addMedicationOrders(patient);
+        createResource(buildMedicationAdministration(patient, medicationList.get("metoprolol"), createDosageOneTablet(1),
+            createDateWithMinuteOffset(45), medOrders.get(0)));
+        createResource(buildMedicationAdministration(patient, medicationList.get("clopidogrel"), createDosageOneTablet(1),
+            createDateWithMinuteOffset(35), medOrders.get(1)));
+        return getResources(MedicationAdministration.class);
     }
     
     /**
-     * Method populates the patient record with some sample medication orders.
-     * 
-     * @param medOrderSetIdentifier
-     * @param patient
-     * @return
+     * Clears all medication administrations that share the given identifier.
      */
-    public List<MedicationOrder> addSampleMedicationOrders(Identifier medOrderSetIdentifier, Patient patient) {
-        List<MedicationOrder> medOrders = new ArrayList<>();
-        medOrders.add(createMedicationOrder(patient, medOrderSetIdentifier, medicationList.get("metoprolol"),
-            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(45)));
-        medOrders.add(createMedicationOrder(patient, medOrderSetIdentifier, medicationList.get("clopidogrel"),
-            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(35)));
-        medOrders.add(createMedicationOrder(patient, medOrderSetIdentifier, medicationList.get("atorvastatin"),
-            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(25)));
-        medOrders.add(createMedicationOrder(patient, medOrderSetIdentifier, medicationList.get("acetaminophen"),
-            createDosageInstructionsOneTablet(1, "PO", "Q8H", "1"), createDateWithMinuteOffset(15)));
-        return medOrders;
-    }
-    
-    /**
-     * Method populates the patient record with some sample medication orders.
-     * 
-     * @param conditionGroupIdentifier
-     * @param patient
-     * @return
-     */
-    public List<Condition> addSampleConditions(Identifier conditionGroupIdentifier, Patient patient) {
-        List<Condition> conditions = new ArrayList<>();
-        conditions.add(createCondition(patient, conditionGroupIdentifier, CONDITION_IDENTIFIER_1, conditionList.get("HTN"),
-            "ACTIVE", "Strong family history HTN.", createDateWithYearOffset(1)));
-        conditions.add(createCondition(patient, conditionGroupIdentifier, CONDITION_IDENTIFIER_2, conditionList.get("OSTEO"),
-            "ACTIVE", "Patient played linebacker in NFL.", createDateWithYearOffset(3)));
-        conditions.add(createCondition(patient, conditionGroupIdentifier, CONDITION_IDENTIFIER_3,
-            conditionList.get("CONCUSSION"), "ACTIVE", "Secondary to automobile accident.", createDateWithDayOffset((3))));
-        return conditions;
-    }
-    
-    /**
-     * Method populates the patient record with some sample medication administrations.
-     * 
-     * @param patient
-     * @return
-     */
-    public List<MedicationAdministration> addSampleMedicationAdmins(Patient patient) {
-        return addSampleMedicationAdmins(MED_ADMIN_GROUP_IDENTIFIER, MED_ORDER_GROUP_IDENTIFIER, patient);
-    }
-    
-    /**
-     * Method populates the patient record with some sample medication orders.
-     * 
-     * @param patient
-     * @return
-     */
-    public List<MedicationOrder> addSampleMedicationOrders(Patient patient) {
-        return addSampleMedicationOrders(MED_ORDER_GROUP_IDENTIFIER, patient);
-    }
-    
-    /**
-     * Method populates the patient record with some sample conditions.
-     * 
-     * @param patient
-     * @return
-     */
-    public List<Condition> addSampleConditions(Patient patient) {
-        return addSampleConditions(CONDITION_GROUP_IDENTIFIER, patient);
-    }
-    
-    /**
-     * Method adds a medication administration record for a given patient.
-     * 
-     * @param patient
-     * @param identifier
-     * @param medCode
-     * @param dosage
-     * @param effectiveDate
-     * @param prescription
-     * @return
-     */
-    public MedicationAdministration createMedicationAdministration(Patient patient, Identifier identifier,
-                                                                   CodeableConcept medCode,
-                                                                   MedicationAdministrationDosageComponent dosage,
-                                                                   Date effectiveDate, MedicationOrder prescription) {
-        MedicationAdministration medAdmin = buildMedicationAdministration(identifier, medCode, dosage, effectiveDate,
-            prescription);
-        medAdmin.setPatientTarget(patient);
-        MethodOutcome methodOutcome = medicationService.createMedicationAdministration(medAdmin);
-        return medAdmin;
-    }
-    
-    /**
-     * Method adds a medication order record for a given patient.
-     * 
-     * @param patient
-     * @param identifier
-     * @param medCode
-     * @param dosage
-     * @param effectiveDate
-     * @return
-     */
-    public MedicationOrder createMedicationOrder(Patient patient, Identifier identifier, CodeableConcept medCode,
-                                                 MedicationOrderDosageInstructionComponent dosage, Date effectiveDate) {
-        MedicationOrder medOrder = buildMedicationOrder(identifier, medCode, dosage, effectiveDate);
-        medOrder.setPatientTarget(patient);
-        MethodOutcome methodOutcome = medicationService.createMedicationOrder(medOrder);
-        return medOrder;
-    }
-    
-    public Condition createCondition(Patient patient, Identifier groupIdentifier, Identifier individualIdentifier,
-                                     CodeableConcept conditionCode, String status, String notes, Date recordedDate) {
-        Condition condition = buildCondition(individualIdentifier, conditionCode, status, notes, recordedDate);
-        condition.addIdentifier(groupIdentifier);
-        condition.setPatientTarget(patient);
-        MethodOutcome methodOutcome = conditionService.addConditionIfNotExist(condition, individualIdentifier);
-        return condition;
+    public int deleteMedicationAdministrations() {
+        return deleteResources(MedicationAdministration.class);
     }
     
     /**
@@ -425,20 +258,86 @@ public class Bootstrapper {
      * @param prescription
      * @return
      */
-    public MedicationAdministration buildMedicationAdministration(Identifier identifier, CodeableConcept medCode,
-                                                                  MedicationAdministrationDosageComponent dose,
-                                                                  Date effectiveDate, MedicationOrder prescription) {
+    private MedicationAdministration buildMedicationAdministration(Patient patient, CodeableConcept medCode,
+                                                                   MedicationAdministrationDosageComponent dose,
+                                                                   Date effectiveDate, MedicationOrder prescription) {
         MedicationAdministration medAdmin = new MedicationAdministration();
-        medAdmin.addIdentifier(identifier);
+        medAdmin.addIdentifier(DEMO_IDENTIFIER);
+        medAdmin.setPatient(new Reference(patient));
         medAdmin.setMedication(medCode);
         medAdmin.setEffectiveTime(new DateTimeType(effectiveDate));
         medAdmin.setDosage(dose);
         if (prescription != null) {
-            medAdmin.setPrescriptionTarget(prescription);
+            medAdmin.setPrescription(new Reference(prescription));
         } else {
             throw new RuntimeException("An order must be associated with this medicationa administration");
         }
         return medAdmin;
+    }
+    
+    /**
+     * Convenience method for representing n tablets of medication X
+     * 
+     * @param numberOfTablets
+     * @return
+     */
+    private MedicationAdministrationDosageComponent createDosageOneTablet(int numberOfTablets) {
+        SimpleQuantity simpleQuantity = new SimpleQuantity();
+        simpleQuantity.setValue(numberOfTablets);
+        simpleQuantity.setUnit("{tbl}");
+        MedicationAdministrationDosageComponent dose = new MedicationAdministrationDosageComponent()
+                .setQuantity(simpleQuantity);
+        return dose;
+    }
+    
+    /**
+     * Populates a medication index. TODO Build off a configuration file
+     */
+    private void populateMedicationCodes() {
+        medicationList.clear();
+        medicationList.put("metoprolol",
+            createCodeableConcept(SYS_RXNORM, "372891", "Metoprolol Tartrate 25 MG Oral tablet"));
+        medicationList.put("atenolol", createCodeableConcept(SYS_RXNORM, "197379", "Atenolol 100 MG Oral Tablet"));
+        medicationList.put("bisoprolol",
+            createCodeableConcept(SYS_RXNORM, "854901", "Bisoprolol Fumarate 10 MG Oral Tablet"));
+        medicationList.put("clopidogrel", createCodeableConcept(SYS_RXNORM, "309362", "Clopidogrel 75 MG Oral Tablet"));
+        medicationList.put("atorvastatin",
+            createCodeableConcept(SYS_RXNORM, "597967", "Amlodipine 10 MG / Atorvastatin 20 MG Oral Tablet"));
+        medicationList.put("acetaminophen",
+            createCodeableConcept(SYS_RXNORM, "665056", "Acetaminophen 500 MG Chewable Tablet"));
+        medicationList.put("aspirin", createCodeableConcept(SYS_RXNORM, "198466", "Aspirin 325 MG Oral Capsule"));
+        medicationList.put("hydrochlorothiazide",
+            createCodeableConcept(SYS_RXNORM, "310798", "Hydrochlorothiazide 25 MG Oral Tablet"));
+        medicationList.put("bisacodyl", createCodeableConcept(SYS_RXNORM, "1550933", "Bisacodyl 5 MG Oral Tablet"));
+        medicationList.put("acetazolamide", createCodeableConcept(SYS_RXNORM, "197304", "Acetazolamide 250 MG Oral Tablet"));
+    }
+    
+    // ------------- Medication Order operations -------------
+    
+    /**
+     * Clears all medication orders that share the given identifier.
+     */
+    public int deleteMedicationOrders() {
+        return deleteResources(MedicationOrder.class);
+    }
+    
+    /**
+     * Method populates the patient record with some sample medication orders.
+     * 
+     * @param medOrderSetIdentifier
+     * @param patient
+     * @return
+     */
+    public List<MedicationOrder> addMedicationOrders(Patient patient) {
+        createResource(buildMedicationOrder(patient, medicationList.get("metoprolol"),
+            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(45)));
+        createResource(buildMedicationOrder(patient, medicationList.get("clopidogrel"),
+            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(35)));
+        createResource(buildMedicationOrder(patient, medicationList.get("atorvastatin"),
+            createDosageInstructionsOneTablet(1, "PO", "QD", null), createDateWithMinuteOffset(25)));
+        createResource(buildMedicationOrder(patient, medicationList.get("acetaminophen"),
+            createDosageInstructionsOneTablet(1, "PO", "Q8H", "1"), createDateWithMinuteOffset(15)));
+        return getResources(MedicationOrder.class);
     }
     
     /**
@@ -450,14 +349,75 @@ public class Bootstrapper {
      * @param dateWritten
      * @return
      */
-    public MedicationOrder buildMedicationOrder(Identifier identifier, CodeableConcept medCode,
-                                                MedicationOrderDosageInstructionComponent dose, Date dateWritten) {
+    private MedicationOrder buildMedicationOrder(Patient patient, CodeableConcept medCode,
+                                                 MedicationOrderDosageInstructionComponent dose, Date dateWritten) {
         MedicationOrder medOrder = new MedicationOrder();
-        medOrder.addIdentifier(identifier);
+        medOrder.setPatient(new Reference(patient));
+        medOrder.addIdentifier(DEMO_IDENTIFIER);
         medOrder.setMedication(medCode);
         medOrder.setDateWritten(dateWritten);
         medOrder.addDosageInstruction(dose);
         return medOrder;
+    }
+    
+    /**
+     * Convenience method for representing n tablets of medication X
+     * 
+     * @param numberOfTablets
+     * @return
+     */
+    private MedicationOrderDosageInstructionComponent createDosageInstructionsOneTablet(int numberOfTablets,
+                                                                                        String routeCode, String freqCode,
+                                                                                        String prnCode) {
+        SimpleQuantity simpleQuantity = new SimpleQuantity();
+        simpleQuantity.setValue(numberOfTablets);
+        simpleQuantity.setUnit("{tbl}");
+        MedicationOrderDosageInstructionComponent dose = new MedicationOrderDosageInstructionComponent()
+                .setDose(simpleQuantity);
+        if (routeCode != null && routeCode.equalsIgnoreCase("PO")) {
+            CodeableConcept route = createCodeableConcept(SYS_SNOMED, "26643006", "Oral route");
+            dose.setRoute(route);
+        }
+        if (freqCode != null && freqCode.equalsIgnoreCase("QD")) {
+            dose.getTiming().setRepeat(FhirUtil.getRepeatFromFrequencyCode(freqCode));
+        } else if (freqCode != null && freqCode.equalsIgnoreCase("Q8H")) {
+            dose.getTiming().setRepeat(FhirUtil.getRepeatFromFrequencyCode(freqCode));
+        } else {
+            log.error("Unknown frequency code " + freqCode);
+        }
+        if (prnCode != null && prnCode.equalsIgnoreCase("1")) {
+            CodeableConcept prnCodeableConcept = createCodeableConcept(SYS_COGMED, "1", "As needed for pain");
+            dose.setAsNeeded(prnCodeableConcept);
+        } else if (prnCode != null && prnCode.equalsIgnoreCase("2")) {
+            CodeableConcept prnCodeableConcept = createCodeableConcept(SYS_COGMED, "1", "As needed to control hypertension");
+            dose.setAsNeeded(prnCodeableConcept);
+        }
+        return dose;
+    }
+    
+    // ------------- Condition-related operations -------------
+    
+    /**
+     * Method populates the patient record with some sample conditions.
+     * 
+     * @param patient
+     * @return
+     */
+    public List<Condition> addConditions(Patient patient) {
+        createResource(buildCondition(patient, CONDITION_IDENTIFIER_1, conditionList.get("HTN"), "ACTIVE",
+            "Strong family history HTN.", createDateWithYearOffset(1)));
+        createResource(buildCondition(patient, CONDITION_IDENTIFIER_2, conditionList.get("OSTEO"), "ACTIVE",
+            "Patient played linebacker in NFL.", createDateWithYearOffset(3)));
+        createResource(buildCondition(patient, CONDITION_IDENTIFIER_3, conditionList.get("CONCUSSION"), "ACTIVE",
+            "Secondary to automobile accident.", createDateWithDayOffset((3))));
+        return getResources(Condition.class);
+    }
+    
+    /**
+     * Deletes all conditions that share the given identifier.
+     */
+    public int deleteConditions() {
+        return deleteResources(Condition.class);
     }
     
     /**
@@ -470,10 +430,12 @@ public class Bootstrapper {
      * @param dateRecorded
      * @return
      */
-    public Condition buildCondition(Identifier identifier, CodeableConcept conditionCode, String status, String notes,
-                                    Date dateRecorded) {
+    private Condition buildCondition(Patient patient, Identifier identifier, CodeableConcept conditionCode, String status,
+                                     String notes, Date dateRecorded) {
         Condition condition = new Condition();
+        condition.setPatient(new Reference(patient));
         condition.addIdentifier(identifier);
+        condition.addIdentifier(DEMO_IDENTIFIER);
         condition.setDateRecorded(dateRecorded);
         condition.setCode(conditionCode);
         condition.setClinicalStatus(status);
@@ -482,112 +444,42 @@ public class Bootstrapper {
     }
     
     /**
-     * Clears all medication administrations that share the given identifier.
-     * 
-     * @param identifier
+     * Populates a condition index. TODO Build off a configuration file
      */
-    public void clearMedicationAdministrations(Identifier identifier) {
-        medicationService.deleteMedicationAdministrationsByIdentifier(identifier);
+    private void populateConditionCodes() {
+        conditionList.clear();
+        conditionList.put("HTN", createCodeableConcept(SYS_SNOMED, "5962100", "Essential Hypertension"));
+        conditionList.put("OSTEO", createCodeableConcept(SYS_SNOMED, "396275006", "Osteoarthritis"));
+        conditionList.put("CONCUSSION", createCodeableConcept(SYS_SNOMED, "110030002", "Concussive Brain Injury"));
     }
     
-    /**
-     * Clears all medication orders that share the given identifier.
-     * 
-     * @param identifier
-     */
-    public void clearMedicationOrders(Identifier identifier) {
-        medicationService.deleteMedicationOrdersByIdentifier(identifier);
-    }
-    
-    /**
-     * Clears all conditions that share the given identifier.
-     * 
-     * @param identifier
-     */
-    public void clearConditions(Identifier identifier) {
-        medicationService.deleteConditionsByIdentifier(identifier);
-    }
-    
-    /**
-     * Clears all medication administrations that share the given identifier.
-     */
-    public void clearMedicationAdministrations() {
-        medicationService.deleteMedicationAdministrationsByIdentifier(MED_ADMIN_GROUP_IDENTIFIER);
-    }
-    
-    /**
-     * Clears all medication orders that share the given identifier.
-     */
-    public void clearMedicationOrders() {
-        medicationService.deleteMedicationOrdersByIdentifier(MED_ORDER_GROUP_IDENTIFIER);
-    }
-    
-    /**
-     * Clears all conditions that share the given identifier.
-     */
-    public void clearConditions() {
-        medicationService.deleteConditionsByIdentifier(CONDITION_GROUP_IDENTIFIER);
-    }
-    
-    /**
-     * Adds a demo patient.
-     * 
-     * @param patientIdentifier
-     * @param givenName
-     * @param surname
-     * @param date
-     * @param address
-     * @param gender
-     * @param prefix
-     * @return
-     */
-    public Patient addDemoPatient(Identifier patientIdentifier, String givenName, String surname, String date,
-                                  Address address, AdministrativeGender gender, String prefix) {
-        Patient patient = buildPatient(patientIdentifier, givenName, surname, date, address, gender, prefix);
-        patient.addIdentifier(PATIENT_GROUP_IDENTIFIER);
-        MethodOutcome methodOutcome = patientService.addPatientIfNotExist(patient, patientIdentifier);
-        if (methodOutcome.getCreated()) {
-            return patient;
-        } else {
-            return null;
-        }
-    }
+    // ------------- Patient-related operations -------------
     
     /**
      * Adds a demo patient. TODO Read from configuration file.
      * 
      * @return
      */
-    public List<Patient> addDemoPatients() {
-        List<Patient> patients = new ArrayList<>();
+    public List<Patient> addPatients() {
         Address address = new Address();
         address.addLine("123 Main Street");
         address.setCity("LA");
         address.setState("CA");
         address.setPostalCode("90049");
-        patients.add(addDemoPatient(PATIENT_IDENTIFIER_1, "Jacques", "LeMalade", "06/30/1956", address,
-            AdministrativeGender.MALE, "Mr."));
-        patients.add(addDemoPatient(PATIENT_IDENTIFIER_2, "Juan", "Interop", "06/30/1956", address,
-            AdministrativeGender.MALE, "Mr."));
-        patients.add(addDemoPatient(PATIENT_IDENTIFIER_3, "Jack", "Intermountain", "06/30/1956", address,
-            AdministrativeGender.MALE, "Mr."));
-        return patients;
-    }
-    
-    /**
-     * Deletes all patient sharing the identifier argument
-     *
-     * @param patientSetIdentifier The identifier for the set of generated patients
-     */
-    public void deleteDemoPatient(Identifier patientSetIdentifier) {
-        patientService.deletePatientByIdentifier(patientSetIdentifier);
+        createResource(
+            buildPatient(PATIENT_IDENTIFIER_1, "Jacques", "LeMalade", 365 * 56, address, AdministrativeGender.MALE, "Mr."));
+        createResource(buildPatient(PATIENT_IDENTIFIER_2, "Jane", "Intermountain", 365 * 26, address,
+            AdministrativeGender.FEMALE, "Ms."));
+        createResource(
+            buildPatient(PATIENT_IDENTIFIER_3, "Jose", "Intermountain", 1, address, AdministrativeGender.MALE, ""));
+        return getResources(Patient.class);
     }
     
     /**
      * Deletes all patient sharing the PATIENT_GROUP_IDENTIFIER
      */
-    public void deleteDemoPatients() {
-        deleteDemoPatient(PATIENT_GROUP_IDENTIFIER);
+    public int deletePatients() {
+        return deleteResources(Patient.class);
     }
     
     /**
@@ -602,17 +494,19 @@ public class Bootstrapper {
      * @param prefix
      * @return
      */
-    public Patient buildPatient(Identifier identifier, String givenName, String surname, String birthdate, Address address,
-                                AdministrativeGender gender, String prefix) {
+    private Patient buildPatient(Identifier identifier, String givenName, String surname, int dobOffset, Address address,
+                                 AdministrativeGender gender, String prefix) {
         Patient patient = new Patient();
         patient.addIdentifier(identifier);
+        patient.addIdentifier(DEMO_IDENTIFIER);
+        
         if (address != null) {
             patient.addAddress(address);//Fix
         }
         setPatientPhoto(patient);
         addPatientName(patient, givenName, surname, prefix);
         patient.setGender(gender);
-        setPatientBirthdate(patient, birthdate);
+        patient.setBirthDate(createDateWithDayOffset(dobOffset));
         return patient;
     }
     
@@ -643,75 +537,78 @@ public class Bootstrapper {
         }
     }
     
+    // ------------- Document-related operations -------------
+    
+    public List<DocumentReference> addDocuments(Patient patient) {
+        List<Practitioner> practitioners = addPractitioners();
+        createResource(buildDocument(patient, practitioners.get(0), DOCUMENT_IDENTIFIER_1, 234, "Discharge Summary",
+            "Discharge Summary", "note1.txt"));
+        createResource(buildDocument(patient, practitioners.get(1), DOCUMENT_IDENTIFIER_2, 5, "Progress Report",
+            "Progress Report", "note2.txt"));
+        
+        if (patient.getGender() == AdministrativeGender.FEMALE) {
+            createResource(buildDocument(patient, practitioners.get(2), DOCUMENT_IDENTIFIER_3, 1, "Lactation Assessment",
+                "Lactation Assessment", "note3.txt"));
+        }
+        return getResources(DocumentReference.class);
+    }
+    
     /**
-     * Convenience method to add a patient birthdate in the right format
+     * Deletes all documents that share the given identifier.
      * 
-     * @param patient
-     * @param dateString
+     * @return
      */
-    private void setPatientBirthdate(Patient patient, String dateString) {
+    public int deleteDocuments() {
+        return deleteResources(DocumentReference.class);
+    }
+    
+    private DocumentReference buildDocument(Patient patient, Practitioner author, Identifier identifier, int createOffset,
+                                            String type, String description, String body) {
+        DocumentReference doc = new DocumentReference();
+        doc.setType(createCodeableConcept(SYS_COGMED, type, description));
+        doc.setSubject(new Reference(patient));
+        doc.addIdentifier(identifier);
+        doc.addIdentifier(DEMO_IDENTIFIER);
+        doc.setCreated(createDateWithDayOffset(createOffset));
+        doc.addAuthor(new Reference(author));
+        DocumentReferenceContentComponent content = doc.addContent();
+        Attachment attachment = new Attachment();
+        attachment.setContentType("text/plain");
+        attachment.setData(getNoteData(body));
+        content.setAttachment(attachment);
+        return doc;
+    }
+    
+    private byte[] getNoteData(String note) {
         try {
-            Date date = formatter.parse(dateString);
-            patient.setBirthDate(date);
+            return FhirUtil.getResourceAsByteArray(NOTE_PATH + note);
         } catch (Exception e) {
-            e.printStackTrace();//ignore error for now
+            return null;
         }
     }
     
-    /**
-     * Create Sepsis condition for demo
-     * 
-     * @param patient
-     * @return
-     */
-    public Condition buildSepsisCondition(Patient patient) {
-        Condition condition = new Condition();
-        condition.setCode(buildCodeableConcept(SYS_SNOMED, "10001005", "Bacterial sepsis (disorder)"));
-        condition.setVerificationStatus(ConditionVerificationStatus.DIFFERENTIAL);
-        condition.setDateRecorded(new Date());
-        condition.setPatientTarget(patient);
-        return condition;
+    // ------------- Practitioner-related operations -------------
+    
+    public List<Practitioner> addPractitioners() {
+        createResource(buildPractitioner("Fry,Emory", PRACTITIONER_IDENTIFIER_1));
+        createResource(buildPractitioner("Martin,Doug", PRACTITIONER_IDENTIFIER_2));
+        createResource(buildPractitioner("Huff,Stan", PRACTITIONER_IDENTIFIER_3));
+        return getResources(Practitioner.class);
     }
     
     /**
-     * Build a genetic test procedure.
-     * 
-     * @param patient
-     * @return
+     * Deletes all practitioners that share the given identifier.
      */
-    public Procedure buildGeneticTestProcedure(Patient patient) {
-        Procedure procedure = new Procedure();
-        procedure.setCode(buildCodeableConcept(SYS_SNOMED, "405825005", "Molecular genetic test (procedure)"));
-        procedure.setPerformed(new DateType(new Date()));
-        Reference reference = new Reference(patient);
-        procedure.setSubject(reference);
-        procedure.setOutcome(
-            buildCodeableConcept("http://demo/terminology", "123", "Substance metabolic disorder - Metoprolol"));
-        return procedure;
+    public int deletePractitioners() {
+        return deleteResources(Practitioner.class);
     }
     
-    /**
-     * Method clears all demo data.
-     */
-    public void clearData() {
-        deleteDemoPatients();
-        clearMedicationAdministrations();
-        clearMedicationOrders();
-        clearConditions();
+    private Practitioner buildPractitioner(String name, Identifier identifier) {
+        Practitioner p = new Practitioner();
+        p.addName(FhirUtil.parseName(name));
+        p.addIdentifier(identifier);
+        p.addIdentifier(DEMO_IDENTIFIER);
+        return p;
     }
     
-    /**
-     * Method clears all demo data.
-     * 
-     * @param patientSetId
-     * @param medAdminId
-     * @param medOrdersId
-     * @param conditionId
-     */
-    public void clearData(Identifier patientSetId, Identifier medAdminId, Identifier medOrdersId, Identifier conditionId) {
-        deleteDemoPatient(patientSetId);
-        clearMedicationAdministrations(medAdminId);
-        clearMedicationOrders(medOrdersId);
-        clearConditions(conditionId);
-    }
 }

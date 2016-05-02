@@ -7,22 +7,49 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<div apply="${cwfDemoConfigController}">
-		<tabbox mold="accordion">
+	<div apply="${cwfDemoConfigController}" >
+		<tabbox id="tabbox" mold="accordion">
 			<tabs>
-				<tab label="Patients" />
-				<tab label="Medication Administrations" />
-				<tab label="Medication Orders" />
-				<tab label="Conditions" />
+				<tab id="tabAll" label="General" />
+				<tab id="tabPatients" label="Patients" />
+				<tab id="tabPractitioners" label="Practitioners" />
+				<tab id="tabMedAdmins" label="Medication Administrations" />
+				<tab id="tabMedOrders" label="Medication Orders" />
+				<tab id="tabConditions" label="Conditions" />
+				<tab id="tabDocuments" label="Documents" />
 			</tabs>
 			<tabpanels>
 				<tabpanel>
 					<vbox>
 						<label
+							value="${labels.cwfdemoconfig.generaltab.welcome.msg}" />
+						<button id="btnSelectPatient"
+							label="Select a patient" />
+						<button id="btnDeleteAll"
+							label="Delete all demo data" />
+						<label id="lblAll" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
 							value="${labels.cwfdemoconfig.patienttab.welcome.msg}" />
-						<button id="btnAddPatient" label="Add three patients" />
-						<button id="btnDelPatient"
-							label="Delete all patients" />
+						<button id="btnAddPatients" 
+							label="Add demo patients" />
+						<button id="btnDelPatients"
+							label="Delete demo patients" />
+						<label id="lblPatients" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.practitionertab.welcome.msg}" />
+						<button id="btnAddPractitioners" 
+							label="Add demo practitioners" />
+						<button id="btnDelPractitioners"
+							label="Delete demo practitioners" />
+						<label id="lblPractitioners" />
 					</vbox>
 				</tabpanel>
 				<tabpanel>
@@ -30,9 +57,10 @@
 						<label
 							value="${labels.cwfdemoconfig.medadmintab.welcome.msg}" />
 						<button id="btnAddMedAdmins"
-							label="Add new medication admins" />
+							label="Add demo medication admins" />
 						<button id="btnDelMedAdmins"
-							label="Delete medication admins" />
+							label="Delete demo medication admins" />
+						<label id="lblMedAdmins" />
 					</vbox>
 				</tabpanel>
 				<tabpanel>
@@ -40,9 +68,10 @@
 						<label
 							value="${labels.cwfdemoconfig.medordertab.welcome.msg}" />
 						<button id="btnAddMedOrders"
-							label="Add new medication orders" />
+							label="Add demo medication orders" />
 						<button id="btnDelMedOrders"
-							label="Delete medication orders" />
+							label="Delete demo medication orders" />
+						<label id="lblMedOrders" />
 					</vbox>
 				</tabpanel>
 				<tabpanel>
@@ -50,9 +79,21 @@
 						<label
 							value="${labels.cwfdemoconfig.conditiontab.welcome.msg}" />
 						<button id="btnAddConditions"
-							label="Add new conditions" />
+							label="Add demo conditions" />
 						<button id="btnDelConditions"
-							label="Delete conditions" />
+							label="Delete demo conditions" />
+						<label id="lblConditions" />
+					</vbox>
+				</tabpanel>
+				<tabpanel>
+					<vbox>
+						<label
+							value="${labels.cwfdemoconfig.documenttab.welcome.msg}" />
+						<button id="btnAddDocuments"
+							label="Add demo documents" />
+						<button id="btnDelDocuments"
+							label="Delete demo documents" />
+						<label id="lblDocuments" />
 					</vbox>
 				</tabpanel>
 			</tabpanels>
