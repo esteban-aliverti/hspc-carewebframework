@@ -23,8 +23,6 @@
 					<vbox>
 						<label
 							value="${labels.cwfdemoconfig.generaltab.welcome.msg}" />
-						<button id="btnSelectPatient"
-							label="Select a patient" />
 						<button id="btnDeleteAll"
 							label="Delete all demo data" />
 						<label id="lblAll" />
@@ -38,6 +36,12 @@
 							label="Add demo patients" />
 						<button id="btnDelPatients"
 							label="Delete demo patients" />
+						<button id="btnAddAllForPatient"
+							label="Add all resources for patient" />
+						<button id="btnDelAllForPatient"
+							label="Delete all resources for patient" />
+						<button id="btnSelectPatient"
+							label="Select a patient" />
 						<label id="lblPatients" />
 					</vbox>
 				</tabpanel>

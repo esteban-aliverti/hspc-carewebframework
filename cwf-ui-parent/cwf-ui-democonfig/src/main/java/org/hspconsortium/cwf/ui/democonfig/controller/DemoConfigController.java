@@ -54,7 +54,9 @@ public class DemoConfigController extends PluginController {
     
     private static final String DELETED = "%s deleted: %d";
     
-    private static final String NOPATIENT = "A patient must be selected to add %s.";
+    private static final String NOPATIENT = "A patient must be selected to perform that operation.";
+    
+    private static final String ADDALL = "Resources added: %2$d";
     
     private static final String DELETEALL = "Resources deleted: %2$d";
     
@@ -87,7 +89,17 @@ public class DemoConfigController extends PluginController {
     }
     
     private Patient getPatient() {
-        return PatientContext.getActivePatient();
+        Patient patient = PatientContext.getActivePatient();
+        
+        if (patient == null) {
+            showNoPatient();
+        }
+        
+        return patient;
+    }
+    
+    private void clearPatient() {
+        PatientContext.changePatient(null);
     }
     
     /*************************************************************************
@@ -99,10 +111,44 @@ public class DemoConfigController extends PluginController {
     }
     
     /**
+     * Deletes all demo resources from the FHIR server.
+     */
+    public void onClick$btnDeleteAll() {
+        clearPatient();
+        showMessage(DELETEALL, bootstrapper.deleteAll());
+    }
+    
+    // --------------- Patient Resources ---------------
+    
+    /**
      * Select a patient.
      */
     public void onClick$btnSelectPatient() {
         PatientSelection.show();
+    }
+    
+    // --------------- All Resources ---------------
+    
+    /**
+     * Adds all patient-based demo resources to the FHIR server.
+     */
+    public void onClick$btnAddAllForPatient() {
+        Patient patient = getPatient();
+        
+        if (patient != null) {
+            showMessage(ADDALL, bootstrapper.addAll(patient));
+        }
+    }
+    
+    /**
+     * Deletes all patient-based demo resources from the FHIR server.
+     */
+    public void onClick$btnDelAllForPatient() {
+        Patient patient = getPatient();
+        
+        if (patient != null) {
+            showMessage(DELETEALL, bootstrapper.deleteAll(patient));
+        }
     }
     
     /**
@@ -116,8 +162,11 @@ public class DemoConfigController extends PluginController {
      * Deletes demo patients from the FHIR server.
      */
     public void onClick$btnDelPatients() {
+        clearPatient();
         showDeleted(bootstrapper.deletePatients());
     }
+    
+    // --------------- Practitioner Resources ---------------
     
     /**
      * Adds demo practitioners to the FHIR server.
@@ -133,6 +182,8 @@ public class DemoConfigController extends PluginController {
         showDeleted(bootstrapper.deletePractitioners());
     }
     
+    // --------------- Medication Administration Resources ---------------
+    
     /**
      * Adds demo medication administrations to the FHIR server.
      */
@@ -141,8 +192,6 @@ public class DemoConfigController extends PluginController {
         
         if (patient != null) {
             showAdded(bootstrapper.addMedicationAdministrations(patient).size());
-        } else {
-            showNoPatient();
         }
     }
     
@@ -153,6 +202,8 @@ public class DemoConfigController extends PluginController {
         showDeleted(bootstrapper.deleteMedicationAdministrations());
     }
     
+    // --------------- Medication Order Resources ---------------
+    
     /**
      * Adds demo medication orders to the FHIR server.
      */
@@ -161,8 +212,6 @@ public class DemoConfigController extends PluginController {
         
         if (patient != null) {
             showAdded(bootstrapper.addMedicationOrders(patient).size());
-        } else {
-            showNoPatient();
         }
     }
     
@@ -173,6 +222,8 @@ public class DemoConfigController extends PluginController {
         showDeleted(bootstrapper.deleteMedicationOrders());
     }
     
+    // --------------- Condition Resources ---------------
+    
     /**
      * Adds demo conditions to the FHIR server.
      */
@@ -181,8 +232,6 @@ public class DemoConfigController extends PluginController {
         
         if (patient != null) {
             showAdded(bootstrapper.addConditions(patient).size());
-        } else {
-            showNoPatient();
         }
     }
     
@@ -193,6 +242,8 @@ public class DemoConfigController extends PluginController {
         showDeleted(bootstrapper.deleteConditions());
     }
     
+    // --------------- Document Resources ---------------
+    
     /**
      * Adds demo documents to the FHIR server.
      */
@@ -201,8 +252,6 @@ public class DemoConfigController extends PluginController {
         
         if (patient != null) {
             showAdded(bootstrapper.addDocuments(patient).size());
-        } else {
-            showNoPatient();
         }
     }
     
@@ -211,13 +260,6 @@ public class DemoConfigController extends PluginController {
      */
     public void onClick$btnDelDocuments() {
         showDeleted(bootstrapper.deleteDocuments());
-    }
-    
-    /**
-     * Deletes all demo resources from the FHIR server.
-     */
-    public void onClick$btnDeleteAll() {
-        showMessage(DELETEALL, bootstrapper.deleteAll());
     }
     
 }

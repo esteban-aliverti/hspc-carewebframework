@@ -54,10 +54,10 @@ public class DocumentDisplayController extends FrameworkController {
      */
     protected void setDocument(Document document) {
         this.document = document;
-        btnPrint.setDisabled(document == null);
         
         if (printRoot != null) {
             ZKUtil.detachChildren(printRoot);
+            btnPrint.setDisabled(document == null);
         }
         
         if (document != null) {
