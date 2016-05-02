@@ -35,6 +35,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
+import org.zkoss.zul.Listitem;
 
 import org.hspconsortium.cwf.fhir.document.Document;
 import org.hspconsortium.cwf.fhir.document.DocumentListDataService;
@@ -79,6 +80,8 @@ public class DocumentListController extends AbstractListController<Document, Doc
     
     private String fixedFilter;
     
+    private DocumentDisplayController displayController;
+    
     private final Collection<String> allTypes;
     
     public DocumentListController(DocumentService service) {
@@ -105,6 +108,16 @@ public class DocumentListController extends AbstractListController<Document, Doc
         }
         
         return queryResult;
+    }
+    
+    @Override
+    public void refresh() {
+        super.refresh();
+        updateSelectedDocument();
+    }
+    
+    protected void setDisplayController(DocumentDisplayController displayController) {
+        this.displayController = displayController;
     }
     
     /**
@@ -174,6 +187,13 @@ public class DocumentListController extends AbstractListController<Document, Doc
      * Selecting document displays view.
      */
     public void onSelect$listBox() {
+        updateSelectedDocument();
+    }
+    
+    private void updateSelectedDocument() {
+        Listitem item = listBox.getSelectedItem();
+        Document document = item == null ? null : (Document) item.getValue();
+        displayController.setDocument(document);
     }
     
     /**

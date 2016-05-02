@@ -184,13 +184,9 @@ public class Bootstrapper {
     /**
      * Method clears all demo data.
      */
-    public void deleteAll() {
-        deleteMedicationAdministrations();
-        deleteMedicationOrders();
-        deleteConditions();
-        deleteDocuments();
-        deletePractitioners();
-        deletePatients();
+    public int deleteAll() {
+        return deleteMedicationAdministrations() + deleteMedicationOrders() + deleteConditions() + deleteDocuments()
+                + deletePractitioners() + deletePatients();
     }
     
     /**

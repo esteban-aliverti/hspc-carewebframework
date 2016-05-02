@@ -44,7 +44,7 @@ public class DocumentMainController extends PluginController {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        documentDisplay.setVisible(false);
+        listController.setDisplayController(displayController);
         attachController(documentList, listController);
         attachController(documentDisplay, displayController);
     }

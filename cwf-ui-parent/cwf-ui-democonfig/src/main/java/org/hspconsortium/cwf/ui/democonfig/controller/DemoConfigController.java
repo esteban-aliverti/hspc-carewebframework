@@ -56,6 +56,8 @@ public class DemoConfigController extends PluginController {
     
     private static final String NOPATIENT = "A patient must be selected to add %s.";
     
+    private static final String DELETEALL = "Resources deleted: %2$d";
+    
     private final Bootstrapper bootstrapper;
     
     private Tabbox tabbox;
@@ -215,8 +217,7 @@ public class DemoConfigController extends PluginController {
      * Deletes all demo resources from the FHIR server.
      */
     public void onClick$btnDeleteAll() {
-        bootstrapper.deleteAll();
-        showMessage("All demo data deleted.", null);
+        showMessage(DELETEALL, bootstrapper.deleteAll());
     }
     
 }

@@ -60,7 +60,7 @@
 							<cwfMedicationOrders/>
 						</treepane>
 						<treepane label="Documents">
-							<cwfDocuments/>
+							<cwfMockuments/>
 						</treepane>
 						<treepane label="Growth Chart">
 							<growth_chart/>
