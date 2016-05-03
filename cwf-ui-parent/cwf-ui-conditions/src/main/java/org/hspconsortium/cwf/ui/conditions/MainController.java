@@ -44,7 +44,7 @@ public class MainController extends ResourceListView<Condition, Condition> {
         columns.add(condition.getCode());
         columns.add(condition.getDateRecorded());
         columns.add(condition.getClinicalStatus());
-        columns.add(condition.getNotes());
+        columns.add(condition.getNote());
     }
     
     @Override

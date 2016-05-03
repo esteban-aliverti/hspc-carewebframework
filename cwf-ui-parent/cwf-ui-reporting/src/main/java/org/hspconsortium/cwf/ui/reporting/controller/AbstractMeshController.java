@@ -32,8 +32,6 @@ import org.carewebframework.api.query.DateQueryFilter;
 import org.carewebframework.api.query.DateQueryFilter.DateType;
 import org.carewebframework.api.query.DateQueryFilter.IDateTypeExtractor;
 import org.carewebframework.api.query.IQueryService;
-import org.hspconsortium.cwf.ui.reporting.Constants;
-import org.hspconsortium.cwf.ui.reporting.Util;
 import org.carewebframework.common.DateRange;
 import org.carewebframework.ui.zk.DateRangePicker;
 import org.carewebframework.ui.zk.HybridModel;
@@ -52,6 +50,9 @@ import org.zkoss.zul.GroupsModel;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.impl.MeshElement;
 
+import org.hspconsortium.cwf.ui.reporting.Constants;
+import org.hspconsortium.cwf.ui.reporting.Util;
+
 /**
  * This is a stateful controller that supports plugins that use a list or grid model and background
  * thread for data retrieval. It supports paging vs ROD-based views.
@@ -59,7 +60,8 @@ import org.zkoss.zul.impl.MeshElement;
  * @param <T> Query result class
  * @param <M> Model result class
  */
-public abstract class AbstractMeshController<T, M> extends AbstractServiceController<T, M>implements IDateTypeExtractor<M> {
+public abstract class AbstractMeshController<T, M> extends AbstractServiceController<T, M> implements IDateTypeExtractor<M> {
+    
     
     private static final long serialVersionUID = 1L;
     
@@ -196,14 +198,14 @@ public abstract class AbstractMeshController<T, M> extends AbstractServiceContro
      */
     @Override
     public abstract Date getDateByType(M result, DateType dateType);
-    
-    /**
-     * Sets the mesh element that consumes the list model (a grid or listbox).
-     *
-     * @param meshElement The mesh element.
-     * @param rodType The ROD setting.
-     */
-    /*package*/void setMeshElement(MeshElement meshElement, String rodType) {
+            
+            /**
+             * Sets the mesh element that consumes the list model (a grid or listbox).
+             *
+             * @param meshElement The mesh element.
+             * @param rodType The ROD setting.
+             */
+            /*package*/void setMeshElement(MeshElement meshElement, String rodType) {
         this.meshElement = meshElement;
         this.rodType = rodType;
         setHideOnShowMessage(meshElement);
@@ -247,6 +249,14 @@ public abstract class AbstractMeshController<T, M> extends AbstractServiceContro
         if (isPaging) {
             meshElement.setActivePage(0);
         }
+        
+        afterModelChanged();
+    }
+    
+    /**
+     * Override to perform any special operations after the model has been changed.
+     */
+    protected void afterModelChanged() {
     }
     
     /**

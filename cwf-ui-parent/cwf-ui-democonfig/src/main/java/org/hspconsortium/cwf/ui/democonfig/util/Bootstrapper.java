@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.Attachment;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
@@ -658,7 +659,7 @@ public class Bootstrapper {
         condition.setDateRecorded(dateRecorded);
         condition.setCode(conditionList.get(conditionCode));
         condition.setClinicalStatus(status);
-        condition.setNotes(notes);
+        condition.addNote(new Annotation().setText(notes));
         return condition;
     }
     

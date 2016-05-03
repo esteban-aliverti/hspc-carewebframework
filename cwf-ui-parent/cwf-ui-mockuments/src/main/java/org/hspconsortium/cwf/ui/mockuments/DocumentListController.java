@@ -40,6 +40,7 @@ import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listitem;
 
 import org.hl7.fhir.dstu3.model.DocumentReference;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hspconsortium.cwf.api.patient.PatientContext;
 import org.hspconsortium.cwf.fhir.common.FhirTerminology;
@@ -48,6 +49,7 @@ import org.hspconsortium.cwf.fhir.document.Document;
 import org.hspconsortium.cwf.fhir.document.DocumentContent;
 import org.hspconsortium.cwf.fhir.document.DocumentListDataService;
 import org.hspconsortium.cwf.fhir.document.DocumentService;
+import org.hspconsortium.cwf.ui.mockuments.DocumentDisplayController.DocumentAction;
 import org.hspconsortium.cwf.ui.reporting.controller.AbstractListController;
 
 /**
@@ -90,12 +92,15 @@ public class DocumentListController extends AbstractListController<Document, Doc
     
     private DocumentDisplayController displayController;
     
-    private Document newDocument;
+    private Document selectedDocument;
     
     private final Collection<String> allTypes;
     
+    private final DocumentService documentService;
+    
     public DocumentListController(DocumentService service) {
         super(new DocumentListDataService(service), "cwfdocuments", "DOCUMENT", "documentsPrint.css");
+        this.documentService = service;
         setPaging(false);
         registerQueryFilter(new DocumentTypeFilter());
         allTypes = service.getTypes();
@@ -113,21 +118,11 @@ public class DocumentListController extends AbstractListController<Document, Doc
      */
     @Override
     protected List<Document> toModel(List<Document> queryResult) {
-        if (newDocument != null) {
-            queryResult.add(newDocument);
-        }
-        
         if (queryResult != null) {
             updateListFilter(queryResult);
         }
         
         return queryResult;
-    }
-    
-    @Override
-    public void refresh() {
-        super.refresh();
-        updateSelectedDocument();
     }
     
     protected void setDisplayController(DocumentDisplayController displayController) {
@@ -201,7 +196,8 @@ public class DocumentListController extends AbstractListController<Document, Doc
      * Selecting document displays view.
      */
     public void onSelect$listBox() {
-        updateSelectedDocument();
+        Listitem item = listBox.getSelectedItem();
+        setSelectedDocument(item == null ? null : (Document) item.getValue());
     }
     
     public void onClick$btnNew() {
@@ -209,6 +205,10 @@ public class DocumentListController extends AbstractListController<Document, Doc
         List<Object> items = new ArrayList<>();
         itemNames.add("Lactation Assessment");
         items.add("lactation_assessment");
+        itemNames.add("Newborn Admission");
+        items.add("lactation_assessment");
+        itemNames.add("Procedure Request");
+        items.add("procedure-request");
         String item = (String) PromptDialog.input("Select document type to create.", "New Document", null, itemNames, items);
         
         if (item == null) {
@@ -220,19 +220,69 @@ public class DocumentListController extends AbstractListController<Document, Doc
         ref.setSubject(new Reference(PatientContext.getActivePatient()));
         ref.setCreated(new Date());
         ref.setType(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, item, displayName));
-        ref.setDocStatus(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, "status-new", "New"));
+        ref.setDocStatus(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, "status-draft", "Draft"));
         DocumentContent content = new DocumentContent("".getBytes(),
                 DocumentDisplayController.QUESTIONNAIRE_CONTENT_TYPE + item);
-        newDocument = new Document(ref, content);
+        Document newDocument = new Document(ref, content);
+        documentService.updateDocument(newDocument);
         refresh();
-        ListUtil.selectListboxData(listBox, newDocument);
-        updateSelectedDocument();
+        setSelectedDocument(newDocument);
     }
     
-    private void updateSelectedDocument() {
+    private void setSelectedDocument(Document document) {
+        if (document == selectedDocument || !allowChange()) {
+            return;
+        }
+        
+        selectedDocument = document;
+        highlightSelectedDocument();
+        displayController.setDocument(document, DocumentAction.DISCARD);
+    }
+    
+    private void highlightSelectedDocument() {
+        if (selectedDocument == null) {
+            listBox.clearSelection();
+            return;
+        }
+        
         Listitem item = listBox.getSelectedItem();
-        Document document = item == null ? null : (Document) item.getValue();
-        displayController.setDocument(document);
+        
+        if (item != null && item.getValue() == selectedDocument) {
+            return;
+        }
+        
+        DocumentReference reference = selectedDocument.getReference();
+        
+        for (Document doc : getFilteredModel()) {
+            if (FhirUtil.areEqual(reference, doc.getReference(), true)) {
+                ListUtil.selectListboxData(listBox, doc);
+                selectedDocument = doc;
+                return;
+            }
+        }
+        
+        getFilteredModel().add(selectedDocument);
+        highlightSelectedDocument();
+    }
+    
+    @Override
+    protected void afterModelChanged() {
+        highlightSelectedDocument();
+    }
+    
+    @Override
+    protected void onPatientChanged(Patient patient) {
+        setSelectedDocument(null);
+        super.onPatientChanged(patient);
+    }
+    
+    @Override
+    protected String onPatientChanging(boolean silent) {
+        return displayController.setDocument(null, silent ? DocumentAction.SAVE : null) ? null : "Edit in progress.";
+    }
+    
+    private boolean allowChange() {
+        return displayController.setDocument(null, null);
     }
     
     /**

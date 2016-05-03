@@ -20,6 +20,7 @@
 package org.hspconsortium.cwf.ui.mockuments;
 
 import org.carewebframework.ui.FrameworkController;
+import org.carewebframework.ui.zk.PromptDialog;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.util.media.AMedia;
@@ -41,6 +42,20 @@ import org.hspconsortium.cwf.ui.reporting.Util;
 public class DocumentDisplayController extends FrameworkController {
     
     
+    public interface IDocumentOperation {
+        
+        
+        boolean hasChanged();
+        
+        void saveChanges();
+        
+        void cancelChanges();
+    }
+    
+    public enum DocumentAction {
+        SAVE, DISCARD, CANCEL
+    };
+    
     private static final long serialVersionUID = 1L;
     
     public static final String QUESTIONNAIRE_CONTENT_TYPE = "application/xcwf-";
@@ -53,12 +68,37 @@ public class DocumentDisplayController extends FrameworkController {
     
     private Document document;
     
+    private IDocumentOperation documentOperation;
+    
     /**
      * Sets the document to be displayed.
      *
      * @param document The document to be displayed.
+     * @param action The default action to take if document has been modified (if null, prompt for
+     *            action).
+     * @return True if the document was set.
      */
-    protected void setDocument(Document document) {
+    protected boolean setDocument(Document document, DocumentAction action) {
+        if (documentOperation != null && documentOperation.hasChanged()) {
+            action = action != null ? action
+                    : DocumentAction.values()[PromptDialog.show("What would you like to do?", "Pending Changes",
+                        "Save Changes|Discard Changes|Keep Editing")];
+            
+            switch (action) {
+                case SAVE: // Save
+                    documentOperation.saveChanges();
+                    break;
+                
+                case DISCARD: // Discard
+                    documentOperation.cancelChanges();
+                    break;
+                
+                case CANCEL: // Cancel
+                    return false;
+            }
+        }
+        
+        documentOperation = null;
         this.document = document;
         
         if (printRoot != null) {
@@ -96,18 +136,24 @@ public class DocumentDisplayController extends FrameworkController {
                 }
             }
         }
+        
+        return true;
     }
     
     public void onClick$btnPrint() {
         Util.print(printRoot, document.getTitle(), "patient", null, false);
     }
     
-    public void addToToolbar(Component source) {
+    protected void addToToolbar(Component source) {
         moveComponents(source, toolbar);
     }
     
-    public void removeFromToolbar(Component target) {
+    protected void removeFromToolbar(Component target) {
         moveComponents(toolbar, target);
+    }
+    
+    protected void setDocumentOperation(IDocumentOperation documentOperation) {
+        this.documentOperation = documentOperation;
     }
     
     private void moveComponents(Component source, Component target) {
