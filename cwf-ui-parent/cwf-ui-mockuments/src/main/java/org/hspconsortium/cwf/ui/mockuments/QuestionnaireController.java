@@ -27,14 +27,17 @@ import org.carewebframework.ui.FrameworkController;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 
+import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemComponent;
 import org.hspconsortium.cwf.fhir.common.FhirTerminology;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.fhir.document.Document;
@@ -57,12 +60,6 @@ public class QuestionnaireController extends FrameworkController {
     
     private Component toolbar;
     
-    private Button btnDelete;
-    
-    private Button btnSave;
-    
-    private Button btnSign;
-    
     private final DocumentService service;
     
     private Document document;
@@ -77,7 +74,9 @@ public class QuestionnaireController extends FrameworkController {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
         
-        if (toolbar != null) {
+        if (!"new".equalsIgnoreCase(document.getStatus())) {
+            disableAll();
+        } else if (toolbar != null) {
             controller.addToToolbar(toolbar);
         }
         
@@ -86,17 +85,14 @@ public class QuestionnaireController extends FrameworkController {
     
     public void setDocument(Document document) {
         this.document = document;
-        
-        if (!"new".equalsIgnoreCase(document.getStatus())) {
-            disableAll();
-        }
     }
     
     private void disableAll() {
         ZKUtil.disableChildren(root, true);
-        btnSave.setDisabled(true);
-        btnDelete.setDisabled(true);
-        btnSign.setDisabled(true);
+        
+        if (toolbar != null) {
+            controller.removeFromToolbar(toolbar);
+        }
     }
     
     public void setDisplayController(DocumentDisplayController controller) {
@@ -136,21 +132,24 @@ public class QuestionnaireController extends FrameworkController {
         }
     }
     
-    private void saveResponses() {
-        
+    private void saveResponses(org.w3c.dom.Document responses) {
+        DocumentContent content = new DocumentContent(XMLUtil.toString(responses).getBytes(), document.getContentType());
+        document.getContent().clear();
+        document.getContent().add(content);
+        service.updateDocument(document);
+    }
+    
+    private org.w3c.dom.Document getResponses() {
         try {
             org.w3c.dom.Document responses = XMLUtil.parseXMLFromString("<responses/>");
-            saveResponses(root, responses.getElementsByTagName("responses").item(0));
-            DocumentContent content = new DocumentContent(XMLUtil.toString(responses).getBytes(), document.getContentType());
-            document.getContent().clear();
-            document.getContent().add(content);
-            service.updateDocument(document);
+            getResponses(root, responses.getElementsByTagName("responses").item(0));
+            return responses;
         } catch (Exception e) {
             throw MiscUtil.toUnchecked(e);
         }
     }
     
-    private void saveResponses(Component comp, Node responses) {
+    private void getResponses(Component comp, Node responses) {
         for (Component child : comp.getChildren()) {
             String id = child.getId();
             
@@ -158,7 +157,7 @@ public class QuestionnaireController extends FrameworkController {
                 String value = null;
                 
                 if (child instanceof Checkbox) {
-                    value = ((Checkbox) child).isChecked() ? "true" : "false";
+                    value = ((Checkbox) child).isChecked() ? "true" : null;
                 } else if (child instanceof Datebox) {
                     Date date = ((Datebox) child).getValue();
                     value = date == null ? null : Long.toString(date.getTime());
@@ -176,8 +175,42 @@ public class QuestionnaireController extends FrameworkController {
                 }
             }
             
-            saveResponses(child, responses);
+            getResponses(child, responses);
         }
+    }
+    
+    private void generateQuestionnaireResponse(org.w3c.dom.Document responses) {
+        NodeList nodeList = responses.getElementsByTagName("response");
+        QuestionnaireResponse qr = new QuestionnaireResponse();
+        //qr.setId((String) root.getAttribute("response_id"));
+        //String ref = (String) root.getAttribute("questionnaire_reference");
+        //qr.setQuestionnaire(ref == null ? null : new Reference(ref));
+        qr.setSubject(document.getReference().getSubject());
+        qr.setAuthor(FhirUtil.getFirst(document.getReference().getAuthor()));
+        
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node response = nodeList.item(i);
+            NamedNodeMap attr = response.getAttributes();
+            String value = attr.getNamedItem("value").getNodeValue();
+            String id = attr.getNamedItem("target").getNodeValue();
+            Component target = root.getFellowIfAny(id);
+            
+            if (target.hasAttribute("linkId")) {
+                QuestionnaireResponseItemComponent item = new QuestionnaireResponseItemComponent();
+                qr.addItem(item);
+                item.setLinkId((String) target.getAttribute("linkId"));
+                item.setText((String) target.getAttribute("text"));
+                QuestionnaireResponseItemAnswerComponent answer = new QuestionnaireResponseItemAnswerComponent();
+                item.addAnswer(answer);
+                Coding coding = new Coding();
+                answer.setValue(coding);
+                coding.setSystem((String) target.getAttribute("system"));
+                coding.setDisplay((String) target.getAttribute("display"));
+                coding.setCode(value);
+            }
+        }
+        
+        service.createResource(qr);
     }
     
     private void setPatient(Patient patient) {
@@ -187,7 +220,7 @@ public class QuestionnaireController extends FrameworkController {
     }
     
     public void onClick$btnSave() {
-        saveResponses();
+        saveResponses(getResponses());
     }
     
     public void onClick$btnDelete() {
@@ -201,6 +234,8 @@ public class QuestionnaireController extends FrameworkController {
         disableAll();
         document.getReference()
                 .setDocStatus(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, "status-signed", "Signed"));
-        saveResponses();
+        org.w3c.dom.Document responses = getResponses();
+        saveResponses(responses);
+        generateQuestionnaireResponse(responses);
     }
 }
