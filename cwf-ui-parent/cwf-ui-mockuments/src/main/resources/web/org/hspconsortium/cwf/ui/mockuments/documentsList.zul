@@ -5,7 +5,7 @@
 
 	<panel id="panel" height="100%" width="100%">
 		<toolbar align="center">
-			<span id="options" style="float:left;">
+			<span id="options" style="float:left">
 				<label id="lblFilter" sclass="z-panel-header" visible="false" style="font-size:12px;padding-right:15px;border:none; background:none"/>
 				<combobox id="cboFilter" readonly="true"
 					text="All Categories" width="15em"
@@ -20,6 +20,9 @@
 					width="11em"
 					tooltiptext="Restrict to documents within this date range." />
 			</span>
+			<span style="float:right">
+				<button id="btnNew" label="New Document" />
+			</span>
 			<label id="lblInfo" style="font-size:12px; font-weight:bold"/>
 		</toolbar>
 		<panelchildren>
@@ -30,16 +33,16 @@
 					sclass="cwf-mockuments-lstList"
 					oddRowSclass="cwf-mockuments-oddRow">
 					<listhead sizable="true">
-						<listheader width="4%"
-							sclass="cwf-listheader-nocheckbox" />
-						<listheader width="24%" label="Date"
+						<listheader width="15%" label="Date"
 							id="DateTime" />
-						<listheader width="24%" label="Title"
+						<listheader width="25%" label="Title"
 							id="Title" />
-						<listheader width="24%" label="Source"
+						<listheader width="25%" label="Source"
 							id="LocationName" />
-						<listheader width="24%" label="Author"
+						<listheader width="25%" label="Author"
 							id="AuthorName" />
+						<listheader width="10%" label="Status"
+							id="Status" />
 					</listhead>
 				</listbox>
 			</div>

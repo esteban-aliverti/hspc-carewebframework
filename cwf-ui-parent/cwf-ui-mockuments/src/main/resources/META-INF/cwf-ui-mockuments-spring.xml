@@ -58,5 +58,11 @@
 			scope="prototype">
 		</bean>
 
+		<bean id="cwfMockumentsQuestionnaireController"
+			class="org.hspconsortium.cwf.ui.mockuments.QuestionnaireController"
+			scope="prototype">
+			<constructor-arg ref="fhirDocumentService" />
+		</bean>
+
 	</beans>
 </beans>

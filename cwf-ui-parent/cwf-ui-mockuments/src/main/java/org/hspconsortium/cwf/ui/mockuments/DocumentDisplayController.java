@@ -23,10 +23,12 @@ import org.carewebframework.ui.FrameworkController;
 import org.carewebframework.ui.zk.ZKUtil;
 
 import org.zkoss.util.media.AMedia;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 
 import org.hspconsortium.cwf.fhir.document.Document;
@@ -40,6 +42,10 @@ public class DocumentDisplayController extends FrameworkController {
     
     
     private static final long serialVersionUID = 1L;
+    
+    public static final String QUESTIONNAIRE_CONTENT_TYPE = "application/xcwf-";
+    
+    private Component toolbar;
     
     private Button btnPrint;
     
@@ -57,16 +63,27 @@ public class DocumentDisplayController extends FrameworkController {
         
         if (printRoot != null) {
             ZKUtil.detachChildren(printRoot);
+            ZKUtil.detachChildren(toolbar);
             btnPrint.setDisabled(document == null);
         }
         
         if (document != null) {
             for (DocumentContent content : document.getContent()) {
-                if (content.getType().equals("text/html")) {
+                String ctype = content.getType();
+                
+                if (ctype.startsWith(QUESTIONNAIRE_CONTENT_TYPE)) {
+                    String zul = "~./org/hspconsortium/cwf/ui/mockuments/"
+                            + ctype.substring(QUESTIONNAIRE_CONTENT_TYPE.length()) + ".zul"; // Hack - need to register these somehow
+                    Include include = new Include();
+                    include.setAttribute("document", document);
+                    include.setAttribute("displayController", this);
+                    include.setSrc(zul);
+                    printRoot.appendChild(include);
+                } else if (ctype.equals("text/html")) {
                     Html html = new Html();
                     html.setContent(content.toString());
                     printRoot.appendChild(html);
-                } else if (content.getType().equals("text/plain")) {
+                } else if (ctype.equals("text/plain")) {
                     Label lbl = new Label(content.toString());
                     lbl.setMultiline(true);
                     lbl.setPre(true);
@@ -83,5 +100,21 @@ public class DocumentDisplayController extends FrameworkController {
     
     public void onClick$btnPrint() {
         Util.print(printRoot, document.getTitle(), "patient", null, false);
-    };
+    }
+    
+    public void addToToolbar(Component source) {
+        moveComponents(source, toolbar);
+    }
+    
+    public void removeFromToolbar(Component target) {
+        moveComponents(toolbar, target);
+    }
+    
+    private void moveComponents(Component source, Component target) {
+        Component child;
+        
+        while ((child = source.getFirstChild()) != null) {
+            child.setParent(target);
+        }
+    }
 }

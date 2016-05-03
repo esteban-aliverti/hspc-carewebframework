@@ -55,8 +55,6 @@ import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hspconsortium.cwf.fhir.common.BaseService;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
-import ca.uhn.fhir.rest.api.MethodOutcome;
-
 /**
  * Currently hard coded but in later iterations, bootstrapper should be configured based on a
  * configuration file to support greater flexibility during demos or connectathons.
@@ -233,6 +231,11 @@ public class Bootstrapper {
         return list;
     }
     
+    @SuppressWarnings("unchecked")
+    private <D extends DomainResource> void addToCache(D resource) {
+        getCachedResources((Class<D>) resource.getClass()).add(resource);
+    }
+    
     /**
      * Returns the principal identifier for the given resource.
      * 
@@ -275,18 +278,14 @@ public class Bootstrapper {
      */
     @SuppressWarnings("unchecked")
     private <D extends DomainResource> D createResource(D resource) {
-        MethodOutcome outcome = fhirService.createResource(resource);
-        D newResource = null;
+        D newResource = fhirService.createResource(resource);
         
-        if (outcome.getResource().getClass() == resource.getClass()) {
-            newResource = (D) outcome.getResource();
-        } else {
+        if (newResource == null) {
             List<? extends DomainResource> results = fhirService.searchResourcesByIdentifier(getMainIdentifier(resource),
                 (Class<? extends DomainResource>) resource.getClass());
             
             if (!results.isEmpty()) {
-                newResource = (D) results.get(0);
-                getCachedResources((Class<D>) resource.getClass()).add(newResource);
+                addToCache(newResource = (D) results.get(0));
             }
         }
         

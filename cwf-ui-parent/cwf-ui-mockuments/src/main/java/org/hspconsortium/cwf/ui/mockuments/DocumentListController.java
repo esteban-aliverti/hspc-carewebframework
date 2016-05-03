@@ -19,6 +19,7 @@
  */
 package org.hspconsortium.cwf.ui.mockuments;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.carewebframework.api.query.AbstractQueryFilter;
 import org.carewebframework.api.query.DateQueryFilter.DateType;
 import org.carewebframework.api.query.IQueryContext;
 import org.carewebframework.ui.zk.ListUtil;
+import org.carewebframework.ui.zk.PromptDialog;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Combobox;
@@ -37,7 +39,13 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.Listitem;
 
+import org.hl7.fhir.dstu3.model.DocumentReference;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hspconsortium.cwf.api.patient.PatientContext;
+import org.hspconsortium.cwf.fhir.common.FhirTerminology;
+import org.hspconsortium.cwf.fhir.common.FhirUtil;
 import org.hspconsortium.cwf.fhir.document.Document;
+import org.hspconsortium.cwf.fhir.document.DocumentContent;
 import org.hspconsortium.cwf.fhir.document.DocumentListDataService;
 import org.hspconsortium.cwf.fhir.document.DocumentService;
 import org.hspconsortium.cwf.ui.reporting.controller.AbstractListController;
@@ -82,6 +90,8 @@ public class DocumentListController extends AbstractListController<Document, Doc
     
     private DocumentDisplayController displayController;
     
+    private Document newDocument;
+    
     private final Collection<String> allTypes;
     
     public DocumentListController(DocumentService service) {
@@ -103,6 +113,10 @@ public class DocumentListController extends AbstractListController<Document, Doc
      */
     @Override
     protected List<Document> toModel(List<Document> queryResult) {
+        if (newDocument != null) {
+            queryResult.add(newDocument);
+        }
+        
         if (queryResult != null) {
             updateListFilter(queryResult);
         }
@@ -187,6 +201,31 @@ public class DocumentListController extends AbstractListController<Document, Doc
      * Selecting document displays view.
      */
     public void onSelect$listBox() {
+        updateSelectedDocument();
+    }
+    
+    public void onClick$btnNew() {
+        List<String> itemNames = new ArrayList<>();
+        List<Object> items = new ArrayList<>();
+        itemNames.add("Lactation Assessment");
+        items.add("lactation_assessment");
+        String item = (String) PromptDialog.input("Select document type to create.", "New Document", null, itemNames, items);
+        
+        if (item == null) {
+            return;
+        }
+        
+        String displayName = itemNames.get(items.indexOf(item));
+        DocumentReference ref = new DocumentReference();
+        ref.setSubject(new Reference(PatientContext.getActivePatient()));
+        ref.setCreated(new Date());
+        ref.setType(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, item, displayName));
+        ref.setDocStatus(FhirUtil.createCodeableConcept(FhirTerminology.SYS_COGMED, "status-new", "New"));
+        DocumentContent content = new DocumentContent("".getBytes(),
+                DocumentDisplayController.QUESTIONNAIRE_CONTENT_TYPE + item);
+        newDocument = new Document(ref, content);
+        refresh();
+        ListUtil.selectListboxData(listBox, newDocument);
         updateSelectedDocument();
     }
     
