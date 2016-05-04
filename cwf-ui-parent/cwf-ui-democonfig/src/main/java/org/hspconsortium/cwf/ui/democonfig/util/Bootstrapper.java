@@ -234,7 +234,9 @@ public class Bootstrapper {
     
     @SuppressWarnings("unchecked")
     private <D extends DomainResource> void addToCache(D resource) {
-        getCachedResources((Class<D>) resource.getClass()).add(resource);
+        if (resource != null) {
+            getCachedResources((Class<D>) resource.getClass()).add(resource);
+        }
     }
     
     /**
@@ -268,29 +270,17 @@ public class Bootstrapper {
             }
         }
         
-        return createResource(resource);
-    }
-    
-    /**
-     * Creates a resource on the server.
-     * 
-     * @param resource Resource to create.
-     * @return True if created.
-     */
-    @SuppressWarnings("unchecked")
-    private <D extends DomainResource> D createResource(D resource) {
-        D newResource = fhirService.createResource(resource);
+        List<? extends DomainResource> results = fhirService.searchResourcesByIdentifier(identifier,
+            (Class<? extends DomainResource>) resource.getClass());
         
-        if (newResource == null) {
-            List<? extends DomainResource> results = fhirService.searchResourcesByIdentifier(getMainIdentifier(resource),
-                (Class<? extends DomainResource>) resource.getClass());
-            
-            if (!results.isEmpty()) {
-                addToCache(newResource = (D) results.get(0));
-            }
+        if (!results.isEmpty()) {
+            resource = (D) results.get(0);
+        } else {
+            resource = fhirService.createResource(resource);
         }
         
-        return newResource;
+        addToCache(resource);
+        return resource;
     }
     
     /**

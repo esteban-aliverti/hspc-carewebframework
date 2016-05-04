@@ -183,6 +183,7 @@ public class QuestionnaireController extends FrameworkController implements IDoc
         document.getContent().clear();
         document.getContent().add(content);
         service.updateDocument(document);
+        modified = false;
     }
     
     private org.w3c.dom.Document getResponses() {
@@ -361,7 +362,6 @@ public class QuestionnaireController extends FrameworkController implements IDoc
         org.w3c.dom.Document responses = getResponses();
         saveResponses(responses);
         createResource(responses);
-        modified = false;
     }
     
     public void onChanged() {
@@ -376,7 +376,6 @@ public class QuestionnaireController extends FrameworkController implements IDoc
     @Override
     public void saveChanges() {
         saveResponses(getResponses());
-        modified = false;
     }
     
     @Override
