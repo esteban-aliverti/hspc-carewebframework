@@ -201,6 +201,10 @@ public class DocumentListController extends AbstractListController<Document, Doc
     }
     
     public void onClick$btnNew() {
+        if (!allowChange()) {
+            return;
+        }
+        
         List<String> itemNames = new ArrayList<>();
         List<Object> items = new ArrayList<>();
         itemNames.add("Lactation Assessment");

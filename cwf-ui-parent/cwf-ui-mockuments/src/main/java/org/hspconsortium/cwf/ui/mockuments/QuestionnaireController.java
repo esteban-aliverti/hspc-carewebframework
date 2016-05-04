@@ -162,8 +162,6 @@ public class QuestionnaireController extends FrameworkController implements IDoc
                 ((Checkbox) target).setChecked("true".equals(value));
             } else if (target instanceof Datebox) {
                 ((Datebox) target).setValue(new Date(Long.parseLong(value)));
-            } else if (target instanceof Textbox) {
-                ((Textbox) target).setValue(value);
             } else if (target instanceof Combobox) {
                 if (ListUtil.selectComboboxData((Combobox) target, value) == -1) {
                     ListUtil.selectComboboxItem((Combobox) target, value);
@@ -172,6 +170,8 @@ public class QuestionnaireController extends FrameworkController implements IDoc
                 if (ListUtil.selectListboxData((Listbox) target, value) == -1) {
                     ListUtil.selectListboxItem((Listbox) target, value);
                 }
+            } else if (target instanceof Textbox) {
+                ((Textbox) target).setValue(value);
             }
         }
         

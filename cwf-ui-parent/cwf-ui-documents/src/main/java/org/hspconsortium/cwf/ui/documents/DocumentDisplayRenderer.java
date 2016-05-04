@@ -67,17 +67,17 @@ public class DocumentDisplayRenderer extends AbstractListitemRenderer<Document, 
         div.appendChild(boxHeader);
         
         for (DocumentContent content : doc.getContent()) {
-            if (content.getType().equals("text/html")) {
+            if (content.getContentType().equals("text/html")) {
                 Html html = new Html();
                 html.setContent(content.toString());
                 cell.appendChild(html);
-            } else if (content.getType().equals("text/plain")) {
+            } else if (content.getContentType().equals("text/plain")) {
                 Label lbl = new Label(content.toString());
                 lbl.setMultiline(true);
                 lbl.setPre(true);
                 cell.appendChild(lbl);
             } else {
-                AMedia media = new AMedia(null, null, content.getType(), content.getData());
+                AMedia media = new AMedia(null, null, content.getContentType(), content.getData());
                 Iframe frame = new Iframe();
                 frame.setContent(media);
                 cell.appendChild(frame);

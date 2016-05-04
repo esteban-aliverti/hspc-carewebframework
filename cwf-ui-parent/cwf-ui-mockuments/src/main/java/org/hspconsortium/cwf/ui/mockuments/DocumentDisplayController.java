@@ -109,7 +109,7 @@ public class DocumentDisplayController extends FrameworkController {
         
         if (document != null) {
             for (DocumentContent content : document.getContent()) {
-                String ctype = content.getType();
+                String ctype = content.getContentType();
                 
                 if (ctype.startsWith(QUESTIONNAIRE_CONTENT_TYPE)) {
                     String zul = "~./org/hspconsortium/cwf/ui/mockuments/"
@@ -129,11 +129,15 @@ public class DocumentDisplayController extends FrameworkController {
                     lbl.setPre(true);
                     printRoot.appendChild(lbl);
                 } else {
-                    AMedia media = new AMedia(null, null, content.getType(), content.getData());
+                    AMedia media = new AMedia(null, null, content.getContentType(), content.getData());
                     Iframe frame = new Iframe();
                     frame.setContent(media);
                     printRoot.appendChild(frame);
                 }
+            }
+            
+            if (printRoot.getFirstChild() == null) {
+                printRoot.appendChild(new Label("Document has no content."));
             }
         }
         

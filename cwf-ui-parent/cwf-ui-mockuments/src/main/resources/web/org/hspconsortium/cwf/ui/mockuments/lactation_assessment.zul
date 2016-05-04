@@ -24,7 +24,7 @@
 		</columns>
 		<rows>
 			<row style="text-align:left!important">
-				<label id="lblPatientName" value="Patient: Last, First"/>
+				<label id="lblPatientName" value="Patient: Last, First" style="font-weight:bold"/>
 				<labeledelement label="Location:">
 					<combobox id="cboLocation" width="80%" readonly="true">
 						<comboitem label="Recovery Room"/>
