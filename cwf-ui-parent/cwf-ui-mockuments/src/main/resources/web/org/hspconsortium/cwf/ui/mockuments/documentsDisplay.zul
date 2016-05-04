@@ -5,7 +5,7 @@
 
 	<panel id="panel" height="100%" width="100%">
 		<panelchildren>
-			<div id="printRoot" height="100%" width="100%" style="overflow:auto" padding="5px"/>
+			<div id="printRoot" height="100%" width="100%" style="overflow:auto;padding:5px"/>
 		</panelchildren>
 		<toolbar>
 			<span style="float:left">
