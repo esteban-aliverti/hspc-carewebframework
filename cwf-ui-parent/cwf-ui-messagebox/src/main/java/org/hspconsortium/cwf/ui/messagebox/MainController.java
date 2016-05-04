@@ -241,6 +241,7 @@ public class MainController extends CaptionedForm implements IPatientContextEven
      */
     @Override
     public void refresh() {
+        showBusy(null);
         lstMessages.setModel((ListModel<?>) null);
         loadMessages(!radAll.isChecked());
         lstMessages.setModel(model);
