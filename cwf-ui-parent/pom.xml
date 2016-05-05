@@ -21,13 +21,9 @@
 		<module>cwf-ui-conditions</module>
 		<module>cwf-ui-familyhistory</module>
 		<module>cwf-ui-adversereactions</module>
-		<module>cwf-ui-mar</module>
 		<module>cwf-ui-medicationorders</module>
 		<module>cwf-ui-observations</module>
 		<module>cwf-ui-orders</module>
 		<module>cwf-ui-procedures</module>
-		<module>cwf-ui-messagebox</module>
-		<module>cwf-ui-democonfig</module>
-		<module>cwf-ui-mockuments</module>
 	</modules>
 </project>
