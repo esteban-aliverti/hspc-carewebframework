@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.carewebframework.api.event.IGenericEvent;
 import org.carewebframework.ui.sharedforms.ListViewForm;
 import org.carewebframework.ui.thread.ZKThread;
 import org.carewebframework.ui.thread.ZKThread.ZKRunnable;
@@ -38,6 +39,7 @@ import org.zkoss.zul.Window;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.instance.model.api.IBaseDatatype;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
@@ -71,11 +73,33 @@ public abstract class ResourceListView<R extends IBaseResource, M> extends ListV
     
     private Class<R> resourceClass;
     
+    private final IGenericEvent<IBaseResource> eventListener = new IGenericEvent<IBaseResource>() {
+        
+        
+        @Override
+        public void eventCallback(String eventName, IBaseResource resource) {
+            if (patient != null && resourceClass.isInstance(resource)) {
+                Reference ref = FhirUtil.getPatient(resource);
+                
+                if (ref != null) {
+                    String id1 = FhirUtil.getIdAsString(patient, true);
+                    String id2 = FhirUtil.getIdAsString(ref.getReferenceElement(), true);
+                    
+                    if (id1.equals(id2)) {
+                        refresh();
+                    }
+                }
+            }
+        }
+        
+    };
+    
     protected void setup(Class<R> resourceClass, String title, String detailTitle, String resourcePath, int sortBy,
                          String... headers) {
         this.detailTitle = detailTitle;
         this.resourcePath = resourcePath;
         this.resourceClass = resourceClass;
+        this.getEventManager().subscribe("Patient", eventListener);
         super.setup(title, sortBy, headers);
     }
     
