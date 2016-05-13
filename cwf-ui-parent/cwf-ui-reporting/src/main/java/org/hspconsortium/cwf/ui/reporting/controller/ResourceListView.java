@@ -182,8 +182,18 @@ public abstract class ResourceListView<R extends IBaseResource, M> extends ListV
         }
         
         model.clear();
-        initModel(FhirUtil.getEntries((Bundle) thread.getAttribute("bundle"), resourceClass));
+        initModel(processBundle((Bundle) thread.getAttribute("bundle")));
         renderData();
+    }
+    
+    /**
+     * Extracts results from the returned bundle. Override for special processing.
+     * 
+     * @param bundle The bundle.
+     * @return List of extracted resources.
+     */
+    protected List<R> processBundle(Bundle bundle) {
+        return FhirUtil.getEntries(bundle, resourceClass);
     }
     
     protected abstract void initModel(List<R> entries);

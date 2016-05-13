@@ -19,11 +19,13 @@
  */
 package org.hspconsortium.cwf.ui.orders;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.carewebframework.common.StrUtil;
 
 import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.DeviceUseRequest;
 import org.hl7.fhir.dstu3.model.DiagnosticOrder;
 import org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent;
@@ -61,6 +63,11 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     protected void init() {
         setup(IBaseResource.class, "Orders", "Order Detail", QUERY, 1, "Type^^min", "Date^^min", "Order^^1", "Notes^^1");
         super.init();
+    }
+    
+    @Override
+    protected List<IBaseResource> processBundle(Bundle bundle) {
+        return FhirUtil.getEntries(bundle, null, Collections.singletonList(Patient.class));
     }
     
     @Override
@@ -156,10 +163,6 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     
     @Override
     protected void initModel(List<IBaseResource> orders) {
-        if (!orders.isEmpty() && orders.get(0) instanceof Patient) {
-            orders.remove(0);
-        }
-        
         model.addAll(orders);
     }
     
