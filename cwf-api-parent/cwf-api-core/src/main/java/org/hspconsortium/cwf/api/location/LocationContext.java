@@ -25,16 +25,15 @@ import org.apache.commons.logging.LogFactory;
 import org.carewebframework.api.context.ContextItems;
 import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
-import org.carewebframework.api.context.ISharedContext;
-import org.carewebframework.api.context.ManagedContext;
 import org.carewebframework.api.property.PropertyUtil;
 
 import org.hl7.fhir.dstu3.model.Location;
+import org.hspconsortium.cwf.api.ResourceContext;
 
 /**
  * Wrapper for shared user location context.
  */
-public class LocationContext extends ManagedContext<Location> {
+public class LocationContext extends ResourceContext<Location> {
     
     
     private static final Log log = LogFactory.getLog(LocationContext.class);
@@ -50,9 +49,8 @@ public class LocationContext extends ManagedContext<Location> {
      *
      * @return Location context.
      */
-    @SuppressWarnings("unchecked")
-    static public ISharedContext<Location> getLocationContext() {
-        return (ISharedContext<Location>) ContextManager.getInstance().getSharedContext(LocationContext.class.getName());
+    static public LocationContext getLocationContext() {
+        return (LocationContext) ContextManager.getInstance().getSharedContext(LocationContext.class.getName());
     }
     
     /**
@@ -76,6 +74,15 @@ public class LocationContext extends ManagedContext<Location> {
         } catch (Exception e) {
             log.error("Error during request context change.", e);
         }
+    }
+    
+    /**
+     * Request a location context change.
+     * 
+     * @param logicalId Logical id of the location.
+     */
+    public static void changeLocation(String logicalId) {
+        getLocationContext().requestContextChange(logicalId);
     }
     
     /**
@@ -110,7 +117,7 @@ public class LocationContext extends ManagedContext<Location> {
      * @param location Initial value for this context.
      */
     public LocationContext(Location location) {
-        super(SUBJECT_NAME, ILocationContextEvent.class, location);
+        super(SUBJECT_NAME, Location.class, ILocationContextEvent.class, location);
     }
     
     /**

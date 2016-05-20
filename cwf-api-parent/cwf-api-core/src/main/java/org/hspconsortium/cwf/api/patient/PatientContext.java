@@ -25,17 +25,16 @@ import org.apache.commons.logging.LogFactory;
 import org.carewebframework.api.context.ContextItems;
 import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
-import org.carewebframework.api.context.ISharedContext;
-import org.carewebframework.api.context.ManagedContext;
 
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hspconsortium.cwf.api.ResourceContext;
 import org.hspconsortium.cwf.fhir.common.FhirUtil;
 
 /**
  * Wrapper for shared patient context.
  */
-public class PatientContext extends ManagedContext<Patient> {
+public class PatientContext extends ResourceContext<Patient> {
     
     
     private static final Log log = LogFactory.getLog(PatientContext.class);
@@ -63,9 +62,8 @@ public class PatientContext extends ManagedContext<Patient> {
      * 
      * @return Patient context.
      */
-    @SuppressWarnings("unchecked")
-    public static ISharedContext<Patient> getPatientContext() {
-        return (ISharedContext<Patient>) ContextManager.getInstance().getSharedContext(PatientContext.class.getName());
+    public static PatientContext getPatientContext() {
+        return (PatientContext) ContextManager.getInstance().getSharedContext(PatientContext.class.getName());
     }
     
     /**
@@ -79,6 +77,15 @@ public class PatientContext extends ManagedContext<Patient> {
         } catch (Exception e) {
             log.error("Error during patient context change.", e);
         }
+    }
+    
+    /**
+     * Request a patient context change.
+     * 
+     * @param logicalId Logical id of the patient.
+     */
+    public static void changePatient(String logicalId) {
+        getPatientContext().requestContextChange(logicalId);
     }
     
     /**
@@ -100,10 +107,10 @@ public class PatientContext extends ManagedContext<Patient> {
     /**
      * Create a shared patient context with a specified initial state.
      * 
-     * @param patient User that will be the initial state.
+     * @param patient Patient that will be the initial state.
      */
     public PatientContext(Patient patient) {
-        super(SUBJECT_NAME, IPatientContextEvent.class, patient);
+        super(SUBJECT_NAME, Patient.class, IPatientContextEvent.class, patient);
     }
     
     /**
@@ -136,5 +143,4 @@ public class PatientContext extends ManagedContext<Patient> {
     public int getPriority() {
         return 10;
     }
-    
 }

@@ -25,16 +25,15 @@ import org.apache.commons.logging.LogFactory;
 import org.carewebframework.api.context.ContextItems;
 import org.carewebframework.api.context.ContextManager;
 import org.carewebframework.api.context.IContextEvent;
-import org.carewebframework.api.context.ISharedContext;
-import org.carewebframework.api.context.ManagedContext;
 
 import org.hl7.fhir.dstu3.model.Encounter;
+import org.hspconsortium.cwf.api.ResourceContext;
 import org.hspconsortium.cwf.api.patient.PatientContext.IPatientContextEvent;
 
 /**
  * Wrapper for shared encounter context.
  */
-public class EncounterContext extends ManagedContext<Encounter> implements IPatientContextEvent {
+public class EncounterContext extends ResourceContext<Encounter> implements IPatientContextEvent {
     
     
     private static final Log log = LogFactory.getLog(EncounterContext.class);
@@ -48,9 +47,8 @@ public class EncounterContext extends ManagedContext<Encounter> implements IPati
      * 
      * @return Encounter context.
      */
-    @SuppressWarnings("unchecked")
-    static public ISharedContext<Encounter> getEncounterContext() {
-        return (ISharedContext<Encounter>) ContextManager.getInstance().getSharedContext(EncounterContext.class.getName());
+    static public EncounterContext getEncounterContext() {
+        return (EncounterContext) ContextManager.getInstance().getSharedContext(EncounterContext.class.getName());
     }
     
     /**
@@ -76,6 +74,15 @@ public class EncounterContext extends ManagedContext<Encounter> implements IPati
     }
     
     /**
+     * Request an encounter context change.
+     * 
+     * @param logicalId Logical id of the encounter.
+     */
+    public static void changeEncounter(String logicalId) {
+        getEncounterContext().requestContextChange(logicalId);
+    }
+    
+    /**
      * Creates the context wrapper and registers its context change callback interface.
      */
     public EncounterContext() {
@@ -88,7 +95,7 @@ public class EncounterContext extends ManagedContext<Encounter> implements IPati
      * @param encounter Initial value for context.
      */
     public EncounterContext(Encounter encounter) {
-        super(SUBJECT_NAME, IEncounterContextEvent.class, encounter);
+        super(SUBJECT_NAME, Encounter.class, IEncounterContextEvent.class, encounter);
     }
     
     /**
@@ -151,7 +158,7 @@ public class EncounterContext extends ManagedContext<Encounter> implements IPati
     @Override
     public String pending(boolean silent) {
         //Patient patient = PatientContext.getPatientContext().getContextObject(true);
-        changeEncounter(null);
+        changeEncounter((Encounter) null);
         //changeEncounter(EncounterUtil.getDefaultEncounter(patient));
         return null;
     }

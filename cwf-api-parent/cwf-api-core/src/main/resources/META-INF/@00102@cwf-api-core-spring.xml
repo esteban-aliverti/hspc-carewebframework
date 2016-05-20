@@ -66,19 +66,24 @@
 
 		<!-- Shared clinical contexts. -->
 
-		<bean id="patientContext" parent="managedContext"
-			class="org.hspconsortium.cwf.api.patient.PatientContext"	/>
+		<bean id="managedResourceContext" parent="managedContext" abstract="true">
+			<property name="fhirService" ref="fhirService" />
+		</bean>
+		
+		<bean id="patientContext" parent="managedResourceContext"
+			class="org.hspconsortium.cwf.api.patient.PatientContext">
+		</bean>
 
-		<bean id="encounterContext" parent="managedContext"
+		<bean id="encounterContext" parent="managedResourceContext"
 			class="org.hspconsortium.cwf.api.encounter.EncounterContext">
+		</bean>
+
+		<bean id="locationContext" parent="managedResourceContext"
+			class="org.hspconsortium.cwf.api.location.LocationContext" depends-on="userContext">
 		</bean>
 
 		<bean id="encounterParticipantContext" parent="managedContext"
 			class="org.hspconsortium.cwf.api.encounter.EncounterParticipantContext">
-		</bean>
-
-		<bean id="locationContext" parent="managedContext"
-			class="org.hspconsortium.cwf.api.location.LocationContext" depends-on="userContext">
 		</bean>
 
 	</beans>

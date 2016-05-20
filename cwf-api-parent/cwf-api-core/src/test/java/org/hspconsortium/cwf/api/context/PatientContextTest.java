@@ -115,7 +115,7 @@ public class PatientContextTest extends CommonTest {
         ContextMarshaller marshaller = contextManager.getContextMarshaller("keystore-test");
         String ctx = marshaller.marshal(contextManager.getMarshaledContext());
         String sig = marshaller.sign(ctx);
-        PatientContext.changePatient(null);
+        PatientContext.changePatient((Patient) null);
         assertNull(PatientContext.getActivePatient());
         marshaller.unmarshal(ctx, sig);
         Patient patient = PatientContext.getActivePatient();
