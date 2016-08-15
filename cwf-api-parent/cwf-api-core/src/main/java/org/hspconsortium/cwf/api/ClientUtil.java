@@ -23,7 +23,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import org.carewebframework.api.spring.SpringUtil;
 
-import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hspconsortium.cwf.fhir.client.FhirContext;
@@ -31,6 +30,7 @@ import org.hspconsortium.cwf.fhir.client.FhirContext;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.rest.client.GenericClient;
 import ca.uhn.fhir.rest.client.IGenericClient;
+import org.hl7.fhir.dstu3.model.StringType;
 
 /**
  * FHIR client utility methods.
@@ -123,7 +123,7 @@ public class ClientUtil {
             return reference.getResource();
         }
         
-        IdType resourceId = reference.getIdElement();
+        StringType resourceId = reference.getIdElement();
         
         if (resourceId == null) {
             throw new IllegalStateException("Reference has no resource ID defined");

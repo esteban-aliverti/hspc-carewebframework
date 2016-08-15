@@ -36,8 +36,7 @@ import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Encounter.EncounterLocationComponent;
 import org.hl7.fhir.dstu3.model.Encounter.EncounterParticipantComponent;
-import org.hl7.fhir.dstu3.model.Encounter.EncounterState;
-import org.hl7.fhir.dstu3.model.Enumeration;
+import org.hl7.fhir.dstu3.model.Encounter.EncounterStatus;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.HumanName.NameUse;
 import org.hl7.fhir.dstu3.model.Location;
@@ -194,8 +193,8 @@ public class EncounterUtil {
     }
     
     public static boolean isLocked(Encounter encounter) {
-        Enumeration<EncounterState> status = encounter.getStatusElement();
-        return status != null && status.getValue() == EncounterState.FINISHED;
+        EncounterStatus status = encounter.getStatus();
+        return status != null && status == EncounterStatus.FINISHED;
     }
     
     public static boolean isPrepared(Encounter encounter) {
@@ -266,7 +265,7 @@ public class EncounterUtil {
         IBaseResource resource = ClientUtil.getResource(participant.getIndividual());
         return resource instanceof Practitioner
                 ? FhirUtil.getName(((Practitioner) resource).getName(), NameUse.USUAL, NameUse.OFFICIAL)
-                : resource instanceof RelatedPerson ? ((RelatedPerson) resource).getName() : null;
+                : resource instanceof RelatedPerson ? ((RelatedPerson) resource).getNameFirstRep() : null;
     }
     
     public static Practitioner getPractitioner(EncounterParticipantComponent participant) {

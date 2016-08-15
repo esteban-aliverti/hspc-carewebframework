@@ -56,8 +56,8 @@ public class MainController extends ResourceListView<AllergyIntolerance, Allergy
     
     @Override
     protected void render(AllergyIntolerance ai, List<Object> columns) {
-        columns.add(ai.getRecordedDate());
-        columns.add(ai.getSubstance());
+        columns.add(ai.getAttestedDate());
+        columns.add(ai.getCode());
         columns.add(ai.getCriticality());
         columns.add(getReactions(ai.getReaction()));
     }

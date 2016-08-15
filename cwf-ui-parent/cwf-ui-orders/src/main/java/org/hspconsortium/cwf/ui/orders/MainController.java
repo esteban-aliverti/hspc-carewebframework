@@ -26,13 +26,13 @@ import org.carewebframework.common.StrUtil;
 
 import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.DeviceUseRequest;
-import org.hl7.fhir.dstu3.model.DiagnosticOrder;
-import org.hl7.fhir.dstu3.model.DiagnosticOrder.DiagnosticOrderItemComponent;
+import org.hl7.fhir.dstu3.model.DiagnosticRequest;
 import org.hl7.fhir.dstu3.model.Medication;
 import org.hl7.fhir.dstu3.model.MedicationOrder;
 import org.hl7.fhir.dstu3.model.MedicationOrder.MedicationOrderDosageInstructionComponent;
-import org.hl7.fhir.dstu3.model.NutritionOrder;
+import org.hl7.fhir.dstu3.model.NutritionRequest;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.hl7.fhir.dstu3.model.Reference;
@@ -54,8 +54,8 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     private static final String QUERY = "Patient?_id=#"
             + "&_revinclude=MedicationOrder:patient"
             + "&_revinclude=ProcedureRequest:subject"
-            + "&_revinclude=NutritionOrder:patient"
-            + "&_revinclude=DiagnosticOrder:subject"
+            + "&_revinclude=NutritionRequest:patient"
+            + "&_revinclude=DiagnosticRequest:subject"
             + "&_revinclude=DeviceUseRequest:subject";
     // @formatter:on
     
@@ -74,12 +74,12 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     protected void render(IBaseResource order, List<Object> columns) {
         if (order instanceof ProcedureRequest) {
             render((ProcedureRequest) order, columns);
-        } else if (order instanceof NutritionOrder) {
-            render((NutritionOrder) order, columns);
+        } else if (order instanceof NutritionRequest) {
+            render((NutritionRequest) order, columns);
         } else if (order instanceof MedicationOrder) {
             render((MedicationOrder) order, columns);
-        } else if (order instanceof DiagnosticOrder) {
-            render((DiagnosticOrder) order, columns);
+        } else if (order instanceof DiagnosticRequest) {
+            render((DiagnosticRequest) order, columns);
         } else if (order instanceof DeviceUseRequest) {
             render((DeviceUseRequest) order, columns);
         }
@@ -92,7 +92,7 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
         columns.add(order.getNotes());
     }
     
-    private void render(NutritionOrder order, List<Object> columns) {
+    private void render(NutritionRequest order, List<Object> columns) {
         columns.add("Nutrition");
         columns.add(order.getDateTime());
         columns.add("");
@@ -133,13 +133,14 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
         columns.add(sb);
     }
     
-    private void render(DiagnosticOrder order, List<Object> columns) {
+    private void render(DiagnosticRequest order, List<Object> columns) {
         columns.add("Diagnostic");
-        columns.add(order.hasEvent() ? order.getEvent().get(0).getDateTime() : null);
+        columns.add(order.hasAuthored()
+            ? order.getAuthored() : null);
         StringBuilder sb = new StringBuilder();
         
-        for (DiagnosticOrderItemComponent item : order.getItem()) {
-            append(sb, item.getCode(), ", ");
+        for (CodeableConcept item : order.getReason()) {
+            append(sb, item.getCodingFirstRep().getCode(), ", ");
         }
         
         columns.add(sb);
@@ -148,9 +149,9 @@ public class MainController extends ResourceListView<IBaseResource, IBaseResourc
     
     private void render(DeviceUseRequest order, List<Object> columns) {
         columns.add("Device Use");
-        columns.add(order.getOrderedOn());
-        columns.add(order.getDevice().getDisplay());
-        columns.add(order.getNotes());
+        columns.add(order.getAuthored());
+        columns.add(order.getDevice().getId());
+        columns.add(order.getNote());
     }
     
     private void append(StringBuilder sb, IBaseDatatype value, String delimiter) {
